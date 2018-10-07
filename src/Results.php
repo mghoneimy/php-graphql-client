@@ -6,7 +6,7 @@
  * Time: 1:54 PM
  */
 
-namespace GraphQl;
+namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
 use Psr\Http\Message\ResponseInterface;
