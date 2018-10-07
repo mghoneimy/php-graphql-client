@@ -8,6 +8,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
+use GraphQL\Exception\QueryError;
 use GraphQL\Query;
 
 // Create Client object to contact the GraphQL endpoint
@@ -19,25 +20,33 @@ $client = new \GraphQL\Client(
 
 // Create the GraphQL query
 $gql = (new Query('Company'))
-    ->setConstraints(['filter' => '{name_contains: "XD"}', 'first' => 3])
-    ->setReturnAttributes(
+    ->setArguments(['filter' => '{name_contains: "XD"}', 'first' => 3])
+    ->setSelectionSet(
         [
             'name',
             (new Query('branches'))
-                ->setConstraints(['first' => 1])
-                ->setReturnAttributes(
+                ->setArguments(['first' => 1])
+                ->setSelectionSet(
                     [
                         'address',
                         (new Query('contracts'))
-                            ->setConstraints(['first' => 3])
-                            ->setReturnAttributes(['date'])
+                            ->setArguments(['first' => 3])
+                            ->setSelectionSet(['date'])
                     ]
                 )
         ]
     );
 
 // Run query to get results
-$results = $client->runQuery($gql);
+try {
+    $results = $client->runQuery($gql);
+}
+catch (QueryError $exception) {
+
+    // Catch query error and desplay error details
+    print_r($exception->getErrorDetails());
+    exit;
+}
 
 // Display part of the returned results of the object
 var_dump($results->getData()->Company[0]);

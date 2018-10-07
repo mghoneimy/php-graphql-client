@@ -30,18 +30,18 @@ class Query
     private $object;
 
     /**
-     * Stores the list of constraints imposed on querying data
+     * Stores the list of arguments used when querying data
      *
      * @var array
      */
-    private $constraints;
+    private $arguments;
 
     /**
-     * Stores the list of attribute we want to return from the query, can include nested queries
+     * Stores the selection set desired to get from the query, can include nested queries
      *
      * @var array
      */
-    private $returnAttributes;
+    private $selectionSet;
 
     /**
      * Private member that's not accessible from outside the class, used internally to deduce if query is nested or not
@@ -57,21 +57,21 @@ class Query
      */
     public function __construct($queryObject)
     {
-        $this->object           = $queryObject;
-        $this->constraints      = [];
-        $this->returnAttributes = [];
-        $this->isNested         = false;
+        $this->object       = $queryObject;
+        $this->arguments    = [];
+        $this->selectionSet = [];
+        $this->isNested     = false;
     }
 
     /**
      * @return string
      * @throws \Exception
      */
-    protected function constructConstraints()
+    protected function constructArguments()
     {
         $constraintsString = '';
         $first             = true;
-        foreach ($this->constraints as $constraint => $value) {
+        foreach ($this->arguments as $constraint => $value) {
 
             // Append space at the beginning if it's not the first item on the list
             if ($first) {
@@ -88,11 +88,11 @@ class Query
     /**
      * @return string
      */
-    protected function constructAttributes()
+    protected function constructSelectionSet()
     {
         $attributesString = '';
         $first            = true;
-        foreach ($this->returnAttributes as $attribute) {
+        foreach ($this->selectionSet as $attribute) {
 
             // Append empty line at the beginning if it's not the first item on the list
             if ($first) {
@@ -121,10 +121,10 @@ class Query
     {
         $queryFormat = static::$queryFormat;
         if (!$this->isNested) {
-            $queryFormat = "{\n" . static::$queryFormat . "\n}";
+            $queryFormat = "query {\n" . static::$queryFormat . "\n}";
         }
-        $constraintsString = $this->constructConstraints();
-        $attributesString  = $this->constructAttributes();
+        $constraintsString = $this->constructArguments();
+        $attributesString  = $this->constructSelectionSet();
 
         return sprintf($queryFormat, $this->object, $constraintsString, $attributesString);
     }
@@ -138,25 +138,25 @@ class Query
     }
 
     /**
-     * @param array $constraints
+     * @param array $arguments
      *
      * @return Query
      */
-    public function setConstraints($constraints)
+    public function setArguments($arguments)
     {
-        $this->constraints = $constraints;
+        $this->arguments = $arguments;
 
         return $this;
     }
 
     /**
-     * @param array $returnAttributes
+     * @param array $selectionSet
      *
      * @return Query
      */
-    public function setReturnAttributes($returnAttributes)
+    public function setSelectionSet($selectionSet)
     {
-        $this->returnAttributes = $returnAttributes;
+        $this->selectionSet = $selectionSet;
 
         return $this;
     }
