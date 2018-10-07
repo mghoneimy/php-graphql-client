@@ -5,9 +5,8 @@
  * Date: 10/5/18
  * Time: 12:15 AM
  */
-namespace GraphQL;
 
-require_once '/home/mostafa/myRepos/graphql-client/vendor/autoload.php';
+namespace GraphQL;
 
 /**
  * Class Client
