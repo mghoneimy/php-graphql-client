@@ -9,7 +9,7 @@
 namespace GraphQl;
 
 use GraphQL\Exception\QueryError;
-use GuzzleHttp\Message\ResponseInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Class Result
