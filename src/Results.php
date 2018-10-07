@@ -8,6 +8,7 @@
 
 namespace GraphQl;
 
+use GraphQL\Exception\QueryError;
 use GuzzleHttp\Message\ResponseInterface;
 
 /**
@@ -39,12 +40,22 @@ class Results
      *
      * @param ResponseInterface $response
      * @param bool              $asArray
+     *
+     * @throws QueryError
      */
     public function __construct(ResponseInterface $response, $asArray = false)
     {
         $this->responseObject = $response;
         $this->responseBody   = $this->responseObject->getBody()->getContents();
         $this->results        = json_decode($this->responseBody, $asArray);
+
+        // Check if any errors exist, and throw exception if they do
+        if (isset($this->results->errors)) {
+
+            // Reformat results to an array and use it to initialize exception object
+            $this->reformatResults(true);
+            throw new QueryError($this->results['errors'][0]);
+        }
     }
 
     /**

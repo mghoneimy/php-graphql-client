@@ -8,6 +8,8 @@
 
 namespace GraphQL;
 
+use GraphQL\Exception\QueryError;
+
 /**
  * Class Client
  *
@@ -48,6 +50,7 @@ class Client
      * @param bool  $resultsAsArray
      *
      * @return Results|null
+     * @throws QueryError
      */
     public function runQuery(Query $query, $resultsAsArray = false)
     {
