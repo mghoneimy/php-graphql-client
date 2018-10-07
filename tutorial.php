@@ -1,17 +1,14 @@
 <?php
-
-require 'GraphQL/Client.php';
-require 'GraphQL/Query.php';
-require 'GraphQL/Results.php';
-
-use GraphQL\Query;
-
 /**
  * Created by PhpStorm.
  * User: mostafa
  * Date: 10/6/18
  * Time: 11:55 PM
  */
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+use GraphQL\Query;
 
 // Create Client object to contact the GraphQL endpoint
 $client = new \GraphQL\Client(
