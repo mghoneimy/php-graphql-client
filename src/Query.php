@@ -20,7 +20,7 @@ class Query
      *
      * @var string
      */
-    private static $queryFormat = "%s(%s) {\n%s\n}";
+    private static $queryFormat = "%s%s {\n%s\n}";
 
     /**
      * Stores the object being queried for
@@ -69,7 +69,13 @@ class Query
      */
     protected function constructArguments()
     {
-        $constraintsString = '';
+        // Return empty string if list is empty
+        if (empty($this->arguments)) {
+            return '';
+        }
+
+        // Construct arguments string if list not empty
+        $constraintsString = '(';
         $first             = true;
         foreach ($this->arguments as $constraint => $value) {
 
@@ -81,6 +87,7 @@ class Query
             }
             $constraintsString .= $constraint . ': ' . $value;
         }
+        $constraintsString .= ')';
 
         return $constraintsString;
     }
@@ -123,10 +130,10 @@ class Query
         if (!$this->isNested) {
             $queryFormat = "query {\n" . static::$queryFormat . "\n}";
         }
-        $constraintsString = $this->constructArguments();
-        $attributesString  = $this->constructSelectionSet();
+        $argumentsString    = $this->constructArguments();
+        $selectionSetString = $this->constructSelectionSet();
 
-        return sprintf($queryFormat, $this->object, $constraintsString, $attributesString);
+        return sprintf($queryFormat, $this->object, $argumentsString, $selectionSetString);
     }
 
     /**
