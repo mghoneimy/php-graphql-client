@@ -85,6 +85,16 @@ class Query
             } else {
                 $constraintsString .= ' ';
             }
+
+            // Wrap the value with quotations if it's a string value
+            if (is_string($value)) {
+                if ($value[0] != '"') {
+                    $value = '"' . $value;
+                }
+                if ($value[-1] != '"') {
+                    $value .= '"';
+                }
+            }
             $constraintsString .= $constraint . ': ' . $value;
         }
         $constraintsString .= ')';
