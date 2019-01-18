@@ -27,6 +27,13 @@ abstract class QueryObject
     const OBJECT_NAME = '';
 
     /**
+     * This string attribute stores the name alias to be used in queries for this object
+     *
+     * @var
+     */
+    private $nameAlias;
+
+    /**
      * This array stores the set of selected fields' names for this object
      *
      * @var array
@@ -52,11 +59,14 @@ abstract class QueryObject
 
     /**
      * SchemaObject constructor.
+     *
+     * @param string $nameAlias
      */
-    public function __construct()
+    public function __construct($nameAlias = '')
     {
         $this->selectionSet = [];
         $this->arguments    = [];
+        $this->nameAlias    = !empty($nameAlias) ? $nameAlias : static::OBJECT_NAME;
     }
 
     /**
@@ -67,8 +77,15 @@ abstract class QueryObject
 	    // Construct arguments list
         $this->constructArguments();
 
+        // Convert nested query objects to string queries
+        foreach ($this->selectionSet as $key => $field) {
+            if (!is_string($field) && $field instanceof QueryObject) {
+                $this->selectionSet[$key] = $field->toQuery();
+            }
+        }
+
         // Create and return query for this object
-        $query = new Query(static::OBJECT_NAME);
+        $query = new Query($this->nameAlias);
         $query->setArguments($this->arguments);
         $query->setSelectionSet($this->selectionSet);
 
@@ -81,18 +98,19 @@ abstract class QueryObject
 	protected function constructArguments()
     {
         foreach ($this as $name => $value) {
-            if (!is_array($value) && !is_object($value) && !empty($value)) {
+            if (!is_array($value) && !is_object($value) && !empty($value) && $name !== 'nameAlias') {
                 $this->arguments[$name] = $value;
             }
         }
     }
 
     /**
-     * @param $fieldName
+     * @param $selectedField
      */
-	protected function selectField($fieldName)
+	protected function selectField($selectedField)
     {
-        $this->selectionSet[] = $fieldName;
+        // TODO: Throw exception if field is not a query object or a string
+        $this->selectionSet[] = $selectedField;
     }
 
     /**
