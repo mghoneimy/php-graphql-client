@@ -54,10 +54,11 @@ class Client
      */
     public function runQuery(Query $query, $resultsAsArray = false)
     {
-        // Set request headers for authorization
+        // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
             $options['headers'] = $this->authorizationHeaders;
         }
+        $options['headers']['Content-Type'] = 'application/json';
 
         // Set query in the request body
         $options['body'] = json_encode(['query' => (string) $query]);
