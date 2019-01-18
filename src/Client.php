@@ -73,7 +73,7 @@ class Client
         $options['headers']['Content-Type'] = 'application/json';
 
         // Set query in the request body
-        $options['body'] = json_encode(['query' => $queryString]);
+        $options['body'] = json_encode(['query' => (string) $queryString]);
 
         // Send api request and get response
         $response = $this->httpClient->post($this->endpointUrl, $options);
