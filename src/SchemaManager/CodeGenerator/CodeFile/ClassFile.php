@@ -163,7 +163,7 @@ class %3$s
         if (!empty($this->traits)) {
             $string .= PHP_EOL;
             foreach ($this->traits as $trait) {
-                $string .= "use $trait;\n";
+                $string .= "    use $trait;\n";
             }
         }
 
@@ -182,7 +182,7 @@ class %3$s
                 if (is_string($value)) {
                     $value = "'$value'";
                 }
-                $string .= "const $name = $value;\n";
+                $string .= "    const $name = $value;\n";
             }
         }
 
