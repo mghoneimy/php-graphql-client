@@ -22,20 +22,37 @@ abstract class AbstractCodeFile implements CodeFileInterface
      */
     const FILE_FORMAT = '<?php
 ';
+    /**
+     * This string stores the name of this file
+     *
+     * @var string
+     */
+    protected $fileName;
 
     /**
      * @var string
      */
-    private $writePath;
+    private $writeDir;
 
     /**
      * AbstractCodeFile constructor.
      *
-     * @param $writePath
+     * @param $writeDir
+     * @param $fileName
+     *
+     * @throws \Exception
      */
-    public function __construct($writePath)
+    public function __construct($writeDir, $fileName)
     {
-        $this->writePath = $writePath;
+        if (!is_dir($writeDir)) {
+            throw new \Exception("'$writeDir' is not a valid directory");
+        }
+        if (!is_writable($writeDir)) {
+            throw new \Exception('Directory is not writable');
+        }
+
+        $this->writeDir = $writeDir;
+        $this->fileName = $fileName;
     }
 
     /**
@@ -45,7 +62,13 @@ abstract class AbstractCodeFile implements CodeFileInterface
     {
         $fileContents = $this->generateFileContents();
 
-        // TODO: Write file contents to file
+        $filePath = $this->writeDir;
+        if ($filePath[-1] !== '/') {
+            $filePath .= '/';
+        }
+        $filePath .= $this->fileName . '.php';
+
+        $this->writeFileToPath($fileContents, $filePath);
     }
 
     /**
@@ -54,4 +77,13 @@ abstract class AbstractCodeFile implements CodeFileInterface
      * @return string
      */
     protected abstract function generateFileContents();
+
+    /**
+     * @param $fileContents
+     * @param $filePath
+     */
+    private function writeFileToPath($fileContents, $filePath)
+    {
+        file_put_contents($filePath, $fileContents);
+    }
 }
