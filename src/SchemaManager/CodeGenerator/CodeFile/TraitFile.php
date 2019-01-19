@@ -181,7 +181,7 @@ trait %3$s
             foreach ($this->methods as $method) {
                 // Indent method with 4 space characters
                 $method = str_replace("\n", "\n    ", $method);
-                $string .= '    ' . $method . PHP_EOL;
+                $string .= '    ' . $method . PHP_EOL . PHP_EOL;
             }
         }
 
