@@ -1,4 +1,5 @@
 /vendor/
 .idea/
 local_*/
-src/Local*/
+schema_object/*
+!schema_object/.gitkeep
