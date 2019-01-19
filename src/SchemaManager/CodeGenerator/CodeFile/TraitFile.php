@@ -160,9 +160,9 @@ trait %3$s
                     $value = "'$value'";
                 }
                 if (empty($value)) {
-                    $string .= "protected $$name;\n";
+                    $string .= "    protected $$name;\n";
                 } else {
-                    $string .= "protected $$name = $value;\n";
+                    $string .= "    protected $$name = $value;\n";
                 }
             }
         }
@@ -179,7 +179,9 @@ trait %3$s
         if (!empty($this->methods)) {
             $string .= PHP_EOL;
             foreach ($this->methods as $method) {
-                $string .= $method . PHP_EOL;
+                // Indent method with 4 space characters
+                $method = str_replace("\n", "\n    ", $method);
+                $string .= '    ' . $method . PHP_EOL;
             }
         }
 
