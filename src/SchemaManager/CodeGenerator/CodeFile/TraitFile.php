@@ -24,7 +24,7 @@ class TraitFile extends AbstractCodeFile
 %1$s%2$s
 trait %3$s
 {
-%4$s%5$s%6$s}';
+%4$s%5$s}';
 
     /**
      * This string stores the name of the namespace which this class belongs to
@@ -39,20 +39,6 @@ trait %3$s
      * @var array
      */
     protected $imports;
-
-    /**
-     * This string stores the name of this file
-     *
-     * @var string
-     */
-    protected $fileName;
-
-    /**
-     * This array is a map that stores constants defined in a file in a key value manner [constantName] => value
-     *
-     * @var array
-     */
-    protected $constants;
 
     /**
      * This array is a map that stores that properties defined in a file in a key value manner [propertyName] => value
@@ -71,16 +57,16 @@ trait %3$s
     /**
      * TraitFile constructor.
      *
-     * @param $writePath
+     * @param $writeDir
      * @param $fileName
+     *
+     * @throws \Exception
      */
-    public function __construct($writePath, $fileName)
+    public function __construct($writeDir, $fileName)
     {
-        parent::__construct($writePath);
+        parent::__construct($writeDir, $fileName);
         $this->namespace  = '';
-        $this->fileName   = $fileName;
         $this->imports    = [];
-        $this->constants  = [];
         $this->properties = [];
         $this->methods    = [];
     }
@@ -99,15 +85,6 @@ trait %3$s
     public function addImport($fullyQualifiedName)
     {
         $this->imports[] = $fullyQualifiedName;
-    }
-
-    /**
-     * @param string          $name
-     * @param string|int|bool $value
-     */
-    public function addConstant($name, $value)
-    {
-        $this->constants[$name] = $value;
     }
 
     /**
@@ -135,11 +112,10 @@ trait %3$s
         $namespace  = $this->generateNamespace();
         $imports    = $this->generateImports();
         $className  = $this->fileName;
-        $constants  = $this->generateConstants();
         $properties = $this->generateProperties();
         $methods    = $this->generateMethods();
 
-        return sprintf(static::FILE_FORMAT, $namespace, $imports, $className, $constants, $properties, $methods);
+        return sprintf(static::FILE_FORMAT, $namespace, $imports, $className, $properties, $methods);
     }
 
     /**
@@ -174,25 +150,6 @@ trait %3$s
     /**
      * @return string
      */
-    protected function generateConstants()
-    {
-        $string = '';
-        if (!empty($this->constants)) {
-            $string .= PHP_EOL;
-            foreach ($this->constants as $name => $value) {
-                if (is_string($value)) {
-                    $value = "'$value'";
-                }
-                $string .= "const $name = $value;\n";
-            }
-        }
-
-        return $string;
-    }
-
-    /**
-     * @return string
-     */
     protected function generateProperties()
     {
         $string = '';
@@ -203,9 +160,9 @@ trait %3$s
                     $value = "'$value'";
                 }
                 if (empty($value)) {
-                    $string .= "protected $name;\n";
+                    $string .= "protected $$name;\n";
                 } else {
-                    $string .= "protected $name = $value;\n";
+                    $string .= "protected $$name = $value;\n";
                 }
             }
         }

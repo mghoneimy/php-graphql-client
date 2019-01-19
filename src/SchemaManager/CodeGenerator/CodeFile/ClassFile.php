@@ -46,19 +46,28 @@ class %3$s
      * @var array
      */
     protected $traits;
+    /**
+     * This array is a map that stores constants defined in a file in a key value manner [constantName] => value
+     *
+     * @var array
+     */
+    protected $constants;
 
     /**
      * ClassFile constructor.
      *
-     * @param $writePath
+     * @param $writeDir
      * @param $fileName
+     *
+     * @throws \Exception
      */
-    public function __construct($writePath, $fileName)
+    public function __construct($writeDir, $fileName)
     {
-        parent::__construct($writePath, $fileName);
+        parent::__construct($writeDir, $fileName);
         $this->baseClass  = '';
         $this->interfaces = [];
         $this->traits     = [];
+        $this->constants  = [];
     }
 
     /**
@@ -83,6 +92,15 @@ class %3$s
     public function addTrait($traitName)
     {
         $this->traits[] = $traitName;
+    }
+
+    /**
+     * @param string          $name
+     * @param string|int|bool $value
+     */
+    public function addConstant($name, $value)
+    {
+        $this->constants[$name] = $value;
     }
 
     /**
@@ -146,6 +164,25 @@ class %3$s
             $string .= PHP_EOL;
             foreach ($this->traits as $trait) {
                 $string .= "use $trait;\n";
+            }
+        }
+
+        return $string;
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateConstants()
+    {
+        $string = '';
+        if (!empty($this->constants)) {
+            $string .= PHP_EOL;
+            foreach ($this->constants as $name => $value) {
+                if (is_string($value)) {
+                    $value = "'$value'";
+                }
+                $string .= "const $name = $value;\n";
             }
         }
 
