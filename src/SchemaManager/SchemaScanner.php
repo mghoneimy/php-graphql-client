@@ -6,7 +6,10 @@
  * Time: 12:42 AM
  */
 
-namespace GraphQL;
+namespace GraphQL\SchemaManager;
+
+use GraphQL\Client;
+use GraphQL\Exception\QueryError;
 
 /**
  * This class scans the GraphQL API schema and generates Classes that map to the schema objects' structure
@@ -44,7 +47,7 @@ class SchemaScanner
 	 * @param $endpointUrl
 	 * @param $authorizationHeaders
 	 *
-	 * @throws Exception\QueryError
+	 * @throws QueryError
 	 */
 	public static function readSchema($endpointUrl, $authorizationHeaders)
 	{
@@ -59,21 +62,30 @@ class SchemaScanner
 
         // Loop over schema to extract type definitions
         foreach ($schema as $typeObject) {
+
+            // TODO: Write method to generate trait from type scalar attributes
+
+            // TODO: Write method to generate class that extends QueryObject, uses ObjectTrait, and implement extra method
+
             $name        = $typeObject['name'];
             $description = $typeObject['description'];
-            $fields      = [];
 
             // Get type fields details
 		    foreach ($typeObject['fields'] as $field) {
-		        $tempField['name'] = $field['name'];
-                $tempField['description'] = $field['description'];
-                $tempField['is_scalar']   = $field['type']['kind'] === 'SCALAR';
-                if ($tempField['is_scalar']) {
-                    $tempField['type'] = $field['type']['name'];
+		        $fieldName        = $field['name'];
+		        if (strpos($fieldName, '_') !== false) {
+                    $fieldCamelCName = $fieldName;
                 } else {
-                    $tempField['type'] = $field['type']['ofType']['name'];
+                    $fieldCamelCName  = lcfirst(str_replace('_', '', ucwords($fieldName, '_')));
                 }
-                $fields[] = $tempField;
+		        $fieldDescription = $field['description'];
+
+		        $isScalar         = $field['type']['kind'] === 'SCALAR';
+                if ($isScalar) {
+                    $typeName = $field['type']['name'];
+                } else {
+                    $typeName = $field['type']['ofType']['name'];
+                }
             }
         }
 	}
