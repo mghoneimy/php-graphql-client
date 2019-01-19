@@ -91,7 +91,7 @@ class Query
                 if ($value[0] != '"') {
                     $value = '"' . $value;
                 }
-                if ($value[-1] != '"') {
+                if (substr($value, -1) != '"') {
                     $value .= '"';
                 }
             }
