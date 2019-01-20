@@ -8,6 +8,7 @@
 
 namespace GraphQL\SchemaObject;
 
+use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\Query;
 
 /**
@@ -70,14 +71,18 @@ abstract class QueryObject
     }
 
     /**
-	 * @return Query
-	 */
+     * @return Query
+     * @throws EmptySelectionSetException
+     */
 	protected function toQuery()
 	{
 	    // Construct arguments list
         $this->constructArguments();
 
         // Convert nested query objects to string queries
+        if (empty($this->selectionSet)) {
+            throw new EmptySelectionSetException(static::class);
+        }
         foreach ($this->selectionSet as $key => $field) {
             if (!is_string($field) && $field instanceof QueryObject) {
                 $this->selectionSet[$key] = $field->toQuery();
@@ -139,8 +144,9 @@ abstract class QueryObject
 
     /**
      * @return string
+     * @throws EmptySelectionSetException
      */
-    public function __toString()
+    public function getQueryString()
     {
         return (string) $this->toQuery();
     }

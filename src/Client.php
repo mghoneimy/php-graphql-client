@@ -9,6 +9,7 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
+use GraphQL\SchemaObject\QueryObject;
 
 /**
  * Class Client
@@ -58,13 +59,26 @@ class Client
     }
 
     /**
+     * @param QueryObject $queryObject
+     * @param bool        $resultsAsArray
+     *
+     * @return Results|null
+     * @throws Exception\EmptySelectionSetException
+     * @throws QueryError
+     */
+    public function runQueryObject(QueryObject $queryObject, $resultsAsArray = false)
+    {
+        return $this->runRawQuery($queryObject->getQueryString(), $resultsAsArray);
+    }
+
+    /**
      * @param string $queryString
      * @param bool   $resultsAsArray
      *
      * @return Results|null
      * @throws QueryError
      */
-    public function runRawQuery($queryString, $resultsAsArray = false)
+    private function runRawQuery($queryString, $resultsAsArray = false)
     {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {

@@ -27,8 +27,6 @@ class QueryObjectClassBuilder
      *
      * @param string $writeDir
      * @param string $objectName
-     *
-     * @throws \Exception
      */
     public function __construct($writeDir, $objectName)
     {
