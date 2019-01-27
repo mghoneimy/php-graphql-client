@@ -159,7 +159,7 @@ class Query
      *
      * @return Query
      */
-    public function setArguments($arguments)
+    public function setArguments(array $arguments)
     {
         $this->arguments = $arguments;
 
@@ -171,7 +171,7 @@ class Query
      *
      * @return Query
      */
-    public function setSelectionSet($selectionSet)
+    public function setSelectionSet(array $selectionSet)
     {
         $this->selectionSet = $selectionSet;
 
