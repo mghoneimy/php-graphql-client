@@ -78,7 +78,7 @@ class Client
      * @return Results|null
      * @throws QueryError
      */
-    private function runRawQuery($queryString, $resultsAsArray = false)
+    public function runRawQuery($queryString, $resultsAsArray = false)
     {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
