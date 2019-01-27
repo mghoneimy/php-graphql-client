@@ -8,6 +8,8 @@
 
 namespace GraphQL;
 
+use GraphQL\Exception\ArgumentException;
+
 /**
  * Class Query
  *
@@ -77,7 +79,7 @@ class Query
         // Construct arguments string if list not empty
         $constraintsString = '(';
         $first             = true;
-        foreach ($this->arguments as $constraint => $value) {
+        foreach ($this->arguments as $name => $value) {
 
             // Append space at the beginning if it's not the first item on the list
             if ($first) {
@@ -95,7 +97,7 @@ class Query
                     $value .= '"';
                 }
             }
-            $constraintsString .= $constraint . ': ' . $value;
+            $constraintsString .= $name . ': ' . $value;
         }
         $constraintsString .= ')';
 
@@ -158,9 +160,18 @@ class Query
      * @param array $arguments
      *
      * @return Query
+     * @throws ArgumentException
      */
     public function setArguments(array $arguments)
     {
+        // If one of the arguments does not have a string value, throw an exception
+        $nonStringArgs = array_filter(array_keys($arguments), function($element) {
+            return !is_string($element);
+        });
+        if (!empty($nonStringArgs)) {
+            throw new ArgumentException('One or more of the arguments provided for creating the query does not have a name');
+        }
+
         $this->arguments = $arguments;
 
         return $this;

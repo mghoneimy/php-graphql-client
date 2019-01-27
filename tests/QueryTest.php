@@ -1,5 +1,6 @@
 <?php
 
+use GraphQL\Exception\ArgumentException;
 use GraphQL\Query;
 use PHPUnit\Framework\TestCase;
 
@@ -64,8 +65,8 @@ class QueryTest extends TestCase
      */
     public function testArgumentWithoutName(Query $query)
     {
+        $this->expectException(ArgumentException::class);
         $query->setArguments(['val']);
-        $this->expectException(\Exception::class);
 
         return $query;
     }
