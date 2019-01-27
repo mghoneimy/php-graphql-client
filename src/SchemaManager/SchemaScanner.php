@@ -59,7 +59,7 @@ class SchemaScanner
 
         // Filter out object types only
         $schema = array_filter($schema, function($element) {
-            return ($element['kind'] == 'OBJECT' && $element['name'] !== 'QueryType');
+            return ($element['kind'] == 'OBJECT' && $element['name'] !== 'QueryType' && $element['name'][0] !== '_');
         });
 
         // Loop over schema to extract type definitions
