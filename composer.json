@@ -20,7 +20,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "GraphQL\\": "src/"
+            "GraphQL\\": "src/",
+            "GraphQL\\SchemaObject\\": "schema_object/"
         }
     },
     "require": {

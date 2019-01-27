@@ -1,3 +1,5 @@
 /vendor/
 .idea/
-local_tests/
+local_*/
+schema_object/*
+!schema_object/.gitkeep
