@@ -48,7 +48,7 @@ abstract class AbstractCodeFile implements CodeFileInterface
             throw new \Exception("'$writeDir' is not a valid directory");
         }
         if (!is_writable($writeDir)) {
-            throw new \Exception('Directory is not writable');
+            throw new \Exception("'$writeDir' is not writable");
         }
 
         $this->writeDir = $writeDir;
@@ -85,5 +85,26 @@ abstract class AbstractCodeFile implements CodeFileInterface
     private function writeFileToPath($fileContents, $filePath)
     {
         file_put_contents($filePath, $fileContents);
+    }
+
+    /**
+     * @return string
+     */
+    public function getFileName()
+    {
+        return $this->fileName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWriteDir()
+    {
+        return $this->writeDir;
+    }
+
+    public function getWritePath()
+    {
+        return $this->writeDir . "/$this->fileName.php";
     }
 }

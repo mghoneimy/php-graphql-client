@@ -159,9 +159,17 @@ trait %3$s
                 if (is_string($value)) {
                     $value = "'$value'";
                 }
-                if (empty($value)) {
+                if (is_null($value)) {
                     $string .= "    protected $$name;\n";
                 } else {
+                    // Handle boolean true and false
+                    if (is_bool($value)) {
+                        if ($value) {
+                            $value = 'true';
+                        } else {
+                            $value = 'false';
+                        }
+                    }
                     $string .= "    protected $$name = $value;\n";
                 }
             }
