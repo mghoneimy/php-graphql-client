@@ -2,7 +2,6 @@
 
 trait TraitWithPropertiesAndValues
 {
-
     protected $propertyOne;
     protected $propertyTwo = 2;
     protected $propertyThree = 'three';

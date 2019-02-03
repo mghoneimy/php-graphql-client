@@ -23,8 +23,7 @@ class TraitFile extends AbstractCodeFile
     const FILE_FORMAT = '<?php
 %1$s%2$s
 trait %3$s
-{
-%4$s%5$s}';
+{%4$s%5$s}';
 
     /**
      * This string stores the name of the namespace which this class belongs to
@@ -109,11 +108,19 @@ trait %3$s
      */
     protected function generateFileContents()
     {
-        $namespace  = $this->generateNamespace();
-        $imports    = $this->generateImports();
-        $className  = $this->fileName;
+        $className = $this->fileName;
+
+        // Generate class headers
+        $namespace = $this->generateNamespace();
+        if (!empty($namespace)) $namespace = PHP_EOL . $namespace;
+        $imports = $this->generateImports();
+        if (!empty($imports)) $imports = PHP_EOL . $imports;
+
+        // Generate class body
         $properties = $this->generateProperties();
-        $methods    = $this->generateMethods();
+        if (!empty($properties)) $properties = PHP_EOL . $properties;
+        $methods = $this->generateMethods();
+        if (!empty($methods)) $methods = PHP_EOL . $methods;
 
         return sprintf(static::FILE_FORMAT, $namespace, $imports, $className, $properties, $methods);
     }
@@ -125,7 +132,7 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->namespace)) {
-            $string = "\nnamespace $this->namespace;\n";
+            $string = "namespace $this->namespace;\n";
         }
 
         return $string;
@@ -138,9 +145,10 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->imports)) {
-            $string .= PHP_EOL;
             foreach ($this->imports as $import) {
-                $string .= "use $import;\n";
+                if (is_string($import) && !empty($import)) {
+                    $string .= "use $import;\n";
+                }
             }
         }
 
@@ -154,8 +162,8 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->properties)) {
-            $string .= PHP_EOL;
             foreach ($this->properties as $name => $value) {
+                if (!is_string($name) || empty($name)) continue;
                 if (is_string($value)) {
                     $value = "'$value'";
                 }
@@ -185,7 +193,6 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->methods)) {
-            $string .= PHP_EOL;
             foreach ($this->methods as $method) {
                 // Indent method with 4 space characters
                 $method = str_replace("\n", "\n    ", $method);
