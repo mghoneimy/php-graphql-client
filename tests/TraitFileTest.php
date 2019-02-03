@@ -141,6 +141,24 @@ class TraitFileTest extends CodeFileTestCase
     /**
      * @throws Exception
      *
+     * @depends testTraitWithNamespace
+     * @depends testTraitWithImports
+     */
+    public function testTraitWithNamespaceAndImports()
+    {
+        $fileName = 'TraitWithNamespaceAndImports';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->setNamespace("GraphQL\\Test");
+        $trait->addImport("GraphQL\\Query");
+        $trait->addImport("GraphQL\\Client");
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
      * @depends testEmptyTrait
      */
     public function testTraitWithProperties()
@@ -175,7 +193,7 @@ class TraitFileTest extends CodeFileTestCase
     /**
      * @param TraitFile $trait
      *
-     * @depends testTraitWithProperties
+     * @depends clone testTraitWithProperties
      */
     public function testTraitWithDuplicateProperties(TraitFile $trait)
     {
@@ -203,5 +221,118 @@ class TraitFileTest extends CodeFileTestCase
         $trait->writeFile();
 
         $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
+    public function testTraitWithOneMethod()
+    {
+        $fileName = 'TraitWithOneMethod';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addMethod('public function testTheTrait() {
+    print "test!";
+    die();
+}'
+        );
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testTraitWithOneMethod
+     */
+    public function testTraitWithMultipleMethods()
+    {
+        $fileName = 'TraitWithMultipleMethods';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addMethod('public function testTheTrait() {
+    $this->innerTest();
+    die();
+}'
+        );
+        $trait->addMethod('private function innerTest() {
+    print "test!";
+    return 0;
+}'
+        );
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
+    public function testTraitWithEmptyMethod()
+    {
+        $fileName = 'EmptyTrait';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addMethod('');
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testTraitWithProperties
+     * @depends testTraitWithMultipleMethods
+     */
+    public function testTraitWithPropertiesAndMethods()
+    {
+        $fileName = 'TraitWithPropertiesAndMethods';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addProperty('propOne');
+        $trait->addProperty('propTwo', true);
+        $trait->addMethod('public function getProperties() {
+    return [$this->propOne, $this->propTwo];
+}'
+        );
+        $trait->addMethod('public function clearProperties() {
+    $this->propOne = 1;
+    $this->propTwo = 2;
+}'
+        );
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testTraitWithNamespaceAndImports
+     * @depends testTraitWithPropertiesAndMethods
+     */
+    public function testTraitWithEverything()
+    {
+        $fileName = 'TraitWithEverything';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->setNamespace("GraphQL\\Test");
+        $trait->addImport("GraphQL\\Query");
+        $trait->addImport("GraphQL\\Client");
+        $trait->addProperty('propOne');
+        $trait->addProperty('propTwo', true);
+        $trait->addMethod('public function getProperties() {
+    return [$this->propOne, $this->propTwo];
+}'
+        );
+        $trait->addMethod('public function clearProperties() {
+    $this->propOne = 1;
+    $this->propTwo = 2;
+}'
+        );
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
     }
 }

@@ -120,7 +120,6 @@ trait %3$s
         $properties = $this->generateProperties();
         if (!empty($properties)) $properties = PHP_EOL . $properties;
         $methods = $this->generateMethods();
-        if (!empty($methods)) $methods = PHP_EOL . $methods;
 
         return sprintf(static::FILE_FORMAT, $namespace, $imports, $className, $properties, $methods);
     }
@@ -146,7 +145,7 @@ trait %3$s
         $string = '';
         if (!empty($this->imports)) {
             foreach ($this->imports as $import) {
-                if (is_string($import) && !empty($import)) {
+                if (is_string($import) && $import !== '') {
                     $string .= "use $import;\n";
                 }
             }
@@ -194,9 +193,11 @@ trait %3$s
         $string = '';
         if (!empty($this->methods)) {
             foreach ($this->methods as $method) {
-                // Indent method with 4 space characters
-                $method = str_replace("\n", "\n    ", $method);
-                $string .= '    ' . $method . PHP_EOL . PHP_EOL;
+                if (is_string($method) && $method !== '') {
+                    // Indent method with 4 space characters
+                    $method = str_replace("\n", "\n    ", $method);
+                    $string .= PHP_EOL . '    ' . $method . PHP_EOL;
+                }
             }
         }
 
