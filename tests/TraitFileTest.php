@@ -12,6 +12,14 @@ use GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile;
 class TraitFileTest extends CodeFileTestCase
 {
     /**
+     * @inheritdoc
+     */
+    protected static function getExpectedFilesDir()
+    {
+        return parent::getExpectedFilesDir() . '/traits';
+    }
+
+    /**
      * @throws Exception
      */
     public function testWritePathGetter()
