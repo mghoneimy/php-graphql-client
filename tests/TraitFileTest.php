@@ -82,6 +82,67 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      */
+    public function testTraitWithNamespace()
+    {
+        $fileName = 'TraitWithNamespace';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->setNamespace("GraphQL\Test");
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
+    public function testTraitWithEmptyNamespace()
+    {
+        $fileName = 'EmptyTrait';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->setNamespace('');
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
+    public function testTraitWithImports()
+    {
+        $fileName = 'TraitWithImports';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addImport("GraphQL\Query");
+        $trait->addImport("GraphQL\Client");
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
+    public function testTraitWithEmptyImport()
+    {
+        $fileName = 'EmptyTrait';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addImport("");
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php", $trait->getWritePath());
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testEmptyTrait
+     */
     public function testTraitWithProperties()
     {
         $fileName = 'TraitWithProperties';
@@ -94,6 +155,21 @@ class TraitFileTest extends CodeFileTestCase
         $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
 
         return $trait;
+    }
+
+    /**
+     * @throws Exception
+     *
+     * @depends testTraitWithProperties
+     */
+    public function testTraitWithEmptyProperty()
+    {
+        $fileName = 'EmptyTrait';
+        $trait = new TraitFile(static::getGeneratedFilesDir(), $fileName);
+        $trait->addProperty('');
+        $trait->writeFile();
+
+        $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
     }
 
     /**
