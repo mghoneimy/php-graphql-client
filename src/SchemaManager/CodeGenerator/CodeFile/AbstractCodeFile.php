@@ -44,15 +44,25 @@ abstract class AbstractCodeFile implements CodeFileInterface
      */
     public function __construct($writeDir, $fileName)
     {
-        if (!is_dir($writeDir)) {
-            throw new \Exception("'$writeDir' is not a valid directory");
-        }
-        if (!is_writable($writeDir)) {
-            throw new \Exception("'$writeDir' is not writable");
-        }
+        $this->validateDirectory($writeDir);
 
         $this->writeDir = $writeDir;
         $this->fileName = $fileName;
+    }
+
+    /**
+     * @param $dirName
+     *
+     * @throws \Exception
+     */
+    private function validateDirectory($dirName)
+    {
+        if (!is_dir($dirName)) {
+            throw new \Exception("'$dirName' is not a valid directory");
+        }
+        if (!is_writable($dirName)) {
+            throw new \Exception("'$dirName' is not writable");
+        }
     }
 
     /**
@@ -96,6 +106,14 @@ abstract class AbstractCodeFile implements CodeFileInterface
     }
 
     /**
+     * @param string $fileName
+     */
+    public function changeFileName($fileName)
+    {
+        $this->fileName = $fileName;
+    }
+
+    /**
      * @return string
      */
     public function getWriteDir()
@@ -103,6 +121,21 @@ abstract class AbstractCodeFile implements CodeFileInterface
         return $this->writeDir;
     }
 
+    /**
+     * @param string $writeDir
+     *
+     * @throws \Exception
+     */
+    public function changeWriteDir($writeDir)
+    {
+        $this->validateDirectory($writeDir);
+
+        $this->writeDir = $writeDir;
+    }
+
+    /**
+     * @return string
+     */
     public function getWritePath()
     {
         return $this->writeDir . "/$this->fileName.php";

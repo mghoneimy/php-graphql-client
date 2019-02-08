@@ -20,61 +20,9 @@ class TraitFileTest extends CodeFileTestCase
     }
 
     /**
-     * @throws Exception
-     */
-    public function testWritePathGetter()
-    {
-        $testDir  = static::getGeneratedFilesDir();
-        $fileName = 'SomeName';
-        $trait    = new TraitFile($testDir, $fileName);
-
-        $this->assertEquals("$testDir/$fileName.php", $trait->getWritePath());
-    }
-
-    /**
-     * Testing scenario when trying to write to a non-existent dir
-     *
-     * @throws Exception
-     */
-    public function testInvalidWriteDir()
-    {
-        $testsDir = static::getGeneratedFilesDir();
-        $this->expectException(\Exception::class);
-        (new TraitFile($testsDir . '/invalid', 'TraitTester'))->writeFile();
-    }
-
-    /**
-     * Testing scenario when trying to write to a non-writable dir
-     *
-     * @throws Exception
-     */
-    public function testUnwritableDir()
-    {
-        $testDir = static::getGeneratedFilesDir() . '/unwritable';
-        mkdir($testDir);
-        chmod($testDir, 0444);
-        $this->expectException(\Exception::class);
-        (new TraitFile($testDir, 'TesterTrait'))->writeFile();
-    }
-
-    /**
-     *
-     * @throws Exception
-     */
-    public function testFileWritingWorks()
-    {
-        $trait = new TraitFile(static::getGeneratedFilesDir(), 'TraitTester');
-        $trait->writeFile();
-
-        $this->assertFileExists($trait->getWritePath());
-    }
-
-    /**
      * Happy scenario test, create empty trait with just name and write it to file system
      *
      * @throws Exception
-     *
-     * @depends testFileWritingWorks
      */
     public function testEmptyTrait()
     {
