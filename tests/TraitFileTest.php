@@ -23,6 +23,8 @@ class TraitFileTest extends CodeFileTestCase
      * Happy scenario test, create empty trait with just name and write it to file system
      *
      * @throws Exception
+     *                  
+     * @covers TraitFile::__construct
      */
     public function testEmptyTrait()
     {
@@ -37,6 +39,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::setNamespace
+     * @covers TraitFile::generateNamespace
      */
     public function testTraitWithNamespace()
     {
@@ -52,6 +57,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::setNamespace
+     * @covers TraitFile::generateNamespace
      */
     public function testTraitWithEmptyNamespace()
     {
@@ -67,6 +75,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::addImport
+     * @covers TraitFile::generateImports
      */
     public function testTraitWithImports()
     {
@@ -83,6 +94,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::addImport
+     * @covers TraitFile::generateImports
      */
     public function testTraitWithEmptyImport()
     {
@@ -95,10 +109,14 @@ class TraitFileTest extends CodeFileTestCase
     }
 
     /**
+     * Maybe this should be rather moved to an integration test?
+     * 
      * @throws Exception
      *
      * @depends testTraitWithNamespace
      * @depends testTraitWithImports
+     *                              
+     * @coversNothing
      */
     public function testTraitWithNamespaceAndImports()
     {
@@ -116,6 +134,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::addProperty
+     * @covers TraitFile::generateProperties
      */
     public function testTraitWithProperties()
     {
@@ -135,6 +156,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testTraitWithProperties
+     *
+     * @covers TraitFile::addProperty
+     * @covers TraitFile::generateProperties
      */
     public function testTraitWithEmptyProperty()
     {
@@ -150,6 +174,9 @@ class TraitFileTest extends CodeFileTestCase
      * @param TraitFile $trait
      *
      * @depends clone testTraitWithProperties
+     *
+     * @covers TraitFile::addProperty
+     * @covers TraitFile::generateProperties
      */
     public function testTraitWithDuplicateProperties(TraitFile $trait)
     {
@@ -164,6 +191,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testTraitWithProperties
+     *
+     * @covers TraitFile::addProperty
+     * @covers TraitFile::generateProperties
      */
     public function testTraitWithPropertiesAndValues()
     {
@@ -183,6 +213,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *                        
+     * @covers TraitFile::addMethod
+     * @covers TraitFile::generateMethods
      */
     public function testTraitWithOneMethod()
     {
@@ -202,6 +235,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testTraitWithOneMethod
+     *
+     * @covers TraitFile::addMethod
+     * @covers TraitFile::generateMethods
      */
     public function testTraitWithMultipleMethods()
     {
@@ -226,6 +262,9 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
+     *
+     * @covers TraitFile::addMethod
+     * @covers TraitFile::generateMethods
      */
     public function testTraitWithEmptyMethod()
     {
@@ -242,6 +281,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithProperties
      * @depends testTraitWithMultipleMethods
+     *
+     * @coversNothing
      */
     public function testTraitWithPropertiesAndMethods()
     {
@@ -268,6 +309,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithNamespaceAndImports
      * @depends testTraitWithPropertiesAndMethods
+     *                                           
+     * @coversNothing
      */
     public function testTraitWithEverything()
     {
