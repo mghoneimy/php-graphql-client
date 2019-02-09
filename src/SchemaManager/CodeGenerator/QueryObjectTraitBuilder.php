@@ -37,11 +37,11 @@ class QueryObjectTraitBuilder
     }
 
     /**
-     * @param string $fieldName
+     * @param string $propertyName
      */
-    public function addProperty($fieldName)
+    public function addProperty($propertyName)
     {
-        $this->traitFile->addProperty($fieldName);
+        $this->traitFile->addProperty($propertyName);
     }
 
     /**

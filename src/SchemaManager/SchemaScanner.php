@@ -10,8 +10,7 @@ namespace GraphQL\SchemaManager;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectClassBuilder;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectTraitBuilder;
+use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
 
 /**
  * This class scans the GraphQL API schema and generates Classes that map to the schema objects' structure
@@ -82,35 +81,23 @@ class SchemaScanner
         foreach ($schemaTypes as $typeObject) {
             $name        = $typeObject['name'];
             $description = $typeObject['description'];
-
-            $traitBuilder = new QueryObjectTraitBuilder($writeDir, $name);
-            $classBuilder = new QueryObjectClassBuilder($writeDir, $name);
+            $schemaObjectBuilder = new QueryObjectBuilder($writeDir, $name);
 
             // Get type fields details
-		    foreach ($typeObject['fields'] as $field) {
-		        $fieldName = $field['name'];
+		    foreach ($typeObject['fields'] as $property) {
+		        $propertyName = $property['name'];
+		        //$fieldDescription = $property['description'];
 
-		        // Construct upper camel case name for field names
-		        if (strpos($fieldName, '_') === false) {
-                    $fieldCamelCName = ucfirst($fieldName);
-                } else {
-                    $fieldCamelCName  = str_replace('_', '', ucwords($fieldName, '_'));
-                }
-		        $fieldDescription = $field['description'];
-
-		        $isScalar         = $field['type']['kind'] === 'SCALAR';
+		        $isScalar = $property['type']['kind'] === 'SCALAR';
                 if ($isScalar) {
-                    $typeName = $field['type']['name'];
-                    $traitBuilder->addProperty($fieldName);
-                    $classBuilder->addSetter($fieldName, $fieldCamelCName);
-                    $classBuilder->addSimpleSelector($fieldName, $fieldCamelCName);
+                    //$typeName = $property['type']['name'];
+                    $schemaObjectBuilder->addScalarProperty($propertyName);
                 } else {
-                    $typeName = $field['type']['ofType']['name'];
-                    $classBuilder->addObjectSelector($fieldName, $fieldCamelCName, $typeName);
+                    $typeName = $property['type']['ofType']['name'];
+                    $schemaObjectBuilder->addObjectProperty($propertyName, $typeName);
                 }
             }
-		    $traitBuilder->build();
-		    $classBuilder->build();
+		    $schemaObjectBuilder->build();
         }
 	}
 
