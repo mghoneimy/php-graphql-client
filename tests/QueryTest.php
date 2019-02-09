@@ -48,7 +48,11 @@ class QueryTest extends TestCase
     public function testEmptyQuery(Query $query)
     {
         $this->assertEquals(
-            "query {\nObject {\n\n}\n}",
+            "query {
+Object {
+
+}
+}",
             (string) $query,
             'Incorrect empty query string'
         );
@@ -101,7 +105,11 @@ class QueryTest extends TestCase
     {
         $query->setArguments(['arg1' => 'val1', 'arg2' => 'val2']);
         $this->assertEquals(
-            "query {\nObject(arg1: \"val1\" arg2: \"val2\") {\n\n}\n}",
+            "query {
+Object(arg1: \"val1\" arg2: \"val2\") {
+
+}
+}",
             (string) $query,
             'Query has improperly formatted parameter list'
         );
@@ -120,7 +128,11 @@ class QueryTest extends TestCase
     {
         $query->setSelectionSet(['field1']);
         $this->assertEquals(
-            "query {\nObject {\nfield1\n}\n}",
+            "query {
+Object {
+field1
+}
+}",
             (string) $query,
             'Query has improperly formatted selection set'
         );
@@ -139,7 +151,12 @@ class QueryTest extends TestCase
     {
         $query->setSelectionSet(['field1', 'field2']);
         $this->assertEquals(
-            "query {\nObject {\nfield1\nfield2\n}\n}",
+            "query {
+Object {
+field1
+field2
+}
+}",
             (string) $query,
             'Query has improperly formatted selection set'
         );
@@ -159,7 +176,12 @@ class QueryTest extends TestCase
         $query->setSelectionSet(['field1', 'field2']);
         $query->setArguments(['arg1' => 'val1', 'arg2' => 'val2']);
         $this->assertEquals(
-            "query {\nObject(arg1: \"val1\" arg2: \"val2\") {\nfield1\nfield2\n}\n}",
+            "query {
+Object(arg1: \"val1\" arg2: \"val2\") {
+field1
+field2
+}
+}",
             (string) $query,
             'One level query not formatted correctly'
         );
@@ -211,7 +233,15 @@ class QueryTest extends TestCase
             ]
         );
         $this->assertEquals(
-            "query {\nObject(arg1: \"val1\" arg2: \"val2\") {\nfield1\nfield2\nObject2 {\nfield3\n}\n}\n}",
+            "query {
+Object(arg1: \"val1\" arg2: \"val2\") {
+field1
+field2
+Object2 {
+field3
+}
+}
+}",
             (string) $query,
             'Two level query not formatted correctly'
         );
