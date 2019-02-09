@@ -23,8 +23,7 @@ class TraitFile extends AbstractCodeFile
     const FILE_FORMAT = '<?php
 %1$s%2$s
 trait %3$s
-{
-%4$s%5$s}';
+{%4$s%5$s}';
 
     /**
      * This string stores the name of the namespace which this class belongs to
@@ -76,7 +75,9 @@ trait %3$s
      */
     public function setNamespace($namespaceName)
     {
-        $this->namespace = $namespaceName;
+        if (!empty($namespaceName)) {
+            $this->namespace = $namespaceName;
+        }
     }
 
     /**
@@ -84,7 +85,9 @@ trait %3$s
      */
     public function addImport($fullyQualifiedName)
     {
-        $this->imports[] = $fullyQualifiedName;
+        if (!empty($fullyQualifiedName)) {
+            $this->imports[$fullyQualifiedName] = null;
+        }
     }
 
     /**
@@ -93,15 +96,19 @@ trait %3$s
      */
     public function addProperty($name, $value = null)
     {
-        $this->properties[$name] = $value;
+        if (is_string($name) && !empty($name)) {
+            $this->properties[$name] = $value;
+        }
     }
 
     /**
-     * @param $methodString
+     * @param string $methodString
      */
     public function addMethod($methodString)
     {
-        $this->methods[] = $methodString;
+        if (is_string($methodString) && !empty($methodString)) {
+            $this->methods[] = $methodString;
+        }
     }
 
     /**
@@ -109,11 +116,18 @@ trait %3$s
      */
     protected function generateFileContents()
     {
-        $namespace  = $this->generateNamespace();
-        $imports    = $this->generateImports();
-        $className  = $this->fileName;
+        $className = $this->fileName;
+
+        // Generate class headers
+        $namespace = $this->generateNamespace();
+        if (!empty($namespace)) $namespace = PHP_EOL . $namespace;
+        $imports = $this->generateImports();
+        if (!empty($imports)) $imports = PHP_EOL . $imports;
+
+        // Generate class body
         $properties = $this->generateProperties();
-        $methods    = $this->generateMethods();
+        if (!empty($properties)) $properties = PHP_EOL . $properties;
+        $methods = $this->generateMethods();
 
         return sprintf(static::FILE_FORMAT, $namespace, $imports, $className, $properties, $methods);
     }
@@ -125,7 +139,7 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->namespace)) {
-            $string = "\nnamespace $this->namespace;\n";
+            $string = "namespace $this->namespace;\n";
         }
 
         return $string;
@@ -138,8 +152,7 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->imports)) {
-            $string .= PHP_EOL;
-            foreach ($this->imports as $import) {
+            foreach ($this->imports as $import => $nothing) {
                 $string .= "use $import;\n";
             }
         }
@@ -154,12 +167,9 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->properties)) {
-            $string .= PHP_EOL;
             foreach ($this->properties as $name => $value) {
-                if (is_string($value)) {
-                    $value = "'$value'";
-                }
-                if (empty($value)) {
+                $value = $this->serializeParameterValue($value);
+                if (is_null($value)) {
                     $string .= "    protected $$name;\n";
                 } else {
                     $string .= "    protected $$name = $value;\n";
@@ -177,14 +187,33 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->methods)) {
-            $string .= PHP_EOL;
             foreach ($this->methods as $method) {
                 // Indent method with 4 space characters
                 $method = str_replace("\n", "\n    ", $method);
-                $string .= '    ' . $method . PHP_EOL . PHP_EOL;
+                $string .= PHP_EOL . '    ' . $method . PHP_EOL;
             }
         }
 
         return $string;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    protected function serializeParameterValue($value)
+    {
+        if (is_string($value)) {
+            $value = "'$value'";
+        } elseif (is_bool($value)) {
+            if ($value) {
+                $value = 'true';
+            } else {
+                $value = 'false';
+            }
+        }
+
+        return $value;
     }
 }
