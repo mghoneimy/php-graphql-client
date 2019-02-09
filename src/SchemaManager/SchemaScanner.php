@@ -10,8 +10,7 @@ namespace GraphQL\SchemaManager;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectClassBuilder;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectTraitBuilder;
+use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
 
 /**
  * This class scans the GraphQL API schema and generates Classes that map to the schema objects' structure
@@ -45,16 +44,22 @@ class SchemaScanner
 	  }
 	}";
 
-	/**
-	 * @param $endpointUrl
-	 * @param $authorizationHeaders
-	 *
-	 * @throws QueryError
-	 */
-	public static function readSchema($endpointUrl, $authorizationHeaders)
-	{
-	    // Read schema form GraphQL endpoint
-		$response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
+    /**
+     * @var string
+     */
+	private static $writeDir = '';
+
+    /**
+     * @param $endpointUrl
+     * @param $authorizationHeaders
+     *
+     * @return array
+     * @throws QueryError
+     */
+	public static function getSchemaArrayType($endpointUrl, $authorizationHeaders)
+    {
+        // Read schema form GraphQL endpoint
+        $response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
         $schema   = $response->getData()['__schema']['types'];
 
         // Filter out object types only
@@ -62,39 +67,62 @@ class SchemaScanner
             return ($element['kind'] == 'OBJECT' && $element['name'] !== 'QueryType' && $element['name'][0] !== '_');
         });
 
-        // Loop over schema to extract type definitions
-        foreach ($schema as $typeObject) {
+        return $schema;
+    }
+
+    /**
+     * @param array  $schemaTypes
+     * @param string $writeDir
+     */
+	public static function readSchema(array $schemaTypes, $writeDir = '')
+	{
+	    if (empty($writeDir)) $writeDir = static::getWriteDir();
+
+        foreach ($schemaTypes as $typeObject) {
             $name        = $typeObject['name'];
             $description = $typeObject['description'];
-
-            $traitBuilder = new QueryObjectTraitBuilder('../schema_object', $name);
-            $classBuilder = new QueryObjectClassBuilder('../schema_object', $name);
+            $schemaObjectBuilder = new QueryObjectBuilder($writeDir, $name);
 
             // Get type fields details
-		    foreach ($typeObject['fields'] as $field) {
-		        $fieldName = $field['name'];
+		    foreach ($typeObject['fields'] as $property) {
+		        $propertyName = $property['name'];
+		        //$fieldDescription = $property['description'];
 
-		        // Construct upper camel case name for field names
-		        if (strpos($fieldName, '_') === false) {
-                    $fieldCamelCName = ucfirst($fieldName);
-                } else {
-                    $fieldCamelCName  = str_replace('_', '', ucwords($fieldName, '_'));
-                }
-		        $fieldDescription = $field['description'];
-
-		        $isScalar         = $field['type']['kind'] === 'SCALAR';
+		        $isScalar = $property['type']['kind'] === 'SCALAR';
                 if ($isScalar) {
-                    $typeName = $field['type']['name'];
-                    $traitBuilder->addProperty($fieldName);
-                    $classBuilder->addSetter($fieldName, $fieldCamelCName);
-                    $classBuilder->addSimpleSelector($fieldName, $fieldCamelCName);
+                    //$typeName = $property['type']['name'];
+                    $schemaObjectBuilder->addScalarProperty($propertyName);
                 } else {
-                    $typeName = $field['type']['ofType']['name'];
-                    $classBuilder->addObjectSelector($fieldName, $fieldCamelCName, $typeName);
+                    $typeName = $property['type']['ofType']['name'];
+                    $schemaObjectBuilder->addObjectProperty($propertyName, $typeName);
                 }
             }
-		    $traitBuilder->build();
-		    $classBuilder->build();
+		    $schemaObjectBuilder->build();
         }
 	}
+
+    /**
+     * Sets the write directory if it's not set for the class
+     */
+	private static function setWriteDir()
+    {
+        if (static::$writeDir !== '') return;
+
+        $currentDir = dirname(__FILE__);
+        while (basename($currentDir) !== 'graphql-client') {
+            $currentDir = dirname($currentDir);
+        }
+
+        static::$writeDir = $currentDir . '/schema_object';
+    }
+
+    /**
+     * @return string
+     */
+    public static function getWriteDir()
+    {
+        static::setWriteDir();
+
+        return static::$writeDir;
+    }
 }

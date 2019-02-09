@@ -27,9 +27,9 @@
     "require": {
         "php": ">=5.6",
         "guzzlehttp/guzzle": "~6.0",
-        "ext-json": "^1.4"
+        "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.4"
+        "phpunit/phpunit": "^5"
     }
 }
