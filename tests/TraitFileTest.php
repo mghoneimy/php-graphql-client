@@ -194,6 +194,7 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @covers TraitFile::addProperty
      * @covers TraitFile::generateProperties
+     * @covers TraitFile::serializeParameterValue
      */
     public function testTraitWithPropertiesAndValues()
     {
@@ -204,6 +205,8 @@ class TraitFileTest extends CodeFileTestCase
         $trait->addProperty('propertyThree', 'three');
         $trait->addProperty('propertyFour', false);
         $trait->addProperty('propertyFive', true);
+        $trait->addProperty('propertySix', '');
+        $trait->addProperty('propertySeven', 7.7);
         $trait->writeFile();
 
         $this->assertFileEquals(static::getExpectedFilesDir() . "/$fileName.php" , $trait->getWritePath());
@@ -282,7 +285,7 @@ class TraitFileTest extends CodeFileTestCase
      * @depends testTraitWithProperties
      * @depends testTraitWithMultipleMethods
      *
-     * @coversNothing
+     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithPropertiesAndMethods()
     {
@@ -309,8 +312,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithNamespaceAndImports
      * @depends testTraitWithPropertiesAndMethods
-     *                                           
-     * @coversNothing
+     *
+     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithEverything()
     {
