@@ -58,10 +58,10 @@ abstract class AbstractCodeFile implements CodeFileInterface
     private function validateDirectory($dirName)
     {
         if (!is_dir($dirName)) {
-            throw new \Exception("'$dirName' is not a valid directory");
+            throw new \Exception("$dirName is not a valid directory");
         }
         if (!is_writable($dirName)) {
-            throw new \Exception("'$dirName' is not writable");
+            throw new \Exception("$dirName is not writable");
         }
     }
 
