@@ -45,16 +45,22 @@ class SchemaScanner
 	  }
 	}";
 
-	/**
-	 * @param $endpointUrl
-	 * @param $authorizationHeaders
-	 *
-	 * @throws QueryError
-	 */
-	public static function readSchema($endpointUrl, $authorizationHeaders)
-	{
-	    // Read schema form GraphQL endpoint
-		$response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
+    /**
+     * @var string
+     */
+	private static $writeDir = '';
+
+    /**
+     * @param $endpointUrl
+     * @param $authorizationHeaders
+     *
+     * @return array
+     * @throws QueryError
+     */
+	public static function getSchemaArrayType($endpointUrl, $authorizationHeaders)
+    {
+        // Read schema form GraphQL endpoint
+        $response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
         $schema   = $response->getData()['__schema']['types'];
 
         // Filter out object types only
@@ -62,13 +68,23 @@ class SchemaScanner
             return ($element['kind'] == 'OBJECT' && $element['name'] !== 'QueryType' && $element['name'][0] !== '_');
         });
 
-        // Loop over schema to extract type definitions
-        foreach ($schema as $typeObject) {
+        return $schema;
+    }
+
+    /**
+     * @param array  $schemaTypes
+     * @param string $writeDir
+     */
+	public static function readSchema(array $schemaTypes, $writeDir = '')
+	{
+	    if (empty($writeDir)) $writeDir = static::getWriteDir();
+
+        foreach ($schemaTypes as $typeObject) {
             $name        = $typeObject['name'];
             $description = $typeObject['description'];
 
-            $traitBuilder = new QueryObjectTraitBuilder('../schema_object', $name);
-            $classBuilder = new QueryObjectClassBuilder('../schema_object', $name);
+            $traitBuilder = new QueryObjectTraitBuilder($writeDir, $name);
+            $classBuilder = new QueryObjectClassBuilder($writeDir, $name);
 
             // Get type fields details
 		    foreach ($typeObject['fields'] as $field) {
@@ -97,4 +113,29 @@ class SchemaScanner
 		    $classBuilder->build();
         }
 	}
+
+    /**
+     * Sets the write directory if it's not set for the class
+     */
+	private static function setWriteDir()
+    {
+        if (static::$writeDir !== '') return;
+
+        $currentDir = dirname(__FILE__);
+        while (basename($currentDir) !== 'graphql-client') {
+            $currentDir = dirname($currentDir);
+        }
+
+        static::$writeDir = $currentDir . '/schema_object';
+    }
+
+    /**
+     * @return string
+     */
+    public static function getWriteDir()
+    {
+        static::setWriteDir();
+
+        return static::$writeDir;
+    }
 }
