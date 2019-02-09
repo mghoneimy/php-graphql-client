@@ -23,8 +23,7 @@ class ClassFile extends TraitFile
     const FILE_FORMAT = '<?php
 %1$s%2$s
 class %3$s
-{
-%4$s%5$s%6$s%7$s}';
+{%4$s%5$s%6$s%7$s}';
 
     /**
      * The name of the base class extended by this class
@@ -75,7 +74,9 @@ class %3$s
      */
     public function extendsClass($className)
     {
-        $this->baseClass = $className;
+        if (!empty($className)) {
+            $this->baseClass = $className;
+        }
     }
 
     /**
@@ -83,7 +84,9 @@ class %3$s
      */
     public function implementsInterface($interfaceName)
     {
-        $this->interfaces[] = $interfaceName;
+        if (!empty($interfaceName)) {
+            $this->interfaces[$interfaceName] = null;
+        }
     }
 
     /**
@@ -91,7 +94,9 @@ class %3$s
      */
     public function addTrait($traitName)
     {
-        $this->traits[] = $traitName;
+        if (!empty($traitName)) {
+            $this->traits[$traitName] = null;
+        }
     }
 
     /**
@@ -100,7 +105,9 @@ class %3$s
      */
     public function addConstant($name, $value)
     {
-        $this->constants[$name] = $value;
+        if (is_string($name) && !empty($name)) {
+            $this->constants[$name] = $value;
+        }
     }
 
     /**
@@ -108,13 +115,22 @@ class %3$s
      */
     protected function generateFileContents()
     {
-        $namespace  = $this->generateNamespace();
-        $imports    = $this->generateImports();
         $className  = $this->generateClassName();
-        $traits     = $this->generateTraits();
-        $constants  = $this->generateConstants();
+
+        // Generate class headers
+        $namespace = $this->generateNamespace();
+        if (!empty($namespace)) $namespace = PHP_EOL . $namespace;
+        $imports = $this->generateImports();
+        if (!empty($imports)) $imports = PHP_EOL . $imports;
+
+        // Generate class body
+        $traits = $this->generateTraits();
+        if (!empty($traits)) $traits = PHP_EOL . $traits;
+        $constants = $this->generateConstants();
+        if (!empty($constants)) $constants = PHP_EOL . $constants;
         $properties = $this->generateProperties();
-        $methods    = $this->generateMethods();
+        if (!empty($properties)) $properties = PHP_EOL . $properties;
+        $methods = $this->generateMethods();
 
         return sprintf(
             static::FILE_FORMAT,
@@ -142,11 +158,11 @@ class %3$s
         if (!empty($this->interfaces)) {
             $string .= ' implements ';
             $first  = true;
-            foreach ($this->interfaces as $interface) {
+            foreach ($this->interfaces as $interfaceName => $nothing) {
                 if (!$first) {
                     $string .= ', ';
                 }
-                $string .= $interface;
+                $string .= $interfaceName;
                 $first  = false;
             }
         }
@@ -161,9 +177,8 @@ class %3$s
     {
         $string = '';
         if (!empty($this->traits)) {
-            $string .= PHP_EOL;
-            foreach ($this->traits as $trait) {
-                $string .= "    use $trait;\n";
+            foreach ($this->traits as $traitName => $nothing) {
+                $string .= "    use $traitName;\n";
             }
         }
 
@@ -177,11 +192,8 @@ class %3$s
     {
         $string = '';
         if (!empty($this->constants)) {
-            $string .= PHP_EOL;
             foreach ($this->constants as $name => $value) {
-                if (is_string($value)) {
-                    $value = "'$value'";
-                }
+                $value = $this->serializeParameterValue($value);
                 $string .= "    const $name = $value;\n";
             }
         }

@@ -75,7 +75,9 @@ trait %3$s
      */
     public function setNamespace($namespaceName)
     {
-        $this->namespace = $namespaceName;
+        if (!empty($namespaceName)) {
+            $this->namespace = $namespaceName;
+        }
     }
 
     /**
@@ -83,7 +85,9 @@ trait %3$s
      */
     public function addImport($fullyQualifiedName)
     {
-        $this->imports[] = $fullyQualifiedName;
+        if (!empty($fullyQualifiedName)) {
+            $this->imports[$fullyQualifiedName] = null;
+        }
     }
 
     /**
@@ -92,15 +96,19 @@ trait %3$s
      */
     public function addProperty($name, $value = null)
     {
-        $this->properties[$name] = $value;
+        if (is_string($name) && !empty($name)) {
+            $this->properties[$name] = $value;
+        }
     }
 
     /**
-     * @param $methodString
+     * @param string $methodString
      */
     public function addMethod($methodString)
     {
-        $this->methods[] = $methodString;
+        if (is_string($methodString) && !empty($methodString)) {
+            $this->methods[] = $methodString;
+        }
     }
 
     /**
@@ -144,10 +152,8 @@ trait %3$s
     {
         $string = '';
         if (!empty($this->imports)) {
-            foreach ($this->imports as $import) {
-                if (is_string($import) && $import !== '') {
-                    $string .= "use $import;\n";
-                }
+            foreach ($this->imports as $import => $nothing) {
+                $string .= "use $import;\n";
             }
         }
 
@@ -162,21 +168,10 @@ trait %3$s
         $string = '';
         if (!empty($this->properties)) {
             foreach ($this->properties as $name => $value) {
-                if (!is_string($name) || empty($name)) continue;
-                if (is_string($value)) {
-                    $value = "'$value'";
-                }
+                $value = $this->serializeParameterValue($value);
                 if (is_null($value)) {
                     $string .= "    protected $$name;\n";
                 } else {
-                    // Handle boolean true and false
-                    if (is_bool($value)) {
-                        if ($value) {
-                            $value = 'true';
-                        } else {
-                            $value = 'false';
-                        }
-                    }
                     $string .= "    protected $$name = $value;\n";
                 }
             }
@@ -193,14 +188,32 @@ trait %3$s
         $string = '';
         if (!empty($this->methods)) {
             foreach ($this->methods as $method) {
-                if (is_string($method) && $method !== '') {
-                    // Indent method with 4 space characters
-                    $method = str_replace("\n", "\n    ", $method);
-                    $string .= PHP_EOL . '    ' . $method . PHP_EOL;
-                }
+                // Indent method with 4 space characters
+                $method = str_replace("\n", "\n    ", $method);
+                $string .= PHP_EOL . '    ' . $method . PHP_EOL;
             }
         }
 
         return $string;
+    }
+
+    /**
+     * @param $value
+     *
+     * @return string
+     */
+    protected function serializeParameterValue($value)
+    {
+        if (is_string($value)) {
+            $value = "'$value'";
+        } elseif (is_bool($value)) {
+            if ($value) {
+                $value = 'true';
+            } else {
+                $value = 'false';
+            }
+        }
+
+        return $value;
     }
 }
