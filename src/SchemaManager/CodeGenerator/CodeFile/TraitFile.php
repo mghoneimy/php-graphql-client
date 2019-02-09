@@ -8,6 +8,8 @@
 
 namespace GraphQL\SchemaManager\CodeGenerator\CodeFile;
 
+use GraphQL\Util\StringLiteralFormatter;
+
 /**
  * Class TraitFile
  *
@@ -204,16 +206,6 @@ trait %3$s
      */
     protected function serializeParameterValue($value)
     {
-        if (is_string($value)) {
-            $value = "'$value'";
-        } elseif (is_bool($value)) {
-            if ($value) {
-                $value = 'true';
-            } else {
-                $value = 'false';
-            }
-        }
-
-        return $value;
+        return StringLiteralFormatter::formatLiteralForClass($value);
     }
 }
