@@ -2,18 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: mostafa
- * Date: 1/28/19
- * Time: 12:52 AM
+ * Date: 2/10/19
+ * Time: 12:31 AM
  */
 
 namespace GraphQL\Exception;
 
 /**
- * Class ArgumentException
+ * Class InvalidSelectionException
  *
  * @package GraphQL\Exception
  */
-class ArgumentException extends \Exception
+class InvalidSelectionException extends \Exception
 {
     public function __construct($message = "")
     {
