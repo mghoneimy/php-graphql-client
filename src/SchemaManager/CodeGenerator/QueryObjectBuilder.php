@@ -8,6 +8,11 @@
 
 namespace GraphQL\SchemaManager\CodeGenerator;
 
+/**
+ * Class QueryObjectBuilder
+ *
+ * @package GraphQL\SchemaManager\CodeGenerator
+ */
 class QueryObjectBuilder
 {
     /**
@@ -32,6 +37,9 @@ class QueryObjectBuilder
         $this->traitBuilder = new QueryObjectTraitBuilder($writeDir, $objectName);
     }
 
+    /**
+     * @param $propertyName
+     */
     public function addScalarProperty($propertyName)
     {
         $upperCamelCaseProp = $this->getUpperCamelCase($propertyName);
