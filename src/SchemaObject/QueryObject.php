@@ -76,15 +76,15 @@ abstract class QueryObject
      */
 	protected function toQuery()
 	{
-	    // Construct arguments list
-        $this->constructArguments();
-
-        // Convert nested query objects to string queries
         if (empty($this->selectionSet)) {
             throw new EmptySelectionSetException(static::class);
         }
+
+        $this->constructArgumentsList();
+
+        // Convert nested query objects to string queries
         foreach ($this->selectionSet as $key => $field) {
-            if (!is_string($field) && $field instanceof QueryObject) {
+            if ($field instanceof QueryObject) {
                 $this->selectionSet[$key] = $field->toQuery();
             }
         }
@@ -100,7 +100,7 @@ abstract class QueryObject
     /**
      * Constructs the object's arguments list from its attributes
      */
-	protected function constructArguments()
+	protected function constructArgumentsList()
     {
         foreach ($this as $name => $value) {
             if (!is_array($value) && !is_object($value) && !empty($value) && $name !== 'nameAlias') {
@@ -110,12 +110,22 @@ abstract class QueryObject
     }
 
     /**
-     * @param $selectedField
+     * @param string|QueryObject $selectedField
      */
 	protected function selectField($selectedField)
     {
-        // TODO: Throw exception if field is not a query object or a string
-        $this->selectionSet[] = $selectedField;
+        if (is_string($selectedField) || $selectedField instanceof QueryObject) {
+            $this->selectionSet[] = $selectedField;
+        }
+    }
+
+    /**
+     * @return string
+     * @throws EmptySelectionSetException
+     */
+    public function getQueryString()
+    {
+        return (string) $this->toQuery();
     }
 
     /**
@@ -140,14 +150,5 @@ abstract class QueryObject
         $this->offset = $offsetObjects;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     * @throws EmptySelectionSetException
-     */
-    public function getQueryString()
-    {
-        return (string) $this->toQuery();
     }
 }
