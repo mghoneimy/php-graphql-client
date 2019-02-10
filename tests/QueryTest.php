@@ -1,6 +1,7 @@
 <?php
 
 use GraphQL\Exception\ArgumentException;
+use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +15,8 @@ use PHPUnit\Framework\TestCase;
 class QueryTest extends TestCase
 {
     /**
+     * @covers \GraphQL\Query::__ToString
+     *
      * @return Query
      */
     public function testConvertsToString()
@@ -26,6 +29,8 @@ class QueryTest extends TestCase
 
     /**
      * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::constructArguments
      *
      * @param Query $query
      *
@@ -40,6 +45,8 @@ class QueryTest extends TestCase
 
     /**
      * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::__toString
      *
      * @param Query $query
      *
@@ -63,6 +70,8 @@ Object {
     /**
      * @depends clone testEmptyArguments
      *
+     * @covers \GraphQL\Query::setArguments
+     *
      * @param Query $query
      *
      * @return Query
@@ -78,35 +87,19 @@ Object {
     /**
      * @depends clone testEmptyArguments
      *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
      * @param Query $query
      *
      * @return Query
      */
-    public function testOneArgument(Query $query)
+    public function testStringArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => 'value']);
         $this->assertEquals(
-            "query {\nObject(arg1: \"value\") {\n\n}\n}",
-            (string) $query,
-            'Query has improperly formatted parameter list'
-        );
-
-        return $query;
-    }
-
-    /**
-     * @depends clone testEmptyArguments
-     *
-     * @param Query $query
-     *
-     * @return Query
-     */
-    public function testTwoOrMoreArguments(Query $query)
-    {
-        $query->setArguments(['arg1' => 'val1', 'arg2' => 'val2']);
-        $this->assertEquals(
             "query {
-Object(arg1: \"val1\" arg2: \"val2\") {
+Object(arg1: \"value\") {
 
 }
 }",
@@ -118,7 +111,108 @@ Object(arg1: \"val1\" arg2: \"val2\") {
     }
 
     /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testIntegerArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => 23]);
+        $this->assertEquals(
+            "query {
+Object(arg1: 23) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testBooleanArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => true]);
+        $this->assertEquals(
+            "query {
+Object(arg1: true) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testStringArgumentValue
+     * @depends testIntegerArgumentValue
+     * @depends testBooleanArgumentValue
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testTwoOrMoreArguments(Query $query)
+    {
+        $query->setArguments(['arg1' => 'val1', 'arg2' => 2, 'arg3' => true]);
+        $this->assertEquals(
+            "query {
+Object(arg1: \"val1\" arg2: 2 arg3: true) {
+
+}
+}",
+            (string) $query,
+            'Query has improperly formatted parameter list'
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends testStringArgumentValue
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     */
+    public function testStringWrappingWorks()
+    {
+        $queryWrapped = new Query('Object');
+        $queryWrapped->setArguments(['arg1' => '"val"']);
+
+        $queryNotWrapped = new Query('Object');
+        $queryNotWrapped->setArguments(['arg1' => 'val']);
+
+        $this->assertEquals((string) $queryWrapped, (string) $queryWrapped);
+    }
+
+    /**
      * @depends clone testEmptyQuery
+     *
+     * @covers \GraphQL\Query::setSelectionSet
+     * @covers \GraphQL\Query::constructSelectionSet
      *
      * @param Query $query
      *
@@ -143,6 +237,9 @@ field1
     /**
      * @depends clone testEmptyQuery
      *
+     * @covers \GraphQL\Query::setSelectionSet
+     * @covers \GraphQL\Query::constructSelectionSet
+     *
      * @param Query $query
      *
      * @return Query
@@ -166,6 +263,25 @@ field2
 
     /**
      * @depends clone testEmptyQuery
+     *
+     * @covers \GraphQL\Query::setSelectionSet
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testSelectNonStringValues(Query $query)
+    {
+        $this->expectException(InvalidSelectionException::class);
+        $query->setSelectionSet([true, 1.5]);
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyQuery
+     *
+     * @coversNothing
      *
      * @param Query $query
      *
@@ -192,6 +308,8 @@ field2
     /**
      * @depends clone testOneLevelQuery
      *
+     * @covers \GraphQL\Query::constructSelectionSet
+     *
      * @param Query $query
      *
      * @return Query
@@ -217,6 +335,8 @@ field2
 
     /**
      * @depends clone testTwoLevelQueryDoesNotContainWordQuery
+     *
+     * @coversNothing
      *
      * @param Query $query
      *
