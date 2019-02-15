@@ -23,7 +23,7 @@ class QueryObjectTest extends TestCase
 
     public function setUp()
     {
-        $this->queryObject = $queryObject = new TestQueryObject();
+        $this->queryObject = new TestQueryObject();
     }
 
     /**
