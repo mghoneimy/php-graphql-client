@@ -34,11 +34,11 @@ class SchemaScannerTest extends CodeFileTestCase
      *
      * @dataProvider schemaStringProvider
      * 
-     * @covers \GraphQL\SchemaManager\SchemaScanner::readSchema 
+     * @covers \GraphQL\SchemaManager\SchemaScanner::generateSchemaObjects 
      */
     public function testSchemaTypesReading(array $schemaTypes, array $expectedFileNames)
     {
-        SchemaScanner::readSchema($schemaTypes, static::getGeneratedFilesDir());
+        SchemaScanner::generateSchemaObjects($schemaTypes, static::getGeneratedFilesDir());
 
         foreach ($expectedFileNames as $fileName) {
             $this->assertFileEquals(

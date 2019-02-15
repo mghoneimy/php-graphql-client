@@ -50,31 +50,31 @@ class SchemaScanner
 	private static $writeDir = '';
 
     /**
-     * @param $endpointUrl
-     * @param $authorizationHeaders
+     * @param string $endpointUrl
+     * @param array  $authorizationHeaders
      *
      * @return array
      * @throws QueryError
      */
-	public static function getSchemaArrayType($endpointUrl, $authorizationHeaders)
+	public static function getSchemaArrayTypes($endpointUrl, $authorizationHeaders = [])
     {
         // Read schema form GraphQL endpoint
         $response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
-        $schema   = $response->getData()['__schema']['types'];
+        $schemaTypes   = $response->getData()['__schema']['types'];
 
         // Filter out object types only
-        $schema = array_filter($schema, function($element) {
+        $schemaTypes = array_filter($schemaTypes, function($element) {
             return ($element['kind'] == 'OBJECT' && $element['name'] !== 'QueryType' && $element['name'][0] !== '_');
         });
 
-        return $schema;
+        return $schemaTypes;
     }
 
     /**
      * @param array  $schemaTypes
      * @param string $writeDir
      */
-	public static function readSchema(array $schemaTypes, $writeDir = '')
+	public static function generateSchemaObjects(array $schemaTypes, $writeDir = '')
 	{
 	    if (empty($writeDir)) $writeDir = static::getWriteDir();
 

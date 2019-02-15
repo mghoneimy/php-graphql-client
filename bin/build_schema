@@ -1,0 +1,35 @@
+#!/usr/bin/env php5.6
+<?php
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use GraphQL\SchemaManager\SchemaScanner;
+
+$endpointUrl = readline('GraphlQL endpoint URL: ');
+
+$authHeaders    = [];
+$authHeaderName = readline('Authorization header name: ');
+if (!empty($authHeaderName)) {
+    $authHeaderValue = readline('Authorization header value: ');
+    $authHeaders = [$authHeaderName => $authHeaderValue];
+}
+
+$schemaTypes = SchemaScanner::getSchemaArrayTypes(
+    $endpointUrl, $authHeaders
+);
+
+if (empty($schemaTypes)) {
+	print "No schema types found in the specified GraphQL endpoint\n";
+    exit;
+}
+
+
+print "-------------------------------------------\n";
+print "Generating schema objects from schema types\n";
+print "-------------------------------------------\n";
+
+SchemaScanner::generateSchemaObjects($schemaTypes);
+
+print "-------------------------------------------\n";
+print "Schema objects generation complete\n";
+print "-------------------------------------------\n";
