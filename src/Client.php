@@ -9,6 +9,7 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
+use GraphQL\SchemaObject\QueryObject;
 
 /**
  * Class Client
@@ -54,6 +55,31 @@ class Client
      */
     public function runQuery(Query $query, $resultsAsArray = false)
     {
+        return $this->runRawQuery((string) $query, $resultsAsArray);
+    }
+
+    /**
+     * @param QueryObject $queryObject
+     * @param bool        $resultsAsArray
+     *
+     * @return Results|null
+     * @throws Exception\EmptySelectionSetException
+     * @throws QueryError
+     */
+    public function runQueryObject(QueryObject $queryObject, $resultsAsArray = false)
+    {
+        return $this->runRawQuery($queryObject->getQueryString(), $resultsAsArray);
+    }
+
+    /**
+     * @param string $queryString
+     * @param bool   $resultsAsArray
+     *
+     * @return Results|null
+     * @throws QueryError
+     */
+    public function runRawQuery($queryString, $resultsAsArray = false)
+    {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
             $options['headers'] = $this->authorizationHeaders;
@@ -61,7 +87,7 @@ class Client
         $options['headers']['Content-Type'] = 'application/json';
 
         // Set query in the request body
-        $options['body'] = json_encode(['query' => (string) $query]);
+        $options['body'] = json_encode(['query' => (string) $queryString]);
 
         // Send api request and get response
         $response = $this->httpClient->post($this->endpointUrl, $options);

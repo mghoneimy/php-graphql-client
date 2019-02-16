@@ -8,6 +8,10 @@
 
 namespace GraphQL;
 
+use GraphQL\Exception\ArgumentException;
+use GraphQL\Exception\InvalidSelectionException;
+use GraphQL\Util\StringLiteralFormatter;
+
 /**
  * Class Query
  *
@@ -64,6 +68,50 @@ class Query
     }
 
     /**
+     * Throwing exception when setting the arguments if they are incorrect because we can't throw an exception during
+     * the execution of __ToString(), it's a fatal error in PHP
+     *
+     * @param array $arguments
+     *
+     * @return Query
+     * @throws ArgumentException
+     */
+    public function setArguments(array $arguments)
+    {
+        // If one of the arguments does not have a string value, throw an exception
+        $nonStringArgs = array_filter(array_keys($arguments), function($element) {
+            return !is_string($element);
+        });
+        if (!empty($nonStringArgs)) {
+            throw new ArgumentException('One or more of the arguments provided for creating the query does not have a name');
+        }
+
+        $this->arguments = $arguments;
+
+        return $this;
+    }
+
+    /**
+     * @param array $selectionSet
+     *
+     * @return Query
+     * @throws InvalidSelectionException
+     */
+    public function setSelectionSet(array $selectionSet)
+    {
+        $nonStringsFields = array_filter($selectionSet, function($element) {
+            return !is_string($element) && !$element instanceof Query;
+        });
+        if (!empty($nonStringsFields)) {
+            throw new InvalidSelectionException('One or more of the selection fields provided is not of type string ro Query');
+        }
+
+        $this->selectionSet = $selectionSet;
+
+        return $this;
+    }
+
+    /**
      * @return string
      * @throws \Exception
      */
@@ -77,7 +125,7 @@ class Query
         // Construct arguments string if list not empty
         $constraintsString = '(';
         $first             = true;
-        foreach ($this->arguments as $constraint => $value) {
+        foreach ($this->arguments as $name => $value) {
 
             // Append space at the beginning if it's not the first item on the list
             if ($first) {
@@ -87,15 +135,8 @@ class Query
             }
 
             // Wrap the value with quotations if it's a string value
-            if (is_string($value)) {
-                if ($value[0] != '"') {
-                    $value = '"' . $value;
-                }
-                if ($value[-1] != '"') {
-                    $value .= '"';
-                }
-            }
-            $constraintsString .= $constraint . ': ' . $value;
+            $value = StringLiteralFormatter::formatLiteralForGQLQuery($value);
+            $constraintsString .= $name . ': ' . $value;
         }
         $constraintsString .= ')';
 
@@ -152,29 +193,5 @@ class Query
     private function setAsNested()
     {
         $this->isNested = true;
-    }
-
-    /**
-     * @param array $arguments
-     *
-     * @return Query
-     */
-    public function setArguments($arguments)
-    {
-        $this->arguments = $arguments;
-
-        return $this;
-    }
-
-    /**
-     * @param array $selectionSet
-     *
-     * @return Query
-     */
-    public function setSelectionSet($selectionSet)
-    {
-        $this->selectionSet = $selectionSet;
-
-        return $this;
     }
 }
