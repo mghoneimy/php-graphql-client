@@ -31,23 +31,63 @@ class QueryObjectClassBuilder
     public function __construct($writeDir, $objectName)
     {
         $className = $objectName . 'QueryObject';
-        $traitName = $objectName . 'Trait';
 
         $this->classFile = new ClassFile($writeDir, $className);
         $this->classFile->setNamespace('GraphQL\\SchemaObject');
         $this->classFile->extendsClass('QueryObject');
-        $this->classFile->addTrait($traitName);
         $this->classFile->addConstant('OBJECT_NAME', $objectName);
+    }
+
+    /**
+     * @param string $propertyName
+     */
+    public function addProperty($propertyName)
+    {
+        $this->classFile->addProperty($propertyName);
     }
 
     /**
      * @param string $propertyName
      * @param string $upperCamelName
      */
-    public function addSetter($propertyName, $upperCamelName)
+    public function addSimpleSetter($propertyName, $upperCamelName)
     {
         $lowerCamelName = lcfirst($upperCamelName);
         $method = "public function set$upperCamelName($$lowerCamelName)
+{
+    \$this->$propertyName = $$lowerCamelName;
+
+    return \$this;
+}";
+        $this->classFile->addMethod($method);
+    }
+
+    /**
+     * @param $propertyName
+     * @param $upperCamelName
+     * @param $propertyType
+     */
+    public function addListSetter($propertyName, $upperCamelName, $propertyType)
+    {
+        $lowerCamelName = lcfirst($upperCamelName);
+        $method = "public function set$upperCamelName(array $$lowerCamelName)
+{
+    \$this->$propertyName = $$lowerCamelName;
+
+    return \$this;
+}";
+        $this->classFile->addMethod($method);
+    }
+
+    /**
+     * @param $propertyName
+     * @param $upperCamelName
+     * @param $propertyType
+     */
+    public function addInputObjectSetter($propertyName, $upperCamelName, $propertyType)
+    {
+        $lowerCamelName = lcfirst($upperCamelName);
+        $method = "public function set$upperCamelName($propertyType $$lowerCamelName)
 {
     \$this->$propertyName = $$lowerCamelName;
 
@@ -74,11 +114,11 @@ class QueryObjectClassBuilder
     /**
      * @param string $fieldName
      * @param string $upperCamelName
-     * @param string $fieldClassType
+     * @param string $fieldTypeName
      */
-    public function addObjectSelector($fieldName, $upperCamelName, $fieldClassType)
+    public function addObjectSelector($fieldName, $upperCamelName, $fieldTypeName)
     {
-        $objectClassName = $fieldClassType . 'QueryObject';
+        $objectClassName = $fieldTypeName . 'QueryObject';
         $method = "public function select$upperCamelName()
 {
     \$object = new $objectClassName('$fieldName');

@@ -20,14 +20,14 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addSetter
+     * @covers QueryObjectClassBuilder::addSimpleSetter
      */
     public function testAddPropertySetter()
     {
         $objectName = 'WithSetter';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
         $objectName .= 'QueryObject';
-        $classBuilder->addSetter('name', 'Name');
+        $classBuilder->addSimpleSetter('name', 'Name');
         $classBuilder->build();
 
         $this->assertFileEquals(
@@ -39,15 +39,15 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddPropertySetter
      *
-     * @covers QueryObjectClassBuilder::addSetter
+     * @covers QueryObjectClassBuilder::addSimpleSetter
      */
     public function testAddMultiplePropertySetters()
     {
         $objectName = 'WithMultipleSetters';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
         $objectName .= 'QueryObject';
-        $classBuilder->addSetter('last_name', 'LastName');
-        $classBuilder->addSetter('first_name', 'FirstName');
+        $classBuilder->addSimpleSetter('last_name', 'LastName');
+        $classBuilder->addSimpleSetter('first_name', 'FirstName');
         $classBuilder->build();
 
         $this->assertFileEquals(
