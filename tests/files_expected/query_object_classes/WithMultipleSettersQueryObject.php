@@ -4,8 +4,6 @@ namespace GraphQL\SchemaObject;
 
 class WithMultipleSettersQueryObject extends QueryObject
 {
-    use WithMultipleSettersTrait;
-
     const OBJECT_NAME = 'WithMultipleSetters';
 
     public function setLastName($lastName)

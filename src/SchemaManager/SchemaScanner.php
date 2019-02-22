@@ -11,7 +11,6 @@ namespace GraphQL\SchemaManager;
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
 use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectClassBuilder;
 
 /**
  * This class scans the GraphQL API schema and generates Classes that map to the schema objects' structure

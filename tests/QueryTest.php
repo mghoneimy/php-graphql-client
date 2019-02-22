@@ -161,6 +161,57 @@ Object(arg1: true) {
     }
 
     /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     *
+     * @param  Query $query
+     *
+     * @return Query
+     */
+    public function testArrayIntegerArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => [1, 2, 3]]);
+        $this->assertEquals(
+            "query {
+Object(arg1: [1, 2, 3]) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
+     *
+     * @param  Query $query
+     *
+     * @return Query
+     */
+    public function testArrayStringArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => ['one', 'two', 'three']]);
+        $this->assertEquals(
+            "query {
+Object(arg1: [\"one\", \"two\", \"three\"]) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
      * @depends clone testStringArgumentValue
      * @depends testIntegerArgumentValue
      * @depends testBooleanArgumentValue
