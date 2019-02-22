@@ -1,7 +1,6 @@
 <?php
 
 include 'files_expected/query_objects/OtherObjectQueryObject.php';
-include 'files_expected/query_objects/TestTrait.php';
 include 'files_expected/query_objects/TestQueryObject.php';
 
 use GraphQL\SchemaObject\TestQueryObject;

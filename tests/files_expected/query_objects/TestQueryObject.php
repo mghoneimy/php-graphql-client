@@ -4,9 +4,10 @@ namespace GraphQL\SchemaObject;
 
 class TestQueryObject extends QueryObject
 {
-    use TestTrait;
-
     const OBJECT_NAME = 'Test';
+
+    protected $property_one;
+    protected $propertyTwo;
 
     public function setPropertyOne($propertyOne)
     {

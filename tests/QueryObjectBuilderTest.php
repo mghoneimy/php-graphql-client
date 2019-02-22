@@ -27,8 +27,9 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $objectName = 'Test';
         $objectBuilder = new QueryObjectBuilder(static::getGeneratedFilesDir(), $objectName);
         $className = $objectName . 'QueryObject';
-        $traitName = $objectName . 'Trait';
+        $objectBuilder->addScalarArgument('property_one');
         $objectBuilder->addScalarField('property_one');
+        $objectBuilder->addScalarArgument('propertyTwo');
         $objectBuilder->addScalarField('propertyTwo');
         $objectBuilder->addObjectField('other_objects', 'OtherObject');
         $objectBuilder->build();
@@ -36,10 +37,6 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/$className.php",
             static::getGeneratedFilesDir() . "/$className.php"
-        );
-        $this->assertFileEquals(
-            static::getExpectedFilesDir() . "/$traitName.php",
-            static::getGeneratedFilesDir() . "/$traitName.php"
         );
     }
 }
