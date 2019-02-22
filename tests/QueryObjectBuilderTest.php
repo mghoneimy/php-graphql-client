@@ -28,9 +28,9 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $objectBuilder = new QueryObjectBuilder(static::getGeneratedFilesDir(), $objectName);
         $className = $objectName . 'QueryObject';
         $traitName = $objectName . 'Trait';
-        $objectBuilder->addScalarProperty('property_one');
-        $objectBuilder->addScalarProperty('propertyTwo');
-        $objectBuilder->addObjectProperty('other_objects', 'OtherObject');
+        $objectBuilder->addScalarField('property_one');
+        $objectBuilder->addScalarField('propertyTwo');
+        $objectBuilder->addObjectField('other_objects', 'OtherObject');
         $objectBuilder->build();
 
         $this->assertFileEquals(
