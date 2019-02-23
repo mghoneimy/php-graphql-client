@@ -74,14 +74,14 @@ class QueryObjectClassBuilder
     }
 
     /**
-     * @param $propertyName
-     * @param $upperCamelName
-     * @param $propertyType
+     * @param string $propertyName
+     * @param string $upperCamelName
+     * @param string $objectClass
      */
-    public function addInputObjectSetter($propertyName, $upperCamelName, $propertyType)
+    public function addInputObjectSetter($propertyName, $upperCamelName, $objectClass)
     {
-        $lowerCamelName = lcfirst($upperCamelName);
-        $method = "public function set$upperCamelName($propertyType $$lowerCamelName)
+        $lowerCamelName = lcfirst(str_replace('_', '', $objectClass));
+        $method = "public function set$upperCamelName($objectClass $$lowerCamelName)
 {
     \$this->$propertyName = $$lowerCamelName;
 
