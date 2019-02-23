@@ -118,11 +118,6 @@ class SchemaScanner
         return $schemaTypes;
     }
 
-    public function buildTypesTree(array $schemaTypes)
-    {
-
-    }
-
     /**
      * @param array  $schemaTypes
      * @param string $writeDir
@@ -144,48 +139,64 @@ class SchemaScanner
             }
             // Build query object fields
             foreach ($type['fields'] as $field) {
-                $propertyName = $field['name'];
-                $fieldDescription = $field['description'];
-
-                $isScalar = $field['type']['kind'] === 'SCALAR';
-                if ($isScalar) {
-                    $typeName = $field['type']['name'];
-                    $queryObjectBuilder->addScalarField($propertyName);
-                } else {
-                    $typeName = $field['type']['ofType']['name'];
-                    $queryObjectBuilder->addObjectField($propertyName, $typeName);
-                }
+                $this->generateObjectFields($queryObjectBuilder, $field);
             }
 
             // Get query object args
             foreach ($arguments as $argument) {
-                $argName = $argument['name'];
-                $argDescription = $argument['description'];
-                $argType = $argument['type'];
-
-                $argKind = $argType['kind'];
-                if ($argKind === 'SCALAR') {
-                    $argTypeName = $argType['name'];
-                    $argTypeDescription = $argType['description'];
-                    $queryObjectBuilder->addScalarArgument($argName);
-                } elseif ($argKind === 'INPUT_OBJECT') {
-                    $argTypeName = $argType['name'];
-                    $argTypeDescription = $argType['description'];
-                    //$queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
-                    // TODO: Handle input fields
-                } elseif ($argKind === 'LIST') {
-                    // Assume list of objects for now
-                    $argType = $argType['ofType'];
-                    $argTypeName = $argType['name'];
-                    $argTypeDescription = $argType['description'];
-                    $queryObjectBuilder->addListArgument($argName, $argTypeName);
-                    // TODO: Handle Enum types
-                }
+                $this->generateObjectArguments($queryObjectBuilder, $argument);
             }
 
 		    $queryObjectBuilder->build();
         }
 	}
+
+    /**
+     * @param QueryObjectBuilder $queryObjectBuilder
+     * @param array              $fieldArray
+     */
+	private function generateObjectFields(QueryObjectBuilder $queryObjectBuilder, array $fieldArray)
+    {
+        $propertyName = $fieldArray['name'];
+        $fieldDescription = $fieldArray['description'];
+
+        $isScalar = $fieldArray['type']['kind'] === 'SCALAR';
+        if ($isScalar) {
+            $typeName = $fieldArray['type']['name'];
+            $queryObjectBuilder->addScalarField($propertyName);
+        } else {
+            $typeName = $fieldArray['type']['ofType']['name'];
+            $queryObjectBuilder->addObjectField($propertyName, $typeName);
+        }
+    }
+
+    /**
+     * @param QueryObjectBuilder $queryObjectBuilder
+     * @param array              $argumentArray
+     */
+    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray)
+    {
+        $argName = $argumentArray['name'];
+        $argDescription = $argumentArray['description'];
+        $argType = $argumentArray['type'];
+
+        $argKind = $argType['kind'];
+        if ($argKind === 'SCALAR') {
+            $argTypeName = $argType['name'];
+            $argTypeDescription = $argType['description'];
+            $queryObjectBuilder->addScalarArgument($argName);
+        } elseif ($argKind === 'INPUT_OBJECT') {
+            $argTypeName = $argType['name'];
+            $argTypeDescription = $argType['description'];
+            //$queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
+        } elseif ($argKind === 'LIST') {
+            // Assume list of objects for now
+            $argType = $argType['ofType'];
+            $argTypeName = $argType['name'];
+            $argTypeDescription = $argType['description'];
+            $queryObjectBuilder->addListArgument($argName, $argTypeName);
+        }
+    }
 
     /**
      * Sets the write directory if it's not set for the class
