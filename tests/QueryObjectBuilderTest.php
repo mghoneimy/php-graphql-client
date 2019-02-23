@@ -18,6 +18,8 @@ class QueryObjectBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addListArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addInputObjectArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::getUpperCamelCase
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::build
      */
     public function testBuildQueryObject()
     {
