@@ -114,10 +114,20 @@ propertyTwo
             $this->queryObject->getQueryString()
         );
 
+        $this->queryObject->setPropertyTwos([1, 25, 87]);
+        $this->assertEquals(
+            'query {
+Test(property_one: "value" propertyTwo: true first: 5 propertyTwos: [1, 25, 87]) {
+propertyTwo
+}
+}',
+            $this->queryObject->getQueryString()
+        );
+
         $this->queryObject->selectOtherObjects()->selectName()->setFirst(2)->setOffset(10)->setName('some');
         $this->assertEquals(
             'query {
-Test(property_one: "value" propertyTwo: true first: 5) {
+Test(property_one: "value" propertyTwo: true first: 5 propertyTwos: [1, 25, 87]) {
 propertyTwo
 other_objects(name: "some" first: 2 offset: 10) {
 name

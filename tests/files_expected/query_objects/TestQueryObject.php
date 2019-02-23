@@ -9,6 +9,7 @@ class TestQueryObject extends QueryObject
     protected $property_one;
     protected $propertyTwo;
     protected $propertyTwos;
+    protected $filterBy;
 
     public function selectPropertyOne()
     {
@@ -20,6 +21,13 @@ class TestQueryObject extends QueryObject
     public function selectPropertyTwo()
     {
         $this->selectField('propertyTwo');
+    
+        return $this;
+    }
+
+    public function selectPropertyWithoutSetter()
+    {
+        $this->selectField('propertyWithoutSetter');
     
         return $this;
     }
@@ -49,6 +57,13 @@ class TestQueryObject extends QueryObject
     public function setPropertyTwos(array $propertyTwos)
     {
         $this->propertyTwos = $propertyTwos;
+    
+        return $this;
+    }
+
+    public function setFilterBy(_TestFilter $testFilter)
+    {
+        $this->filterBy = $testFilter;
     
         return $this;
     }

@@ -13,7 +13,11 @@ class QueryObjectBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarField
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addObjectField
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addListArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addInputObjectArgument
      */
     public function testBuildQueryObject()
     {
@@ -22,10 +26,12 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $className = $objectName . 'QueryObject';
         $objectBuilder->addScalarField('property_one');
         $objectBuilder->addScalarField('propertyTwo');
+        $objectBuilder->addScalarField('propertyWithoutSetter');
         $objectBuilder->addObjectField('other_objects', 'OtherObject');
         $objectBuilder->addScalarArgument('property_one');
         $objectBuilder->addScalarArgument('propertyTwo');
         $objectBuilder->addListArgument('propertyTwos', 'PropertyTwo');
+        $objectBuilder->addInputObjectArgument('filterBy', '_TestFilter');
         $objectBuilder->build();
 
         $this->assertFileEquals(
