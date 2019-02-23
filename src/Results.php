@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 10/7/18
- * Time: 1:54 PM
- */
 
 namespace GraphQL;
 

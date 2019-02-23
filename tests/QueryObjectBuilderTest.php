@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 11:06 PM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 class QueryObjectBuilderTest extends CodeFileTestCase
 {
@@ -20,7 +13,7 @@ class QueryObjectBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder
      */
     public function testBuildQueryObject()
     {

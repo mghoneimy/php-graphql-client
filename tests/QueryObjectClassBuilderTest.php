@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectClassBuilder;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 9:22 PM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 
 class QueryObjectClassBuilderTest extends CodeFileTestCase
 {

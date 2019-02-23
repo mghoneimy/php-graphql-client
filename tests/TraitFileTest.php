@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/29/19
- * Time: 12:06 AM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile;
 
 class TraitFileTest extends CodeFileTestCase
 {
@@ -285,7 +278,7 @@ class TraitFileTest extends CodeFileTestCase
      * @depends testTraitWithProperties
      * @depends testTraitWithMultipleMethods
      *
-     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithPropertiesAndMethods()
     {
@@ -313,7 +306,7 @@ class TraitFileTest extends CodeFileTestCase
      * @depends testTraitWithNamespaceAndImports
      * @depends testTraitWithPropertiesAndMethods
      *
-     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithEverything()
     {
