@@ -43,16 +43,6 @@ abstract class QueryObject
     private $arguments;
 
     /**
-     * @var int
-     */
-    protected $first;
-
-    /**
-     * @var int
-     */
-    protected $offset;
-
-    /**
      * SchemaObject constructor.
      *
      * @param string $nameAlias
@@ -121,29 +111,5 @@ abstract class QueryObject
     public function getQueryString()
     {
         return (string) $this->toQuery();
-    }
-
-    /**
-     * @param int $firstObjects
-     *
-     * @return $this
-     */
-    public function setFirst($firstObjects)
-    {
-        $this->first = $firstObjects;
-
-        return $this;
-    }
-
-    /**
-     * @param int $offsetObjects
-     *
-     * @return $this
-     */
-    public function setOffset($offsetObjects)
-    {
-        $this->offset = $offsetObjects;
-
-        return $this;
     }
 }
