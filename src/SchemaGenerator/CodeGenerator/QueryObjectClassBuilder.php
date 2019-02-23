@@ -9,7 +9,7 @@ use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
  *
  * @package GraphQL\SchemaManager\CodeGenerator
  */
-class QueryObjectClassBuilder
+class QueryObjectClassBuilder implements ObjectBuilderInterface
 {
     /**
      * @var ClassFile

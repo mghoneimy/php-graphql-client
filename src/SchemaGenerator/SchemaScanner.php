@@ -4,6 +4,7 @@ namespace GraphQL\SchemaGenerator;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
+use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 /**
@@ -76,6 +77,14 @@ class SchemaScanner
                     name
                     description
                     kind
+                    ofType{
+                      name
+                      kind
+                      ofType {
+                        name
+                        description
+                      }
+                    }
                   }
                 }
                 ofType {
@@ -190,12 +199,30 @@ class SchemaScanner
             $argTypeDescription = $argType['description'];
             //$queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
         } elseif ($argKind === 'LIST') {
-            // Assume list of objects for now
-            $argType = $argType['ofType'];
-            $argTypeName = $argType['name'];
-            $argTypeDescription = $argType['description'];
-            $queryObjectBuilder->addListArgument($argName, $argTypeName);
+            // Get type wrapped by list
+            $wrappedType = $argType['ofType'];
+            $wrappedTypeName = $wrappedType['name'];
+            $wrappedTypeDescription = $wrappedType['description'];
+            $wrappedTypeKind = $wrappedType['kind'];
+            $queryObjectBuilder->addListArgument($argName, $wrappedTypeName);
+
+            // Handle creation of ENUM objects if needed
+            if ($wrappedTypeKind === 'ENUM') {
+                $this->generateEnumObject($wrappedTypeName, $wrappedType['enumValues']);
+            }
         }
+    }
+
+
+    private function generateEnumObject($name, array $values)
+    {
+        $enumBuilder = new EnumObjectBuilder($this->getWriteDir(), $name);
+        foreach ($values as $value) {
+            $valueName = $value['name'];
+            $valueDescripion = $value['description'];
+            $enumBuilder->addEnumValue($valueName);
+        }
+        $enumBuilder->build();
     }
 
     /**
