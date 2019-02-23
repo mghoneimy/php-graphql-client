@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 10/4/18
- * Time: 11:56 PM
- */
 
 namespace GraphQL;
 
@@ -78,7 +72,7 @@ class Query
      */
     public function setArguments(array $arguments)
     {
-        // If one of the arguments does not have a string value, throw an exception
+        // If one of the arguments does not have a name provided, throw an exception
         $nonStringArgs = array_filter(array_keys($arguments), function($element) {
             return !is_string($element);
         });
@@ -134,8 +128,14 @@ class Query
                 $constraintsString .= ' ';
             }
 
-            // Wrap the value with quotations if it's a string value
-            $value = StringLiteralFormatter::formatLiteralForGQLQuery($value);
+            // Convert argument values to graphql string literal equivalent
+            if (is_scalar($value)) {
+                // Convert scalar value to its literal in graphql
+                $value = StringLiteralFormatter::formatLiteralForGQLQuery($value);
+            } elseif (is_array($value)) {
+                // Convert PHP array to its array representation in graphql arguments
+                $value = StringLiteralFormatter::formatArrayForGQLQuery($value);
+            }
             $constraintsString .= $name . ': ' . $value;
         }
         $constraintsString .= ')';
