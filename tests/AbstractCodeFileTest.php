@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\CodeFile\AbstractCodeFile;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/8/19
- * Time: 3:39 PM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile;
 
 class AbstractCodeFileTest extends CodeFileTestCase
 {

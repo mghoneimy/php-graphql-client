@@ -6,13 +6,6 @@ include 'files_expected/query_objects/TestQueryObject.php';
 use GraphQL\SchemaObject\TestQueryObject;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/10/19
- * Time: 1:24 AM
- */
-
 class QueryObjectTest extends TestCase
 {
     /**

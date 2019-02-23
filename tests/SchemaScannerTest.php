@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\SchemaScanner;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 4:19 PM
- */
+use GraphQL\SchemaGenerator\SchemaScanner;
 
 class SchemaScannerTest extends CodeFileTestCase
 {
@@ -35,7 +28,7 @@ class SchemaScannerTest extends CodeFileTestCase
      *
      * @dataProvider schemaStringProvider
      * 
-     * @covers \GraphQL\SchemaManager\SchemaScanner::generateSchemaObjects 
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::generateSchemaObjects
      */
     public function testSchemaTypesReading(array $schemaTypes, $expectedFileName)
     {

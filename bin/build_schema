@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use GraphQL\SchemaManager\SchemaScanner;
+use GraphQL\SchemaGenerator\SchemaScanner;
 
 $endpointUrl = readline('GraphlQL endpoint URL: ');
 

@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 8:46 PM
- */
 
-namespace GraphQL\SchemaManager\CodeGenerator;
+namespace GraphQL\SchemaGenerator\CodeGenerator;
 
 /**
  * Class QueryObjectBuilder

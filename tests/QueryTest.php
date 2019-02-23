@@ -5,13 +5,6 @@ use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/27/19
- * Time: 11:11 PM
- */
-
 class QueryTest extends TestCase
 {
     /**

@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/18/19
- * Time: 12:42 AM
- */
 
-namespace GraphQL\SchemaManager;
+namespace GraphQL\SchemaGenerator;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 /**
  * This class scans the GraphQL API schema and generates Classes that map to the schema objects' structure
