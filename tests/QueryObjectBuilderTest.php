@@ -27,11 +27,12 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $objectName = 'Test';
         $objectBuilder = new QueryObjectBuilder(static::getGeneratedFilesDir(), $objectName);
         $className = $objectName . 'QueryObject';
-        $objectBuilder->addScalarArgument('property_one');
         $objectBuilder->addScalarField('property_one');
-        $objectBuilder->addScalarArgument('propertyTwo');
         $objectBuilder->addScalarField('propertyTwo');
         $objectBuilder->addObjectField('other_objects', 'OtherObject');
+        $objectBuilder->addScalarArgument('property_one');
+        $objectBuilder->addScalarArgument('propertyTwo');
+        $objectBuilder->addListArgument('propertyTwos', 'PropertyTwo');
         $objectBuilder->build();
 
         $this->assertFileEquals(

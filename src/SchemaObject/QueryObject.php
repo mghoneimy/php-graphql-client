@@ -103,7 +103,8 @@ abstract class QueryObject
 	protected function constructArgumentsList()
     {
         foreach ($this as $name => $value) {
-            if (!is_array($value) && !is_object($value) && !empty($value) && $name !== 'nameAlias') {
+            // TODO: Use annotations to avoid having to check on specific keys
+            if (!is_object($value) && !empty($value) && !in_array($name, ['nameAlias', 'selectionSet', 'arguments'])) {
                 $this->arguments[$name] = $value;
             }
         }

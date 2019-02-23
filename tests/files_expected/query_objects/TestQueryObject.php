@@ -8,24 +8,11 @@ class TestQueryObject extends QueryObject
 
     protected $property_one;
     protected $propertyTwo;
-
-    public function setPropertyOne($propertyOne)
-    {
-        $this->property_one = $propertyOne;
-    
-        return $this;
-    }
+    protected $propertyTwos;
 
     public function selectPropertyOne()
     {
         $this->selectField('property_one');
-    
-        return $this;
-    }
-
-    public function setPropertyTwo($propertyTwo)
-    {
-        $this->propertyTwo = $propertyTwo;
     
         return $this;
     }
@@ -43,5 +30,26 @@ class TestQueryObject extends QueryObject
         $this->selectField($object);
     
         return $object;
+    }
+
+    public function setPropertyOne($propertyOne)
+    {
+        $this->property_one = $propertyOne;
+    
+        return $this;
+    }
+
+    public function setPropertyTwo($propertyTwo)
+    {
+        $this->propertyTwo = $propertyTwo;
+    
+        return $this;
+    }
+
+    public function setPropertyTwos(array $propertyTwos)
+    {
+        $this->propertyTwos = $propertyTwos;
+    
+        return $this;
     }
 }
