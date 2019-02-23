@@ -4,8 +4,6 @@ namespace GraphQL\SchemaObject;
 
 class WithSetterQueryObject extends QueryObject
 {
-    use WithSetterTrait;
-
     const OBJECT_NAME = 'WithSetter';
 
     public function setName($name)

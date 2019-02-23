@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 11:06 PM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 class QueryObjectBuilderTest extends CodeFileTestCase
 {
@@ -20,26 +13,32 @@ class QueryObjectBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaManager\CodeGenerator\QueryObjectBuilder
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarField
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addObjectField
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addListArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addInputObjectArgument
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::getUpperCamelCase
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::build
      */
     public function testBuildQueryObject()
     {
         $objectName = 'Test';
         $objectBuilder = new QueryObjectBuilder(static::getGeneratedFilesDir(), $objectName);
         $className = $objectName . 'QueryObject';
-        $traitName = $objectName . 'Trait';
-        $objectBuilder->addScalarProperty('property_one');
-        $objectBuilder->addScalarProperty('propertyTwo');
-        $objectBuilder->addObjectProperty('other_objects', 'OtherObject');
+        $objectBuilder->addScalarField('property_one');
+        $objectBuilder->addScalarField('propertyTwo');
+        $objectBuilder->addScalarField('propertyWithoutSetter');
+        $objectBuilder->addObjectField('other_objects', 'OtherObject');
+        $objectBuilder->addScalarArgument('property_one');
+        $objectBuilder->addScalarArgument('propertyTwo');
+        $objectBuilder->addListArgument('propertyTwos', 'PropertyTwo');
+        $objectBuilder->addInputObjectArgument('filterBy', '_TestFilter');
         $objectBuilder->build();
 
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/$className.php",
             static::getGeneratedFilesDir() . "/$className.php"
-        );
-        $this->assertFileEquals(
-            static::getExpectedFilesDir() . "/$traitName.php",
-            static::getGeneratedFilesDir() . "/$traitName.php"
         );
     }
 }

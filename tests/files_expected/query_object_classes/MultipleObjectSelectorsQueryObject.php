@@ -4,8 +4,6 @@ namespace GraphQL\SchemaObject;
 
 class MultipleObjectSelectorsQueryObject extends QueryObject
 {
-    use MultipleObjectSelectorsTrait;
-
     const OBJECT_NAME = 'MultipleObjectSelectors';
 
     public function selectRightObjects()

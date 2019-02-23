@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/10/19
- * Time: 12:51 AM
- */
 
 namespace GraphQL\Util;
 
@@ -62,5 +56,27 @@ class StringLiteralFormatter
         }
 
         return (string) $value;
+    }
+
+    /**
+     * @param array $array
+     *
+     * @return string
+     */
+    public static function formatArrayForGQLQuery(array $array)
+    {
+        $arrString = '[';
+        $first = true;
+        foreach ($array as $element) {
+            if ($first) {
+                $first = false;
+            } else {
+                $arrString .= ', ';
+            }
+            $arrString .= StringLiteralFormatter::formatLiteralForGQLQuery($element);
+        }
+        $arrString .= ']';
+
+        return $arrString;
     }
 }

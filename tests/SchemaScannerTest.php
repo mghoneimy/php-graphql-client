@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\SchemaScanner;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 4:19 PM
- */
+use GraphQL\SchemaGenerator\SchemaScanner;
 
 class SchemaScannerTest extends CodeFileTestCase
 {
@@ -20,32 +13,32 @@ class SchemaScannerTest extends CodeFileTestCase
     }
 
     /**
-     * @covers SchemaScanner::setWriteDir
-     * @covers SchemaScanner::getWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::setWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::getWriteDir
      */
     public function testSetWriteDirectory()
     {
-        $this->assertStringEndsWith('/graphql-client/schema_object', SchemaScanner::getWriteDir());
+        $schemaScanner = new SchemaScanner();
+        $this->assertStringEndsWith('/graphql-client/schema_object', $schemaScanner->getWriteDir());
     }
 
     /**
-     * @param array $schemaTypes
-     * @param       $expectedFileNames
+     * @param array  $schemaTypes
+     * @param string $expectedFileName
      *
      * @dataProvider schemaStringProvider
      * 
-     * @covers \GraphQL\SchemaManager\SchemaScanner::generateSchemaObjects 
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::generateSchemaObjects
      */
-    public function testSchemaTypesReading(array $schemaTypes, array $expectedFileNames)
+    public function testSchemaTypesReading(array $schemaTypes, $expectedFileName)
     {
-        SchemaScanner::generateSchemaObjects($schemaTypes, static::getGeneratedFilesDir());
+        $schemaScanner = new SchemaScanner();
+        $schemaScanner->generateSchemaObjects($schemaTypes, static::getGeneratedFilesDir());
 
-        foreach ($expectedFileNames as $fileName) {
-            $this->assertFileEquals(
-                static::getExpectedFilesDir() . "/$fileName.php",
-                static::getGeneratedFilesDir() . "/$fileName.php"
-            );
-        }
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$expectedFileName.php",
+            static::getGeneratedFilesDir() . "/$expectedFileName.php"
+        );
     }
 
     /**
@@ -56,79 +49,154 @@ class SchemaScannerTest extends CodeFileTestCase
         $simpleObjectSchema = [
             [
                 'name' => 'SimpleObject',
-                'kind' => 'OBJECT',
-                'description' => 'some description',
-                'fields' =>[
+                'description' => '',
+                'type' => [
+                    'name' => null,
+                    'kind' => 'LIST',
+                    'ofType' => [
+                        'name' => 'SimpleObject',
+                        'kind' => 'OBJECT',
+                        'description' => 'some description',
+                        'fields' =>[
+                            [
+                                'name' => '_id',
+                                'description' => 'object id',
+                                'type' => [
+                                    'name' => 'Long',
+                                    'kind' => 'SCALAR',
+                                    'ofType' => null
+                                ]
+                            ], [
+                                'name' => 'name',
+                                'description' => 'name of object',
+                                'type' => [
+                                    'name' => 'String',
+                                    'kind' => 'SCALAR',
+                                    'ofType' => null
+                                ]
+                            ], [
+                                'name' => 'creation_date',
+                                'description' => 'object creation date',
+                                'type' => [
+                                    'name' => 'String',
+                                    'kind' => 'SCALAR',
+                                    'ofType' => null
+                                ]
+                            ]
+                        ],
+                    ],
+                ],
+                'args' => [
                     [
                         'name' => '_id',
-                        'description' => 'object id',
+                        'description' => '',
                         'type' => [
-                            'name' => 'Long',
+                            'name' => 'LONG',
+                            'description' => 'Long type',
                             'kind' => 'SCALAR',
-                            'ofType' => null
+                            'inputFields' => null,
+                            'ofType' => null,
                         ]
-                    ], [
+                    ],
+                    [
                         'name' => 'name',
-                        'description' => 'name of object',
+                        'description' => '',
                         'type' => [
                             'name' => 'String',
+                            'description' => 'Built-in String',
                             'kind' => 'SCALAR',
-                            'ofType' => null
+                            'inputFields' => null,
+                            'ofType' => null,
                         ]
-                    ], [
+                    ],
+                    [
                         'name' => 'creation_date',
-                        'description' => 'object creation date',
+                        'description' => '',
                         'type' => [
                             'name' => 'String',
+                            'description' => 'Built-in String',
                             'kind' => 'SCALAR',
-                            'ofType' => null
+                            'inputFields' => null,
+                            'ofType' => null,
                         ]
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         
         $complexObjectSchema = [
             [
                 'name' => 'ComplexObject',
-                'kind' => 'OBJECT',
-                'description' => 'another description',
-                'fields' =>[
+                'description' => '',
+                'type' => [
+                    'name' => null,
+                    'kind' => 'LIST',
+                    'ofType' => [
+                        'name' => 'ComplexObject',
+                        'kind' => 'OBJECT',
+                        'description' => 'some description',
+                        'fields' =>[
+                            [
+                                'name' => '_id',
+                                'description' => 'object id',
+                                'type' => [
+                                    'name' => 'Long',
+                                    'kind' => 'SCALAR',
+                                    'ofType' => null
+                                ]
+                            ], [
+                                'name' => 'simples',
+                                'description' => 'related simple objects',
+                                'type' => [
+                                    'name' => null,
+                                    'kind' => 'LIST',
+                                    'ofType' => [
+                                        'name' => 'SimpleObject',
+                                        'kind' => 'OBJECT'
+                                    ]
+                                ]
+                            ], [
+                                'name' => 'creation_date',
+                                'description' => 'object creation date',
+                                'type' => [
+                                    'name' => 'String',
+                                    'kind' => 'SCALAR',
+                                    'ofType' => null
+                                ]
+                            ]
+                        ],
+                    ],
+                ],
+                'args' => [
                     [
                         'name' => '_id',
-                        'description' => 'complex object id',
+                        'description' => '',
                         'type' => [
-                            'name' => 'Long',
+                            'name' => 'LONG',
+                            'description' => 'Long type',
                             'kind' => 'SCALAR',
-                            'ofType' => null
+                            'inputFields' => null,
+                            'ofType' => null,
                         ]
-                    ], [
-                        'name' => 'simples',
-                        'description' => 'related simple objects',
-                        'type' => [
-                            'name' => null,
-                            'kind' => 'LIST',
-                            'ofType' => [
-                                'name' => 'SimpleObject',
-                                'kind' => 'OBJECT'
-                            ]
-                        ]
-                    ], [
+                    ],
+                    [
                         'name' => 'creation_date',
-                        'description' => 'complex object creation date',
+                        'description' => '',
                         'type' => [
                             'name' => 'String',
+                            'description' => 'Built-in String',
                             'kind' => 'SCALAR',
-                            'ofType' => null
+                            'inputFields' => null,
+                            'ofType' => null,
                         ]
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         return [
-            'SimpleObjectCase' => [$simpleObjectSchema, ['SimpleObjectTrait', 'SimpleObjectQueryObject']],
-            'ComplexObjectCase' => [$complexObjectSchema, ['ComplexObjectTrait', 'ComplexObjectQueryObject']],
+            'SimpleObjectCase' => [$simpleObjectSchema, 'SimpleObjectQueryObject'],
+            'ComplexObjectCase' => [$complexObjectSchema, 'ComplexObjectQueryObject'],
         ];
     }
 }
