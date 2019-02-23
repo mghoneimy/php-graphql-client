@@ -13,9 +13,46 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
+     * @covers QueryObjectClassBuilder::addProperty
+     */
+    public function testAddProperty()
+    {
+        $objectName = 'WithProperty';
+        $traitBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $traitBuilder->addProperty('property');
+        $traitBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddProperty
+     *
+     * @covers QueryObjectClassBuilder::addProperty
+     */
+    public function testAddProperties()
+    {
+        $objectName = 'WithMultipleProperties';
+        $traitBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $traitBuilder->addProperty('first_property');
+        $traitBuilder->addProperty('secondProperty');
+        $traitBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
      * @covers QueryObjectClassBuilder::addSimpleSetter
      */
-    public function testAddPropertySetter()
+    public function testAddSimplePropertySetter()
     {
         $objectName = 'WithSetter';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
@@ -30,17 +67,91 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @depends testAddPropertySetter
+     * @depends testAddSimplePropertySetter
      *
      * @covers QueryObjectClassBuilder::addSimpleSetter
      */
-    public function testAddMultiplePropertySetters()
+    public function testAddMultipleSimplePropertySetters()
     {
         $objectName = 'WithMultipleSetters';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
         $objectName .= 'QueryObject';
         $classBuilder->addSimpleSetter('last_name', 'LastName');
         $classBuilder->addSimpleSetter('first_name', 'FirstName');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers QueryObjectClassBuilder::addListSetter
+     */
+    public function testAddListSetter()
+    {
+        $objectName = 'ListSetter';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addListSetter('names', 'Names', 'String');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddListSetter
+     *
+     * @covers QueryObjectClassBuilder::addListSetter
+     */
+    public function testAddMultipleListSetters()
+    {
+        $objectName = 'MultipleListSetters';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addListSetter('last_names', 'LastNames', 'String');
+        $classBuilder->addListSetter('firstNames', 'FirstNames', 'String');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers QueryObjectClassBuilder::addInputObjectSetter
+     */
+    public function testAddInputObjectSetter()
+    {
+        $objectName = 'InputObjectSetter';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addInputObjectSetter('filterBy', 'FilterBy', '_TestFilter');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddInputObjectSetter
+     *
+     * @covers QueryObjectClassBuilder::addInputObjectSetter
+     */
+    public function testAddMultipleObjectSetters()
+    {
+        $objectName = 'MultipleInputObjectSetters';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addInputObjectSetter('filter_one_by', 'FilterOneBy', '_TestFilterOne');
+        $classBuilder->addInputObjectSetter('filterAllBy', 'FilterAllBy', '_TestFilterAll');
         $classBuilder->build();
 
         $this->assertFileEquals(
