@@ -5,6 +5,9 @@ use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class QueryTest
+ */
 class QueryTest extends TestCase
 {
     /**
@@ -82,6 +85,7 @@ Object {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -108,6 +112,7 @@ Object(arg1: \"value\") {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -130,9 +135,10 @@ Object(arg1: 23) {
 
     /**
      * @depends clone testEmptyArguments
-     *
+
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -158,6 +164,7 @@ Object(arg1: true) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
      *
      * @param  Query $query
      *
@@ -237,7 +244,6 @@ Object(arg1: \"val1\" arg2: 2 arg3: true) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      */

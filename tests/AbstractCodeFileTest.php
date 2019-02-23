@@ -38,8 +38,8 @@ class AbstractCodeFileTest extends CodeFileTestCase
     /**
      * @testdox Test the behavior of the constructor when provided with an invalid directory
      *
-     * @covers AbstractCodeFile::__construct()
-     * @covers AbstractCodeFile::validateDirectory
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::__construct()
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::validateDirectory
      */
     public function testInvalidWriteDirInConstructor()
     {
@@ -54,8 +54,8 @@ class AbstractCodeFileTest extends CodeFileTestCase
     /**
      * @testdox Test the behavior of the constructor when provided with a non-writable directory
      *
-     * @covers AbstractCodeFile::__construct()
-     * @covers AbstractCodeFile::validateDirectory
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::__construct()
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::validateDirectory
      */
     public function testUnwritableDirInConstructor()
     {
@@ -76,8 +76,8 @@ class AbstractCodeFileTest extends CodeFileTestCase
      *
      * @testdox Test the behavior of changeWriteDir method when provided with an invalid directory
      *
-     * @covers AbstractCodeFile::changeWriteDir
-     * @covers AbstractCodeFile::validateDirectory
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::changeWriteDir
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::validateDirectory
      */
     public function testInvalidWriteDir()
     {
@@ -90,8 +90,8 @@ class AbstractCodeFileTest extends CodeFileTestCase
      *
      * @testdox Test the behavior of changeWriteDir method when provided with a non-writable directory
      *
-     * @covers AbstractCodeFile::changeWriteDir
-     * @covers AbstractCodeFile::validateDirectory
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::changeWriteDir
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::validateDirectory
      */
     public function testUnwritableDir()
     {
@@ -104,8 +104,8 @@ class AbstractCodeFileTest extends CodeFileTestCase
     }
 
     /**
-     * @covers AbstractCodeFile::getWritePath
-     * @covers AbstractCodeFile::writeFileToPath
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::getWritePath
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::writeFileToPath
      */
     public function testWritePathGetter()
     {
@@ -115,9 +115,9 @@ class AbstractCodeFileTest extends CodeFileTestCase
     /**
      * @depends testWritePathGetter
      *
-     * @covers AbstractCodeFile::writeFile
-     * @covers AbstractCodeFile::writeFileToPath
-     * @covers AbstractCodeFile::generateFileContents
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::writeFile
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::writeFileToPath
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::generateFileContents
      */
     public function testFileWritingWorks()
     {
@@ -130,7 +130,7 @@ class AbstractCodeFileTest extends CodeFileTestCase
      *
      * @depends testFileWritingWorks
      *
-     * @covers  AbstractCodeFile::WriteFile
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile::WriteFile
      */
     public function testFileWritingWorksWithTrailingSlash()
     {

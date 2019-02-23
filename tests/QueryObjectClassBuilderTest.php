@@ -13,7 +13,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addProperty
      */
     public function testAddProperty()
     {
@@ -32,7 +32,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddProperty
      *
-     * @covers QueryObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addProperty
      */
     public function testAddProperties()
     {
@@ -50,7 +50,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addSimpleSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSetter
      */
     public function testAddSimplePropertySetter()
     {
@@ -69,7 +69,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddSimplePropertySetter
      *
-     * @covers QueryObjectClassBuilder::addSimpleSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSetter
      */
     public function testAddMultipleSimplePropertySetters()
     {
@@ -87,7 +87,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addListSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addListSetter
      */
     public function testAddListSetter()
     {
@@ -106,7 +106,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddListSetter
      *
-     * @covers QueryObjectClassBuilder::addListSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addListSetter
      */
     public function testAddMultipleListSetters()
     {
@@ -124,7 +124,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addInputObjectSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
      */
     public function testAddInputObjectSetter()
     {
@@ -143,7 +143,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddInputObjectSetter
      *
-     * @covers QueryObjectClassBuilder::addInputObjectSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
      */
     public function testAddMultipleObjectSetters()
     {
@@ -161,7 +161,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addSimpleSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSelector
      */
     public function testAddSimpleSelector()
     {
@@ -180,7 +180,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddSimpleSelector
      * 
-     * @covers QueryObjectClassBuilder::addSimpleSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSelector
      */
     public function testAddMultipleSimpleSelectors()
     {
@@ -198,7 +198,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addObjectSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addObjectSelector
      */
     public function testAddObjectSelector()
     {
@@ -217,7 +217,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddObjectSelector
      * 
-     * @covers QueryObjectClassBuilder::addObjectSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addObjectSelector
      */
     public function testAddMultipleObjectSelectors()
     {

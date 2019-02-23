@@ -13,8 +13,8 @@ class SchemaScannerTest extends CodeFileTestCase
     }
 
     /**
-     * @covers SchemaScanner::setWriteDir
-     * @covers SchemaScanner::getWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::setWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaScanner::getWriteDir
      */
     public function testSetWriteDirectory()
     {
