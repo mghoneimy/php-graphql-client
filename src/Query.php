@@ -136,6 +136,7 @@ class Query
                 // Convert PHP array to its array representation in graphql arguments
                 $value = StringLiteralFormatter::formatArrayForGQLQuery($value);
             }
+            // TODO: Handle cases where a non-string-convertible object is added to the arguments
             $constraintsString .= $name . ': ' . $value;
         }
         $constraintsString .= ')';
