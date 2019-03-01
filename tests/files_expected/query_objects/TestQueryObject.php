@@ -61,9 +61,9 @@ class TestQueryObject extends QueryObject
         return $this;
     }
 
-    public function setFilterBy(_TestFilter $testFilter)
+    public function setFilterBy(_TestFilterInputObject $testFilterInputObject)
     {
-        $this->filterBy = $testFilter;
+        $this->filterBy = $testFilterInputObject;
     
         return $this;
     }
