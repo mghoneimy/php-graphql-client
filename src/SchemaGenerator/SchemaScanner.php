@@ -80,6 +80,7 @@ class SchemaScanner
                     kind
                     ofType{
                       name
+                      description
                       kind
                       ofType {
                         name
@@ -155,7 +156,7 @@ class SchemaScanner
 
             // Get query object args
             foreach ($arguments as $argument) {
-                $this->generateObjectArguments($queryObjectBuilder, $argument);
+                $this->generateObjectArguments($queryObjectBuilder, $argument, $writeDir);
             }
 
 		    $queryObjectBuilder->build();
@@ -184,8 +185,9 @@ class SchemaScanner
     /**
      * @param QueryObjectBuilder $queryObjectBuilder
      * @param array              $argumentArray
+     * @param string             $writeDir
      */
-    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray)
+    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray, $writeDir = '')
     {
         $argName = $argumentArray['name'];
         $argDescription = $argumentArray['description'];
@@ -202,7 +204,7 @@ class SchemaScanner
             $queryObjectBuilder->addInputObjectArgument($argName, $argTypeName . 'InputObject');
 
             // Generate input object class
-            $this->generateInputObject($argTypeName, $argType['inputFields']);
+            $this->generateInputObject($argTypeName, $argType['inputFields'], $writeDir);
         } elseif ($argKind === 'LIST') {
             // Get type wrapped by list
             $wrappedType = $argType['ofType'];
@@ -213,7 +215,7 @@ class SchemaScanner
 
             // Handle generation of ENUM object if needed
             if ($wrappedTypeKind === 'ENUM') {
-                $this->generateEnumObject($wrappedTypeName, $wrappedType['enumValues']);
+                $this->generateEnumObject($wrappedTypeName, $wrappedType['enumValues'], $writeDir);
             }
         }
     }
@@ -221,10 +223,13 @@ class SchemaScanner
     /**
      * @param string $objectName
      * @param array  $fieldsList
+     * @param string $writeDir
      */
-    private function generateInputObject($objectName, array $fieldsList)
+    private function generateInputObject($objectName, array $fieldsList, $writeDir = '')
     {
-        $inputObjectBuilder = new InputObjectClassBuilder($this->getWriteDir(), $objectName);
+        if (empty($writeDir)) $writeDir = $this->getWriteDir();
+
+        $inputObjectBuilder = new InputObjectClassBuilder($writeDir, $objectName);
         foreach ($fieldsList as $field) {
             $fieldName = $field['name'];
             $fieldDescription = $field['description'];
@@ -249,10 +254,13 @@ class SchemaScanner
     /**
      * @param string $objectName
      * @param array  $values
+     * @param string $writeDir
      */
-    private function generateEnumObject($objectName, array $values)
+    private function generateEnumObject($objectName, array $values, $writeDir = '')
     {
-        $enumBuilder = new EnumObjectBuilder($this->getWriteDir(), $objectName);
+        if (empty($writeDir)) $writeDir = $this->getWriteDir();
+
+        $enumBuilder = new EnumObjectBuilder($writeDir, $objectName);
         foreach ($values as $value) {
             $valueName = $value['name'];
             $valueDescripion = $value['description'];

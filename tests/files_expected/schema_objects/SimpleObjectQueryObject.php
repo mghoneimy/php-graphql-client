@@ -7,7 +7,9 @@ class SimpleObjectQueryObject extends QueryObject
     const OBJECT_NAME = 'SimpleObject';
 
     protected $_id;
+    protected $_ids;
     protected $name;
+    protected $names;
     protected $creation_date;
 
     public function selectId()
@@ -38,9 +40,23 @@ class SimpleObjectQueryObject extends QueryObject
         return $this;
     }
 
+    public function setIds(array $ids)
+    {
+        $this->_ids = $ids;
+    
+        return $this;
+    }
+
     public function setName($name)
     {
         $this->name = $name;
+    
+        return $this;
+    }
+
+    public function setNames(array $names)
+    {
+        $this->names = $names;
     
         return $this;
     }
