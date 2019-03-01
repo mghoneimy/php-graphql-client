@@ -12,8 +12,9 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
         return parent::getExpectedFilesDir() . '/query_object_classes';
     }
 
+    // TODO: Move the first six tests to ObjectClassBuilderTest
     /**
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
      */
     public function testAddProperty()
     {
@@ -32,7 +33,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddProperty
      *
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
      */
     public function testAddProperties()
     {
@@ -50,7 +51,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addSimpleSetter
      */
     public function testAddSimplePropertySetter()
     {
@@ -69,7 +70,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddSimplePropertySetter
      *
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addSimpleSetter
      */
     public function testAddMultipleSimplePropertySetters()
     {
@@ -87,7 +88,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addListSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddListSetter()
     {
@@ -106,7 +107,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddListSetter
      *
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addListSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddMultipleListSetters()
     {
