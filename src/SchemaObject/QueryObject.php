@@ -92,7 +92,7 @@ abstract class QueryObject
 
             // Handle input objects before adding them to the arguments list
             if ($value instanceof InputObject) {
-                $value = $value->getRawObject();
+                $value = $value->toRawObject();
             }
 
             $this->arguments[$name] = $value;

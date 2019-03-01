@@ -50,7 +50,7 @@ abstract class InputObject
     /**
      * @return RawObject
      */
-    public function getRawObject()
+    public function toRawObject()
     {
         return new RawObject((string) $this);
     }
