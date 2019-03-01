@@ -22,7 +22,7 @@ class RawObject
     public function __construct($objectString)
     {
         if (!is_string($objectString) || empty($objectString)) {
-            throw new \Exception('JsonObject should only be constructed with string parameter');
+            throw new \Exception('RawObject should only be constructed with string parameter');
         }
         $this->objectString = $objectString;
     }
