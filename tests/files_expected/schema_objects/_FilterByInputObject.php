@@ -9,6 +9,7 @@ class _FilterByInputObject extends InputObject
     protected $name_not;
     protected $name_in;
     protected $name_not_in;
+    protected $siblings;
 
     public function setName($name)
     {
@@ -41,6 +42,13 @@ class _FilterByInputObject extends InputObject
     public function setNameNotIn(array $nameNotIn)
     {
         $this->name_not_in = $nameNotIn;
+    
+        return $this;
+    }
+
+    public function setSiblings(_FilterByInputObject $filterByInputObject)
+    {
+        $this->siblings = $filterByInputObject;
     
         return $this;
     }

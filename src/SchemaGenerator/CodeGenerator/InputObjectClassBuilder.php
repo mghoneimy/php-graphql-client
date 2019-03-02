@@ -48,6 +48,18 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     }
 
     /**
+     * @param $argumentName
+     * @param $typeName
+     */
+    public function addInputObjectValue($argumentName, $typeName)
+    {
+        $typeName .= 'InputObject';
+        $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
+        $this->addProperty($argumentName);
+        $this->addInputObjectSetter($argumentName, $upperCamelCaseArg, $typeName);
+    }
+
+    /**
      * @return void
      */
     public function build()
