@@ -52,6 +52,7 @@ class QueryObjectBuilder implements ObjectBuilderInterface
      */
     public function addInputObjectArgument($argumentName, $typeName)
     {
+        $typeName .= 'InputObject';
         $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
         $this->classBuilder->addProperty($argumentName);
         $this->classBuilder->addInputObjectSetter($argumentName, $upperCamelCaseArg, $typeName);

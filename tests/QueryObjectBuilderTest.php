@@ -33,7 +33,7 @@ class QueryObjectBuilderTest extends CodeFileTestCase
         $objectBuilder->addScalarArgument('property_one');
         $objectBuilder->addScalarArgument('propertyTwo');
         $objectBuilder->addListArgument('propertyTwos', 'PropertyTwo');
-        $objectBuilder->addInputObjectArgument('filterBy', '_TestFilterInputObject');
+        $objectBuilder->addInputObjectArgument('filterBy', '_TestFilter');
         $objectBuilder->build();
 
         $this->assertFileEquals(

@@ -201,7 +201,7 @@ class SchemaScanner
         } elseif ($argKind === 'INPUT_OBJECT') {
             $argTypeName = $argType['name'];
             $argTypeDescription = $argType['description'];
-            $queryObjectBuilder->addInputObjectArgument($argName, $argTypeName . 'InputObject');
+            $queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
 
             // Generate input object class
             $this->generateInputObject($argTypeName, $argType['inputFields'], $writeDir);
@@ -237,6 +237,9 @@ class SchemaScanner
             switch ($fieldType['kind']) {
                 case 'SCALAR':
                     $inputObjectBuilder->addScalarValue($fieldName);
+                    break;
+                case 'INPUT_OBJECT':
+                    $inputObjectBuilder->addInputObjectValue($fieldName, $fieldType['name']);
                     break;
                 case 'LIST':
                     // Get wrapped object type
