@@ -280,7 +280,7 @@ class SchemaScanner
         if ($this->writeDir !== '') return;
 
         $currentDir = dirname(__FILE__);
-        while (basename($currentDir) !== 'graphql-client') {
+        while (basename($currentDir) !== 'php-graphql-client') {
             $currentDir = dirname($currentDir);
         }
 
