@@ -137,10 +137,10 @@ with, without having to write queries or worry about typos or about GraphQL synt
 
 For instance, creating a GraphQL query can be something as simple as this:
 ```
-$object = (new TestQueryObject())
-    ->setFilterBy(
+$object = new TestQueryObject();
+$object->setFilterBy(
     	(new _TestFilterInputObject())
-    		->setIds([1, 2, 3])
+    	    ->setIds([1, 2, 3])
     )
     ->setPropertyOne('val')
     ->selectPropertyOne()
