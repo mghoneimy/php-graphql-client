@@ -19,7 +19,7 @@ class SchemaScannerTest extends CodeFileTestCase
     public function testSetWriteDirectory()
     {
         $schemaScanner = new SchemaScanner();
-        $this->assertStringEndsWith('/graphql-client/schema_object', $schemaScanner->getWriteDir());
+        $this->assertStringEndsWith('/php-graphql-client/schema_object', $schemaScanner->getWriteDir());
     }
 
     /**
