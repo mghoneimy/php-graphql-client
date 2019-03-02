@@ -1,12 +1,119 @@
 # php-graphql-client
-A GraphQL client written in PHP that generates schema objects based on the types being dealt with using the
-introspection feature in GraphQL API's. The package also provides a very simple, yet powerful, query generator class
-which makes writing GraphQL queries a very simple process.
+A GraphQL client written in PHP that provides a very simple, yet powerful, query generator class which makes writing
+GraphQL queries a very simple process. The package also generates schema objects that can be used to generate queries
+based on the types declared in the API schema using the introspection feature in GraphQL.
 
-# Query Example
+# Query Example: Simple Query
 ```
 $gql = (new Query('Company'))
-    ->setArguments(['filter' => '{name_contains: "XD"}', 'first' => 3])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This simple query will retrieve all companies displaying their names and serial numbers.
+
+# Query Example: Nested Queries
+```
+$gql = (new Query('Company'))
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber',
+            (new Query('branches'))
+                ->setSelectionSet(
+                    [
+                        'address',
+                        (new Query('contracts'))
+                            ->setSelectionSet(['date'])
+                    ]
+                )
+        ]
+    );
+```
+This query is a more complex one, retrieving not just scalar fields, but object fields as well. This query returns all
+companies, displaying their names, serial numbers, and for each company, all its branches, displaying the branch address,
+and for each address, it retrieves all contracts bound to this address, displaying their dates.
+
+# Query Example: Query With Arguments
+```
+$gql = (new Query('Company'))
+    ->setArguments(['name' => 'Tech Co.', 'first' => 3])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This query does not retrieve all companies by adding arguments. This query will retrieve the first 3 companies with the
+name "Tech Co.", displaying their names and serial numbers. 
+
+# Query Example: Query With Array Argument
+```
+$gql = (new Query('Company'))
+    ->setArguments(['serialNumbers' => [159, 260, 371]])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This query is a special case of the arguments query. In this example, the query will retrieve only the companies with
+serial number in one of 159, 260, and 371, displaying the name and serial number.
+
+# Query Example: Query With Input Object Argument
+```
+$gql = (new Query('Company'))
+    ->setArguments(['filter' => new RawObject('{name_starts_with: "Face"}')])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This query is another special case of the arguments query. In this example, we're setting a custom input object "filter"
+with some values to limit the companies being returned. We're setting the filter "name_starts_with" with value "Face".
+This query will retrieve only the companies whose names start with the phrase "Face".
+
+The RawObject class being constructed is used for injecting the string into the query as it is. Whatever string is input
+into the RawObject constructor will be put in the query as it is without any custom formatting normally done by the
+query class.
+
+# Constructing The Client
+A Client object can easily be instantiated by providing the GraphQL endpoint URL. The Client constructor also receives
+an optional "authorizationHeaders" array, which can be used to add authorization headers to all requests being sent to
+the GraphQL server.
+
+Example:
+```
+$client = new Client(
+    'http://api.graphql.com',
+    ['Authorization' => 'Basic xyz']
+);
+```
+
+# Running Queries:
+
+Running query with the GraphQL client and getting the results in object structure:
+```
+$results = $client->runQuery($gql);
+$results->getData()->Company[0]->branches;
+```
+Or getting results in array structure:
+```
+$results = $client->runQuery($gql, true);
+$results->getData()['Company'][1]['branches']['address']
+```
+
+# Complex Query Examples
+```
+$gql = (new Query('Company'))
+    ->setArguments(['name' => 'XYZ', 'first' => 3])
     ->setSelectionSet(
         [
             'name',
@@ -22,16 +129,6 @@ $gql = (new Query('Company'))
                 )
         ]
     );
-```
-Running query with the GraphQL client and getting the results in object structure:
-```
-$results = $client->runQuery($gql);
-$results->getData()->Company[0]->branches;
-```
-Or getting results in array structure:
-```
-$results = $client->runQuery($gql, true);
-$results->getData()['Company'][1]['branches']['address']
 ```
 
 # Generating The Schema Objects (Beta)
