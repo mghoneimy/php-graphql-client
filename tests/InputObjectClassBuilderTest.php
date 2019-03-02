@@ -90,6 +90,41 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addInputObjectValue
+     */
+    public function testAddInputObjectValue()
+    {
+        $objectName = 'WithInputObjectValue';
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'InputObject';
+        $classBuilder->addInputObjectValue('inputObject', 'WithListValue');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addInputObjectValue
+     */
+    public function testAddMultipleInputObjectValues()
+    {
+        $objectName = 'WithMultipleInputObjectValues';
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'InputObject';
+        $classBuilder->addInputObjectValue('inputObject', 'WithListValue');
+        $classBuilder->addInputObjectValue('inputObjectTwo', '_TestFilter');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
      */
     public function testInputObjectIntegration()
@@ -100,6 +135,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
         $classBuilder->addScalarValue('first_name');
         $classBuilder->addScalarValue('lastName');
         $classBuilder->addListValue('ids', '');
+        $classBuilder->addInputObjectValue('testFilter', '_TestFilter');
         $classBuilder->build();
 
         $this->assertFileEquals(

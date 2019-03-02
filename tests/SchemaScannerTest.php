@@ -430,6 +430,15 @@ class SchemaScannerTest extends CodeFileTestCase
                                             ]
                                         ],
                                     ]
+                                ], [
+                                    'name' => 'siblings',
+                                    'description' => '',
+                                    'type' => [
+                                        'name' => $inputObjectName,
+                                        'description' => '',
+                                        'kind' => 'INPUT_OBJECT',
+                                        'ofType' => null
+                                    ],
                                 ]
                             ]
                         ],
