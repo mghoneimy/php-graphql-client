@@ -41,6 +41,7 @@ class InputObjectTest extends TestCase
 
     /**
      * @covers \GraphQL\SchemaObject\InputObject::toRawObject
+     * @covers \GraphQL\SchemaObject\InputObject::__toString
      */
     public function testSetInputValues()
     {
