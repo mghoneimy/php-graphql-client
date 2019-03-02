@@ -1,7 +1,20 @@
 #!/usr/bin/env php5.6
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+$autoLoadFiles = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
+
+// Require autoload.php depending on environment
+$autoLoadFound = false;
+foreach ($autoLoadFiles as $autoLoadFile) {
+	if (file_exists($autoLoadFile)) {
+		require $autoLoadFile;
+		$autoLoadFound = true;
+	}
+}
+// Exit if autoload.php is not required
+if (!$autoLoadFound) {
+	throw new RuntimeException('Could not find vendor/autoload.php');
+}
 
 use GraphQL\SchemaGenerator\SchemaScanner;
 
