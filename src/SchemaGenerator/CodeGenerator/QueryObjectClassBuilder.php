@@ -1,27 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/19/19
- * Time: 1:46 PM
- */
 
-namespace GraphQL\SchemaManager\CodeGenerator;
+namespace GraphQL\SchemaGenerator\CodeGenerator;
 
-use GraphQL\SchemaManager\CodeGenerator\CodeFile\ClassFile;
+use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 
 /**
  * Class QueryObjectClassBuilder
  *
  * @package GraphQL\SchemaManager\CodeGenerator
  */
-class QueryObjectClassBuilder
+class QueryObjectClassBuilder extends ObjectClassBuilder
 {
-    /**
-     * @var ClassFile
-     */
-    protected $classFile;
-
     /**
      * QueryObjectClassBuilder constructor.
      *
@@ -31,23 +20,22 @@ class QueryObjectClassBuilder
     public function __construct($writeDir, $objectName)
     {
         $className = $objectName . 'QueryObject';
-        $traitName = $objectName . 'Trait';
 
         $this->classFile = new ClassFile($writeDir, $className);
         $this->classFile->setNamespace('GraphQL\\SchemaObject');
         $this->classFile->extendsClass('QueryObject');
-        $this->classFile->addTrait($traitName);
         $this->classFile->addConstant('OBJECT_NAME', $objectName);
     }
 
     /**
      * @param string $propertyName
      * @param string $upperCamelName
+     * @param string $objectClass
      */
-    public function addSetter($propertyName, $upperCamelName)
+    public function addInputObjectSetter($propertyName, $upperCamelName, $objectClass)
     {
-        $lowerCamelName = lcfirst($upperCamelName);
-        $method = "public function set$upperCamelName($$lowerCamelName)
+        $lowerCamelName = lcfirst(str_replace('_', '', $objectClass));
+        $method = "public function set$upperCamelName($objectClass $$lowerCamelName)
 {
     \$this->$propertyName = $$lowerCamelName;
 
@@ -74,11 +62,11 @@ class QueryObjectClassBuilder
     /**
      * @param string $fieldName
      * @param string $upperCamelName
-     * @param string $fieldClassType
+     * @param string $fieldTypeName
      */
-    public function addObjectSelector($fieldName, $upperCamelName, $fieldClassType)
+    public function addObjectSelector($fieldName, $upperCamelName, $fieldTypeName)
     {
-        $objectClassName = $fieldClassType . 'QueryObject';
+        $objectClassName = $fieldTypeName . 'QueryObject';
         $method = "public function select$upperCamelName()
 {
     \$object = new $objectClassName('$fieldName');

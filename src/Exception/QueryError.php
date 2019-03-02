@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 10/7/18
- * Time: 6:09 PM
- */
 
 namespace GraphQL\Exception;
 

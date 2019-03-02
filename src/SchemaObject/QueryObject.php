@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/18/19
- * Time: 12:47 AM
- */
 
 namespace GraphQL\SchemaObject;
 
@@ -47,16 +41,6 @@ abstract class QueryObject
      * @var array
      */
     private $arguments;
-
-    /**
-     * @var int
-     */
-    protected $first;
-
-    /**
-     * @var int
-     */
-    protected $offset;
 
     /**
      * SchemaObject constructor.
@@ -103,9 +87,15 @@ abstract class QueryObject
 	protected function constructArgumentsList()
     {
         foreach ($this as $name => $value) {
-            if (!is_array($value) && !is_object($value) && !empty($value) && $name !== 'nameAlias') {
-                $this->arguments[$name] = $value;
+            // TODO: Use annotations to avoid having to check on specific keys
+            if (empty($value) || in_array($name, ['nameAlias', 'selectionSet', 'arguments'])) continue;
+
+            // Handle input objects before adding them to the arguments list
+            if ($value instanceof InputObject) {
+                $value = $value->toRawObject();
             }
+
+            $this->arguments[$name] = $value;
         }
     }
 
@@ -126,29 +116,5 @@ abstract class QueryObject
     public function getQueryString()
     {
         return (string) $this->toQuery();
-    }
-
-    /**
-     * @param int $firstObjects
-     *
-     * @return $this
-     */
-    public function setFirst($firstObjects)
-    {
-        $this->first = $firstObjects;
-
-        return $this;
-    }
-
-    /**
-     * @param int $offsetObjects
-     *
-     * @return $this
-     */
-    public function setOffset($offsetObjects)
-    {
-        $this->offset = $offsetObjects;
-
-        return $this;
     }
 }

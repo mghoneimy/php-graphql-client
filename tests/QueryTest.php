@@ -3,15 +3,12 @@
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
+use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/27/19
- * Time: 11:11 PM
+ * Class QueryTest
  */
-
 class QueryTest extends TestCase
 {
     /**
@@ -89,6 +86,7 @@ Object {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -115,6 +113,7 @@ Object(arg1: \"value\") {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -137,9 +136,10 @@ Object(arg1: 23) {
 
     /**
      * @depends clone testEmptyArguments
-     *
+
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -151,6 +151,84 @@ Object(arg1: 23) {
         $this->assertEquals(
             "query {
 Object(arg1: true) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
+     *
+     * @param  Query $query
+     *
+     * @return Query
+     */
+    public function testArrayIntegerArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => [1, 2, 3]]);
+        $this->assertEquals(
+            "query {
+Object(arg1: [1, 2, 3]) {
+
+}
+}",
+            (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers  \GraphQL\Query::setArguments
+     * @covers  \GraphQL\Query::constructArguments
+     * @covers  \GraphQL\RawObject::__toString
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testJsonObjectArgumentValue(Query $query)
+    {
+        $query->setArguments(['obj' => new RawObject('{json_string_array: ["json value"]}')]);
+        $this->assertEquals(
+            "query {
+Object(obj: {json_string_array: [\"json value\"]}) {
+
+}
+}"
+            , (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
+     * @covers \GraphQL\Query::setArguments
+     * @covers \GraphQL\Query::constructArguments
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
+     *
+     * @param  Query $query
+     *
+     * @return Query
+     */
+    public function testArrayStringArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => ['one', 'two', 'three']]);
+        $this->assertEquals(
+            "query {
+Object(arg1: [\"one\", \"two\", \"three\"]) {
 
 }
 }",
@@ -193,12 +271,12 @@ Object(arg1: \"val1\" arg2: 2 arg3: true) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      */
     public function testStringWrappingWorks()
     {
+        // TODO: Remove this in v1.0 release
         $queryWrapped = new Query('Object');
         $queryWrapped->setArguments(['arg1' => '"val"']);
 

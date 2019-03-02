@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\QueryObjectClassBuilder;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/9/19
- * Time: 9:22 PM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 
 class QueryObjectClassBuilderTest extends CodeFileTestCase
 {
@@ -19,15 +12,53 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
         return parent::getExpectedFilesDir() . '/query_object_classes';
     }
 
+    // TODO: Move the first six tests to ObjectClassBuilderTest
     /**
-     * @covers QueryObjectClassBuilder::addSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
      */
-    public function testAddPropertySetter()
+    public function testAddProperty()
+    {
+        $objectName = 'WithProperty';
+        $traitBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $traitBuilder->addProperty('property');
+        $traitBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddProperty
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     */
+    public function testAddProperties()
+    {
+        $objectName = 'WithMultipleProperties';
+        $traitBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $traitBuilder->addProperty('first_property');
+        $traitBuilder->addProperty('secondProperty');
+        $traitBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addSimpleSetter
+     */
+    public function testAddSimplePropertySetter()
     {
         $objectName = 'WithSetter';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
         $objectName .= 'QueryObject';
-        $classBuilder->addSetter('name', 'Name');
+        $classBuilder->addSimpleSetter('name', 'Name');
         $classBuilder->build();
 
         $this->assertFileEquals(
@@ -37,17 +68,17 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @depends testAddPropertySetter
+     * @depends testAddSimplePropertySetter
      *
-     * @covers QueryObjectClassBuilder::addSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addSimpleSetter
      */
-    public function testAddMultiplePropertySetters()
+    public function testAddMultipleSimplePropertySetters()
     {
         $objectName = 'WithMultipleSetters';
         $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
         $objectName .= 'QueryObject';
-        $classBuilder->addSetter('last_name', 'LastName');
-        $classBuilder->addSetter('first_name', 'FirstName');
+        $classBuilder->addSimpleSetter('last_name', 'LastName');
+        $classBuilder->addSimpleSetter('first_name', 'FirstName');
         $classBuilder->build();
 
         $this->assertFileEquals(
@@ -57,7 +88,81 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addSimpleSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
+     */
+    public function testAddListSetter()
+    {
+        $objectName = 'ListSetter';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addListSetter('names', 'Names', 'String');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddListSetter
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
+     */
+    public function testAddMultipleListSetters()
+    {
+        $objectName = 'MultipleListSetters';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addListSetter('last_names', 'LastNames', 'String');
+        $classBuilder->addListSetter('firstNames', 'FirstNames', 'String');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
+     */
+    public function testAddInputObjectSetter()
+    {
+        $objectName = 'InputObjectSetter';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addInputObjectSetter('filterBy', 'FilterBy', '_TestFilter');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @depends testAddInputObjectSetter
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
+     */
+    public function testAddMultipleObjectSetters()
+    {
+        $objectName = 'MultipleInputObjectSetters';
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $objectName .= 'QueryObject';
+        $classBuilder->addInputObjectSetter('filter_one_by', 'FilterOneBy', '_TestFilterOne');
+        $classBuilder->addInputObjectSetter('filterAllBy', 'FilterAllBy', '_TestFilterAll');
+        $classBuilder->build();
+
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
+
+    /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSelector
      */
     public function testAddSimpleSelector()
     {
@@ -76,7 +181,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddSimpleSelector
      * 
-     * @covers QueryObjectClassBuilder::addSimpleSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addSimpleSelector
      */
     public function testAddMultipleSimpleSelectors()
     {
@@ -94,7 +199,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers QueryObjectClassBuilder::addObjectSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addObjectSelector
      */
     public function testAddObjectSelector()
     {
@@ -113,7 +218,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddObjectSelector
      * 
-     * @covers QueryObjectClassBuilder::addObjectSelector
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addObjectSelector
      */
     public function testAddMultipleObjectSelectors()
     {
