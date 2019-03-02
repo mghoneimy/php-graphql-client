@@ -2,16 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/2/19
- * Time: 6:18 PM
- */
-
-/**
- * Class CodeFileTestCase
- */
 abstract class CodeFileTestCase extends TestCase
 {
     /**

@@ -4,16 +4,10 @@ namespace GraphQL\SchemaObject;
 
 class ComplexObjectQueryObject extends QueryObject
 {
-    use ComplexObjectTrait;
-
     const OBJECT_NAME = 'ComplexObject';
 
-    public function setId($id)
-    {
-        $this->_id = $id;
-    
-        return $this;
-    }
+    protected $_id;
+    protected $creation_date;
 
     public function selectId()
     {
@@ -30,16 +24,23 @@ class ComplexObjectQueryObject extends QueryObject
         return $object;
     }
 
-    public function setCreationDate($creationDate)
+    public function selectCreationDate()
     {
-        $this->creation_date = $creationDate;
+        $this->selectField('creation_date');
     
         return $this;
     }
 
-    public function selectCreationDate()
+    public function setId($id)
     {
-        $this->selectField('creation_date');
+        $this->_id = $id;
+    
+        return $this;
+    }
+
+    public function setCreationDate($creationDate)
+    {
+        $this->creation_date = $creationDate;
     
         return $this;
     }

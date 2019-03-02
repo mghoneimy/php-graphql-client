@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/10/19
- * Time: 1:35 AM
- */
 
 namespace GraphQL\SchemaObject;
 

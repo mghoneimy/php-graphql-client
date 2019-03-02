@@ -1,18 +1,12 @@
 <?php
 
-include 'files_expected/query_objects/OtherObjectQueryObject.php';
-include 'files_expected/query_objects/TestTrait.php';
-include 'files_expected/query_objects/TestQueryObject.php';
+require_once 'files_expected/query_objects/OtherObjectQueryObject.php';
+require_once 'files_expected/query_objects/TestQueryObject.php';
+require_once 'files_expected/input_objects/_TestFilterInputObject.php';
 
+use GraphQL\SchemaObject\_TestFilterInputObject;
 use GraphQL\SchemaObject\TestQueryObject;
 use PHPUnit\Framework\TestCase;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 2/10/19
- * Time: 1:24 AM
- */
 
 class QueryObjectTest extends TestCase
 {
@@ -21,6 +15,9 @@ class QueryObjectTest extends TestCase
      */
     protected $queryObject;
 
+    /**
+     *
+     */
     public function setUp()
     {
         $this->queryObject = new TestQueryObject();
@@ -112,22 +109,35 @@ propertyTwo
             $this->queryObject->getQueryString()
         );
 
-        $this->queryObject->setFirst(5);
+        $this->queryObject->setPropertyTwos([1, 25, 87]);
         $this->assertEquals(
             'query {
-Test(property_one: "value" propertyTwo: true first: 5) {
+Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87]) {
 propertyTwo
 }
 }',
             $this->queryObject->getQueryString()
         );
 
-        $this->queryObject->selectOtherObjects()->selectName()->setFirst(2)->setOffset(10)->setName('some');
+        $this->queryObject->selectOtherObjects()->selectName()->setName('some');
         $this->assertEquals(
             'query {
-Test(property_one: "value" propertyTwo: true first: 5) {
+Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87]) {
 propertyTwo
-other_objects(name: "some" first: 2 offset: 10) {
+other_objects(name: "some") {
+name
+}
+}
+}',
+            $this->queryObject->getQueryString()
+        );
+
+        $this->queryObject->setFilterBy((new _TestFilterInputObject())->setFirstName('Nameyy')->setIds([1, 5, 8]));
+        $this->assertEquals(
+            'query {
+Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87] filterBy: {first_name: "Nameyy", ids: [1, 5, 8]}) {
+propertyTwo
+other_objects(name: "some") {
 name
 }
 }

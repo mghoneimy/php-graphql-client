@@ -3,7 +3,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use GraphQL\SchemaManager\SchemaScanner;
+use GraphQL\SchemaGenerator\SchemaScanner;
 
 $endpointUrl = readline('GraphlQL endpoint URL: ');
 
@@ -14,7 +14,8 @@ if (!empty($authHeaderName)) {
     $authHeaders = [$authHeaderName => $authHeaderValue];
 }
 
-$schemaTypes = SchemaScanner::getSchemaArrayTypes(
+$scanner = new SchemaScanner();
+$schemaTypes = $scanner->getSchemaTypesArray(
     $endpointUrl, $authHeaders
 );
 
@@ -23,12 +24,11 @@ if (empty($schemaTypes)) {
     exit;
 }
 
-
 print "-------------------------------------------\n";
 print "Generating schema objects from schema types\n";
 print "-------------------------------------------\n";
 
-SchemaScanner::generateSchemaObjects($schemaTypes);
+$scanner->generateSchemaObjects($schemaTypes);
 
 print "-------------------------------------------\n";
 print "Schema objects generation complete\n";

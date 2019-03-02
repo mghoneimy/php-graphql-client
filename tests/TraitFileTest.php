@@ -1,13 +1,6 @@
 <?php
 
-use GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile;
-
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/29/19
- * Time: 12:06 AM
- */
+use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile;
 
 class TraitFileTest extends CodeFileTestCase
 {
@@ -24,7 +17,7 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @throws Exception
      *                  
-     * @covers TraitFile::__construct
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::__construct
      */
     public function testEmptyTrait()
     {
@@ -40,8 +33,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::setNamespace
-     * @covers TraitFile::generateNamespace
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::setNamespace
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateNamespace
      */
     public function testTraitWithNamespace()
     {
@@ -58,8 +51,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::setNamespace
-     * @covers TraitFile::generateNamespace
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::setNamespace
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateNamespace
      */
     public function testTraitWithEmptyNamespace()
     {
@@ -76,8 +69,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::addImport
-     * @covers TraitFile::generateImports
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addImport
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateImports
      */
     public function testTraitWithImports()
     {
@@ -95,8 +88,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::addImport
-     * @covers TraitFile::generateImports
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addImport
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateImports
      */
     public function testTraitWithEmptyImport()
     {
@@ -135,8 +128,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::addProperty
-     * @covers TraitFile::generateProperties
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      */
     public function testTraitWithProperties()
     {
@@ -157,8 +150,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithProperties
      *
-     * @covers TraitFile::addProperty
-     * @covers TraitFile::generateProperties
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      */
     public function testTraitWithEmptyProperty()
     {
@@ -175,8 +168,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends clone testTraitWithProperties
      *
-     * @covers TraitFile::addProperty
-     * @covers TraitFile::generateProperties
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      */
     public function testTraitWithDuplicateProperties(TraitFile $trait)
     {
@@ -192,9 +185,9 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithProperties
      *
-     * @covers TraitFile::addProperty
-     * @covers TraitFile::generateProperties
-     * @covers TraitFile::serializeParameterValue
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::serializeParameterValue
      */
     public function testTraitWithPropertiesAndValues()
     {
@@ -217,8 +210,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *                        
-     * @covers TraitFile::addMethod
-     * @covers TraitFile::generateMethods
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addMethod
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateMethods
      */
     public function testTraitWithOneMethod()
     {
@@ -239,8 +232,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testTraitWithOneMethod
      *
-     * @covers TraitFile::addMethod
-     * @covers TraitFile::generateMethods
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addMethod
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateMethods
      */
     public function testTraitWithMultipleMethods()
     {
@@ -266,8 +259,8 @@ class TraitFileTest extends CodeFileTestCase
      *
      * @depends testEmptyTrait
      *
-     * @covers TraitFile::addMethod
-     * @covers TraitFile::generateMethods
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addMethod
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateMethods
      */
     public function testTraitWithEmptyMethod()
     {
@@ -285,7 +278,7 @@ class TraitFileTest extends CodeFileTestCase
      * @depends testTraitWithProperties
      * @depends testTraitWithMultipleMethods
      *
-     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithPropertiesAndMethods()
     {
@@ -313,7 +306,7 @@ class TraitFileTest extends CodeFileTestCase
      * @depends testTraitWithNamespaceAndImports
      * @depends testTraitWithPropertiesAndMethods
      *
-     * @covers \GraphQL\SchemaManager\CodeGenerator\CodeFile\TraitFile::generateFileContents
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateFileContents
      */
     public function testTraitWithEverything()
     {

@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mostafa
- * Date: 1/19/19
- * Time: 2:22 PM
- */
 
-namespace GraphQL\SchemaManager\CodeGenerator\CodeFile;
+namespace GraphQL\SchemaGenerator\CodeGenerator\CodeFile;
 
 /**
  * Class AbstractCodeFile
