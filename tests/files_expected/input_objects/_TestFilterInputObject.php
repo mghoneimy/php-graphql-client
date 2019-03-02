@@ -7,6 +7,7 @@ class _TestFilterInputObject extends InputObject
     protected $first_name;
     protected $lastName;
     protected $ids;
+    protected $testFilter;
 
     public function setFirstName($firstName)
     {
@@ -25,6 +26,13 @@ class _TestFilterInputObject extends InputObject
     public function setIds(array $ids)
     {
         $this->ids = $ids;
+    
+        return $this;
+    }
+
+    public function setTestFilter(_TestFilterInputObject $testFilterInputObject)
+    {
+        $this->testFilter = $testFilterInputObject;
     
         return $this;
     }

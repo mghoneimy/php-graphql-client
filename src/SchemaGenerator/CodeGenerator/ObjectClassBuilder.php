@@ -56,4 +56,21 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
 }";
         $this->classFile->addMethod($method);
     }
+
+    /**
+     * @param string $propertyName
+     * @param string $upperCamelName
+     * @param string $objectClass
+     */
+    public function addInputObjectSetter($propertyName, $upperCamelName, $objectClass)
+    {
+        $lowerCamelName = lcfirst(str_replace('_', '', $objectClass));
+        $method         = "public function set$upperCamelName($objectClass $$lowerCamelName)
+{
+    \$this->$propertyName = $$lowerCamelName;
+
+    return \$this;
+}";
+        $this->classFile->addMethod($method);
+    }
 }

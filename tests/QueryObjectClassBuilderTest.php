@@ -125,7 +125,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addInputObjectSetter
      */
     public function testAddInputObjectSetter()
     {
@@ -144,7 +144,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @depends testAddInputObjectSetter
      *
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::addInputObjectSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addInputObjectSetter
      */
     public function testAddMultipleObjectSetters()
     {
