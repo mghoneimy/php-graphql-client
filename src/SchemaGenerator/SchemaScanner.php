@@ -4,6 +4,8 @@ namespace GraphQL\SchemaGenerator;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
+use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
+use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 /**
@@ -76,6 +78,16 @@ class SchemaScanner
                     name
                     description
                     kind
+                    ofType{
+                      name
+                      description
+                      kind
+                      ofType {
+                        name
+                        description
+                        kind
+                      }
+                    }
                   }
                 }
                 ofType {
@@ -144,7 +156,7 @@ class SchemaScanner
 
             // Get query object args
             foreach ($arguments as $argument) {
-                $this->generateObjectArguments($queryObjectBuilder, $argument);
+                $this->generateObjectArguments($queryObjectBuilder, $argument, $writeDir);
             }
 
 		    $queryObjectBuilder->build();
@@ -173,8 +185,9 @@ class SchemaScanner
     /**
      * @param QueryObjectBuilder $queryObjectBuilder
      * @param array              $argumentArray
+     * @param string             $writeDir
      */
-    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray)
+    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray, $writeDir = '')
     {
         $argName = $argumentArray['name'];
         $argDescription = $argumentArray['description'];
@@ -188,14 +201,72 @@ class SchemaScanner
         } elseif ($argKind === 'INPUT_OBJECT') {
             $argTypeName = $argType['name'];
             $argTypeDescription = $argType['description'];
-            //$queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
+            $queryObjectBuilder->addInputObjectArgument($argName, $argTypeName . 'InputObject');
+
+            // Generate input object class
+            $this->generateInputObject($argTypeName, $argType['inputFields'], $writeDir);
         } elseif ($argKind === 'LIST') {
-            // Assume list of objects for now
-            $argType = $argType['ofType'];
-            $argTypeName = $argType['name'];
-            $argTypeDescription = $argType['description'];
-            $queryObjectBuilder->addListArgument($argName, $argTypeName);
+            // Get type wrapped by list
+            $wrappedType = $argType['ofType'];
+            $wrappedTypeName = $wrappedType['name'];
+            $wrappedTypeDescription = $wrappedType['description'];
+            $wrappedTypeKind = $wrappedType['kind'];
+            $queryObjectBuilder->addListArgument($argName, $wrappedTypeName);
+
+            // Handle generation of ENUM object if needed
+            if ($wrappedTypeKind === 'ENUM') {
+                $this->generateEnumObject($wrappedTypeName, $wrappedType['enumValues'], $writeDir);
+            }
         }
+    }
+
+    /**
+     * @param string $objectName
+     * @param array  $fieldsList
+     * @param string $writeDir
+     */
+    private function generateInputObject($objectName, array $fieldsList, $writeDir = '')
+    {
+        if (empty($writeDir)) $writeDir = $this->getWriteDir();
+
+        $inputObjectBuilder = new InputObjectClassBuilder($writeDir, $objectName);
+        foreach ($fieldsList as $field) {
+            $fieldName = $field['name'];
+            $fieldDescription = $field['description'];
+            $fieldType = $field['type'];
+            switch ($fieldType['kind']) {
+                case 'SCALAR':
+                    $inputObjectBuilder->addScalarValue($fieldName);
+                    break;
+                case 'LIST':
+                    // Get wrapped object type
+                    while (!in_array($fieldType['kind'], ['OBJECT', 'INPUT_OBJECT', 'SCALAR']))
+                        $fieldType = $fieldType['ofType'];
+                    $wrappedTypeName = $fieldType['name'];
+                    $wrappedTypeDescription = $fieldType['description'];
+                    $inputObjectBuilder->addListValue($fieldName, $wrappedTypeName);
+                    break;
+            }
+        }
+        $inputObjectBuilder->build();
+    }
+
+    /**
+     * @param string $objectName
+     * @param array  $values
+     * @param string $writeDir
+     */
+    private function generateEnumObject($objectName, array $values, $writeDir = '')
+    {
+        if (empty($writeDir)) $writeDir = $this->getWriteDir();
+
+        $enumBuilder = new EnumObjectBuilder($writeDir, $objectName);
+        foreach ($values as $value) {
+            $valueName = $value['name'];
+            $valueDescripion = $value['description'];
+            $enumBuilder->addEnumValue($valueName);
+        }
+        $enumBuilder->build();
     }
 
     /**

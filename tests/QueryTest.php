@@ -3,6 +3,7 @@
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
+use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -188,6 +189,32 @@ Object(arg1: [1, 2, 3]) {
     /**
      * @depends clone testEmptyArguments
      *
+     * @covers  \GraphQL\Query::setArguments
+     * @covers  \GraphQL\Query::constructArguments
+     * @covers  \GraphQL\RawObject::__toString
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testJsonObjectArgumentValue(Query $query)
+    {
+        $query->setArguments(['obj' => new RawObject('{json_string_array: ["json value"]}')]);
+        $this->assertEquals(
+            "query {
+Object(obj: {json_string_array: [\"json value\"]}) {
+
+}
+}"
+            , (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
@@ -249,6 +276,7 @@ Object(arg1: \"val1\" arg2: 2 arg3: true) {
      */
     public function testStringWrappingWorks()
     {
+        // TODO: Remove this in v1.0 release
         $queryWrapped = new Query('Object');
         $queryWrapped->setArguments(['arg1' => '"val"']);
 

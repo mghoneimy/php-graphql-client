@@ -88,9 +88,14 @@ abstract class QueryObject
     {
         foreach ($this as $name => $value) {
             // TODO: Use annotations to avoid having to check on specific keys
-            if (!is_object($value) && !empty($value) && !in_array($name, ['nameAlias', 'selectionSet', 'arguments'])) {
-                $this->arguments[$name] = $value;
+            if (empty($value) || in_array($name, ['nameAlias', 'selectionSet', 'arguments'])) continue;
+
+            // Handle input objects before adding them to the arguments list
+            if ($value instanceof InputObject) {
+                $value = $value->toRawObject();
             }
+
+            $this->arguments[$name] = $value;
         }
     }
 

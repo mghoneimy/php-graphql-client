@@ -7,7 +7,7 @@ namespace GraphQL\SchemaGenerator\CodeGenerator;
  *
  * @package GraphQL\SchemaManager\CodeGenerator
  */
-class QueryObjectBuilder
+class QueryObjectBuilder implements ObjectBuilderInterface
 {
     /**
      * @var QueryObjectClassBuilder
