@@ -53,7 +53,7 @@ class Query
      *
      * @param string $queryObject
      */
-    public function __construct($queryObject)
+    public function __construct(string $queryObject)
     {
         $this->object       = $queryObject;
         $this->arguments    = [];
@@ -70,7 +70,7 @@ class Query
      * @return Query
      * @throws ArgumentException
      */
-    public function setArguments(array $arguments)
+    public function setArguments(array $arguments): Query
     {
         // If one of the arguments does not have a name provided, throw an exception
         $nonStringArgs = array_filter(array_keys($arguments), function($element) {
@@ -91,13 +91,13 @@ class Query
      * @return Query
      * @throws InvalidSelectionException
      */
-    public function setSelectionSet(array $selectionSet)
+    public function setSelectionSet(array $selectionSet): Query
     {
         $nonStringsFields = array_filter($selectionSet, function($element) {
             return !is_string($element) && !$element instanceof Query;
         });
         if (!empty($nonStringsFields)) {
-            throw new InvalidSelectionException('One or more of the selection fields provided is not of type string ro Query');
+            throw new InvalidSelectionException('One or more of the selection fields provided is not of type string or Query');
         }
 
         $this->selectionSet = $selectionSet;
@@ -109,7 +109,7 @@ class Query
      * @return string
      * @throws \Exception
      */
-    protected function constructArguments()
+    protected function constructArguments(): string
     {
         // Return empty string if list is empty
         if (empty($this->arguments)) {
@@ -147,7 +147,7 @@ class Query
     /**
      * @return string
      */
-    protected function constructSelectionSet()
+    protected function constructSelectionSet(): string
     {
         $attributesString = '';
         $first            = true;

@@ -33,7 +33,7 @@ class Client
      * @param string $endpointUrl
      * @param array  $authorizationHeaders
      */
-    public function __construct($endpointUrl, $authorizationHeaders = [])
+    public function __construct(string $endpointUrl, array $authorizationHeaders = [])
     {
         $this->endpointUrl          = $endpointUrl;
         $this->authorizationHeaders = $authorizationHeaders;
@@ -47,7 +47,7 @@ class Client
      * @return Results|null
      * @throws QueryError
      */
-    public function runQuery(Query $query, $resultsAsArray = false)
+    public function runQuery(Query $query, bool $resultsAsArray = false): ?Results
     {
         return $this->runRawQuery((string) $query, $resultsAsArray);
     }
@@ -60,7 +60,7 @@ class Client
      * @throws Exception\EmptySelectionSetException
      * @throws QueryError
      */
-    public function runQueryObject(QueryObject $queryObject, $resultsAsArray = false)
+    public function runQueryObject(QueryObject $queryObject, bool $resultsAsArray = false): ?Results
     {
         return $this->runRawQuery($queryObject->getQueryString(), $resultsAsArray);
     }
@@ -72,7 +72,7 @@ class Client
      * @return Results|null
      * @throws QueryError
      */
-    public function runRawQuery($queryString, $resultsAsArray = false)
+    public function runRawQuery(string $queryString, $resultsAsArray = false): ?Results
     {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {

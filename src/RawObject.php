@@ -19,11 +19,8 @@ class RawObject
      *
      * @param string $objectString
      */
-    public function __construct($objectString)
+    public function __construct(string $objectString)
     {
-        if (!is_string($objectString) || empty($objectString)) {
-            throw new \Exception('RawObject should only be constructed with string parameter');
-        }
         $this->objectString = $objectString;
     }
 
