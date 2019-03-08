@@ -4,6 +4,11 @@ namespace GraphQL\SchemaGenerator\CodeGenerator;
 
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 
+/**
+ * Class EnumObjectBuilder
+ *
+ * @package GraphQL\SchemaGenerator\CodeGenerator
+ */
 class EnumObjectBuilder implements ObjectBuilderInterface
 {
     /**
@@ -14,10 +19,10 @@ class EnumObjectBuilder implements ObjectBuilderInterface
     /**
      * EnumObjectBuilder constructor.
      *
-     * @param $writeDir
-     * @param $objectName
+     * @param string $writeDir
+     * @param string $objectName
      */
-    public function __construct($writeDir, $objectName)
+    public function __construct(string $writeDir, string $objectName)
     {
         $className = $objectName . 'EnumObject';
 
@@ -27,9 +32,9 @@ class EnumObjectBuilder implements ObjectBuilderInterface
     }
 
     /**
-     * @param $valueName
+     * @param string $valueName
      */
-    public function addEnumValue($valueName)
+    public function addEnumValue(string $valueName)
     {
         $constantName = strtoupper($valueName);
         $this->classFile->addConstant($constantName, $valueName);
@@ -38,7 +43,7 @@ class EnumObjectBuilder implements ObjectBuilderInterface
     /**
      * @return void
      */
-    public function build()
+    public function build(): void
     {
         $this->classFile->writeFile();
     }
