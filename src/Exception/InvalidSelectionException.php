@@ -7,7 +7,7 @@ namespace GraphQL\Exception;
  *
  * @package GraphQL\Exception
  */
-class InvalidSelectionException extends \Exception
+class InvalidSelectionException extends \InvalidArgumentException
 {
     public function __construct($message = "")
     {

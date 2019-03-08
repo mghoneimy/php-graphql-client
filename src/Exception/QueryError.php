@@ -9,7 +9,7 @@ namespace GraphQL\Exception;
  *
  * @package GraphQl\Exception
  */
-class QueryError extends \Exception
+class QueryError extends \RuntimeException
 {
     /**
      * @var array
