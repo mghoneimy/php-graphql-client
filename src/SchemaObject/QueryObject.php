@@ -19,12 +19,12 @@ abstract class QueryObject
      *
      * @var string
      */
-    const OBJECT_NAME = '';
+    private const OBJECT_NAME = '';
 
     /**
      * This string attribute stores the name alias to be used in queries for this object
      *
-     * @var
+     * @var string
      */
     private $nameAlias;
 
@@ -36,13 +36,6 @@ abstract class QueryObject
     private $selectionSet;
 
     /**
-     * This array stores a map of argument name to argument value for this object
-     *
-     * @var array
-     */
-    private $arguments;
-
-    /**
      * SchemaObject constructor.
      *
      * @param string $nameAlias
@@ -50,7 +43,6 @@ abstract class QueryObject
     public function __construct($nameAlias = '')
     {
         $this->selectionSet = [];
-        $this->arguments    = [];
         $this->nameAlias    = !empty($nameAlias) ? $nameAlias : static::OBJECT_NAME;
     }
 
@@ -58,15 +50,14 @@ abstract class QueryObject
      * @return Query
      * @throws EmptySelectionSetException
      */
-	protected function toQuery()
+	protected function toQuery(): Query
 	{
         if (empty($this->selectionSet)) {
             throw new EmptySelectionSetException(static::class);
         }
 
-        $this->constructArgumentsList();
-
         // Convert nested query objects to string queries
+        $argumentsList = $this->constructArgumentsList();
         foreach ($this->selectionSet as $key => $field) {
             if ($field instanceof QueryObject) {
                 $this->selectionSet[$key] = $field->toQuery();
@@ -75,7 +66,7 @@ abstract class QueryObject
 
         // Create and return query for this object
         $query = new Query($this->nameAlias);
-        $query->setArguments($this->arguments);
+        $query->setArguments($argumentsList);
         $query->setSelectionSet($this->selectionSet);
 
         return $query;
@@ -84,25 +75,28 @@ abstract class QueryObject
     /**
      * Constructs the object's arguments list from its attributes
      */
-	protected function constructArgumentsList()
+	protected function constructArgumentsList(): array
     {
+        $argumentsList = [];
         foreach ($this as $name => $value) {
             // TODO: Use annotations to avoid having to check on specific keys
-            if (empty($value) || in_array($name, ['nameAlias', 'selectionSet', 'arguments'])) continue;
+            if (empty($value) || in_array($name, ['nameAlias', 'selectionSet'])) continue;
 
             // Handle input objects before adding them to the arguments list
             if ($value instanceof InputObject) {
                 $value = $value->toRawObject();
             }
 
-            $this->arguments[$name] = $value;
+            $argumentsList[$name] = $value;
         }
+
+        return $argumentsList;
     }
 
     /**
      * @param string|QueryObject $selectedField
      */
-	protected function selectField($selectedField)
+	protected function selectField($selectedField): void
     {
         if (is_string($selectedField) || $selectedField instanceof QueryObject) {
             $this->selectionSet[] = $selectedField;
@@ -113,7 +107,7 @@ abstract class QueryObject
      * @return string
      * @throws EmptySelectionSetException
      */
-    public function getQueryString()
+    public function getQueryString(): string
     {
         return (string) $this->toQuery();
     }

@@ -18,7 +18,7 @@ class Query
      *
      * @var string
      */
-    private static $queryFormat = "%s%s {\n%s\n}";
+    private const QUERY_FORMAT = "%s%s {\n%s\n}";
 
     /**
      * Stores the object being queried for
@@ -77,7 +77,9 @@ class Query
             return !is_string($element);
         });
         if (!empty($nonStringArgs)) {
-            throw new ArgumentException('One or more of the arguments provided for creating the query does not have a name');
+            throw new ArgumentException(
+                'One or more of the arguments provided for creating the query does not have a key, which represents argument name'
+            );
         }
 
         $this->arguments = $arguments;
@@ -97,7 +99,9 @@ class Query
             return !is_string($element) && !$element instanceof Query;
         });
         if (!empty($nonStringsFields)) {
-            throw new InvalidSelectionException('One or more of the selection fields provided is not of type string or Query');
+            throw new InvalidSelectionException(
+                'One or more of the selection fields provided is not of type string or Query'
+            );
         }
 
         $this->selectionSet = $selectionSet;
@@ -107,7 +111,6 @@ class Query
 
     /**
      * @return string
-     * @throws \Exception
      */
     protected function constructArguments(): string
     {
@@ -174,13 +177,12 @@ class Query
 
     /**
      * @return string
-     * @throws \Exception
      */
     public function __toString()
     {
-        $queryFormat = static::$queryFormat;
+        $queryFormat = static::QUERY_FORMAT;
         if (!$this->isNested) {
-            $queryFormat = "query {\n" . static::$queryFormat . "\n}";
+            $queryFormat = "query {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();

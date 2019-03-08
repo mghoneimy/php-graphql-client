@@ -164,10 +164,10 @@ trait %3$s
         $string = '';
         if (!empty($this->properties)) {
             foreach ($this->properties as $name => $value) {
-                $value = $this->serializeParameterValue($value);
                 if (is_null($value)) {
                     $string .= "    protected $$name;\n";
                 } else {
+                    $value = $this->serializeParameterValue($value);
                     $string .= "    protected $$name = $value;\n";
                 }
             }
