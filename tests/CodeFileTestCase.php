@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use PHPUnit\Framework\TestCase;
 
 abstract class CodeFileTestCase extends TestCase

@@ -24,6 +24,11 @@
             "GraphQL\\SchemaObject\\": "schema_object/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "GraphQL\\Tests\\": "tests/"
+        }
+    },
     "require": {
         "php": "^7.2",
         "ext-json": "*",

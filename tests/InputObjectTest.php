@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 require_once 'files_expected/input_objects/_TestFilterInputObject.php';
 
 use GraphQL\SchemaObject\_TestFilterInputObject;
