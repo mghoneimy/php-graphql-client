@@ -15,6 +15,7 @@ class QueryTest extends TestCase
 {
     /**
      * @covers \GraphQL\Query::__ToString
+     * @covers \GraphQL\Query::__construct
      *
      * @return Query
      */
@@ -389,6 +390,7 @@ field2
      * @depends clone testOneLevelQuery
      *
      * @covers \GraphQL\Query::constructSelectionSet
+     * @covers \GraphQL\Query::setAsNested
      *
      * @param Query $query
      *
@@ -416,7 +418,7 @@ field2
     /**
      * @depends clone testTwoLevelQueryDoesNotContainWordQuery
      *
-     * @coversNothing
+     * @covers \GraphQL\Query::setAsNested
      *
      * @param Query $query
      *

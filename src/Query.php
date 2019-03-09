@@ -51,11 +51,11 @@ class Query
     /**
      * GQLQueryBuilder constructor.
      *
-     * @param string $queryObject
+     * @param string $objectName
      */
-    public function __construct(string $queryObject)
+    public function __construct(string $objectName)
     {
-        $this->object       = $queryObject;
+        $this->object       = $objectName;
         $this->arguments    = [];
         $this->selectionSet = [];
         $this->isNested     = false;
