@@ -9,6 +9,7 @@ class RawObjectTest extends TestCase
 {
     /**
      * @covers \GraphQL\RawObject::__toString
+     * @covers \GraphQL\RawObject::__construct
      */
     public function testConvertToString()
     {
