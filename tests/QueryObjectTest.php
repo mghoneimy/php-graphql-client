@@ -26,6 +26,28 @@ class QueryObjectTest extends TestCase
     }
 
     /**
+     * @covers \GraphQL\SchemaObject\QueryObject::__construct
+     */
+    public function testConstruct()
+    {
+        $object = new TestQueryObject();
+        $object->selectPropertyTwo();
+        $this->assertEquals('query {
+Test {
+propertyTwo
+}
+}', $object->getQueryString());
+
+        $object = new TestQueryObject('test');
+        $object->selectPropertyTwo();
+        $this->assertEquals('query {
+test {
+propertyTwo
+}
+}', $object->getQueryString());
+    }
+
+    /**
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
      * @throws \GraphQL\Exception\EmptySelectionSetException

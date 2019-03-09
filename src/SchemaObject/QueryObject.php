@@ -40,7 +40,7 @@ abstract class QueryObject
      *
      * @param string $nameAlias
      */
-    public function __construct($nameAlias = '')
+    public function __construct(string $nameAlias = '')
     {
         $this->selectionSet = [];
         $this->nameAlias    = !empty($nameAlias) ? $nameAlias : static::OBJECT_NAME;
