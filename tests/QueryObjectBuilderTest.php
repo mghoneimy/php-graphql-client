@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 class QueryObjectBuilderTest extends CodeFileTestCase

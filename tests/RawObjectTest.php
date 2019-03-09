@@ -1,21 +1,12 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
 class RawObjectTest extends TestCase
 {
-    /**
-     * @covers \GraphQL\RawObject::__construct
-     *
-     * @throws Exception
-     */
-    public function testConstructWithNonString()
-    {
-        $this->expectException(\Exception::class);
-        new RawObject(123);
-    }
-
     /**
      * @covers \GraphQL\RawObject::__toString
      */

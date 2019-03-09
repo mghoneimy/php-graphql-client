@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use PHPUnit\Framework\TestCase;
 
 abstract class CodeFileTestCase extends TestCase
@@ -23,7 +25,7 @@ abstract class CodeFileTestCase extends TestCase
     /**
      * Create directory before executing the tests
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         mkdir(static::getGeneratedFilesDir());
@@ -32,7 +34,7 @@ abstract class CodeFileTestCase extends TestCase
     /**
      * Remove directory created during running this class' tests
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
         static::removeDirRecursive(static::getGeneratedFilesDir());

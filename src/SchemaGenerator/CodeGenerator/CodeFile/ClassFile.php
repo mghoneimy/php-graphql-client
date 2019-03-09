@@ -14,7 +14,7 @@ class ClassFile extends TraitFile
      *
      * @var string
      */
-    const FILE_FORMAT = '<?php
+    protected const FILE_FORMAT = '<?php
 %1$s%2$s
 class %3$s
 {%4$s%5$s%6$s%7$s}';
@@ -49,12 +49,10 @@ class %3$s
     /**
      * ClassFile constructor.
      *
-     * @param $writeDir
-     * @param $fileName
-     *
-     * @throws \Exception
+     * @param string $writeDir
+     * @param string $fileName
      */
-    public function __construct($writeDir, $fileName)
+    public function __construct(string $writeDir, string $fileName)
     {
         parent::__construct($writeDir, $fileName);
         $this->baseClass  = '';
@@ -64,9 +62,9 @@ class %3$s
     }
 
     /**
-     * @param $className
+     * @param string $className
      */
-    public function extendsClass($className)
+    public function extendsClass(string $className)
     {
         if (!empty($className)) {
             $this->baseClass = $className;
@@ -74,9 +72,9 @@ class %3$s
     }
 
     /**
-     * @param $interfaceName
+     * @param string $interfaceName
      */
-    public function implementsInterface($interfaceName)
+    public function implementsInterface(string $interfaceName)
     {
         if (!empty($interfaceName)) {
             $this->interfaces[$interfaceName] = null;
@@ -84,9 +82,9 @@ class %3$s
     }
 
     /**
-     * @param $traitName
+     * @param string $traitName
      */
-    public function addTrait($traitName)
+    public function addTrait(string $traitName)
     {
         if (!empty($traitName)) {
             $this->traits[$traitName] = null;
@@ -97,9 +95,9 @@ class %3$s
      * @param string          $name
      * @param string|int|bool $value
      */
-    public function addConstant($name, $value)
+    public function addConstant(string $name, $value)
     {
-        if (is_string($name) && !empty($name)) {
+        if (!empty($name)) {
             $this->constants[$name] = $value;
         }
     }
@@ -107,7 +105,7 @@ class %3$s
     /**
      * @inheritdoc
      */
-    protected function generateFileContents()
+    protected function generateFileContents(): string
     {
         $className  = $this->generateClassName();
 
@@ -141,7 +139,7 @@ class %3$s
     /**
      * @return string
      */
-    protected function generateClassName()
+    protected function generateClassName(): string
     {
         $string = $this->fileName;
         if (!empty($this->baseClass)) {
@@ -167,7 +165,7 @@ class %3$s
     /**
      * @return string
      */
-    protected function generateTraits()
+    protected function generateTraits(): string
     {
         $string = '';
         if (!empty($this->traits)) {
@@ -182,7 +180,7 @@ class %3$s
     /**
      * @return string
      */
-    protected function generateConstants()
+    protected function generateConstants(): string
     {
         $string = '';
         if (!empty($this->constants)) {

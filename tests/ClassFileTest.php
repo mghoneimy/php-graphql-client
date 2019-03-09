@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 
 class ClassFileTest extends CodeFileTestCase

@@ -17,18 +17,18 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     /**
      * SchemaObjectBuilder constructor.
      *
-     * @param $writeDir
-     * @param $objectName
+     * @param string $writeDir
+     * @param string $objectName
      */
-    public function __construct($writeDir, $objectName)
+    public function __construct(string $writeDir, string $objectName)
     {
         $this->classBuilder = new QueryObjectClassBuilder($writeDir, $objectName);
     }
 
     /**
-     * @param $argumentName
+     * @param string $argumentName
      */
-    public function addScalarArgument($argumentName)
+    public function addScalarArgument(string $argumentName)
     {
         $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
         $this->classBuilder->addProperty($argumentName);
@@ -36,10 +36,10 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     }
 
     /**
-     * @param $argumentName
-     * @param $typeName
+     * @param string string $argumentName
+     * @param string string $typeName
      */
-    public function addListArgument($argumentName, $typeName)
+    public function addListArgument(string $argumentName, string $typeName)
     {
         $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
         $this->classBuilder->addProperty($argumentName);
@@ -47,10 +47,10 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     }
 
     /**
-     * @param $argumentName
-     * @param $typeName
+     * @param string $argumentName
+     * @param string $typeName
      */
-    public function addInputObjectArgument($argumentName, $typeName)
+    public function addInputObjectArgument(string $argumentName, string $typeName)
     {
         $typeName .= 'InputObject';
         $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
@@ -59,30 +59,30 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     }
 
     /**
-     * @param $fieldName
+     * @param string $fieldName
      */
-    public function addScalarField($fieldName)
+    public function addScalarField(string $fieldName)
     {
         $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
         $this->classBuilder->addSimpleSelector($fieldName, $upperCamelCaseProp);
     }
 
     /**
-     * @param $fieldName
-     * @param $typeName
+     * @param string $fieldName
+     * @param string $typeName
      */
-    public function addObjectField($fieldName, $typeName)
+    public function addObjectField(string $fieldName, string $typeName)
     {
         $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
         $this->classBuilder->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName);
     }
 
     /**
-     * @param $propertyName
+     * @param string $propertyName
      *
      * @return string
      */
-    protected function getUpperCamelCase($propertyName)
+    protected function getUpperCamelCase(string $propertyName)
     {
         if (strpos($propertyName, '_') === false) {
             return ucfirst($propertyName);
@@ -92,9 +92,9 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     }
 
     /**
-     *
+     * @inheritdoc
      */
-    public function build()
+    public function build(): void
     {
         $this->classBuilder->build();
     }

@@ -17,7 +17,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $writeDir
      * @param string $objectName
      */
-    public function __construct($writeDir, $objectName)
+    public function __construct(string $writeDir, string $objectName)
     {
         $className = $objectName . 'QueryObject';
 
@@ -31,7 +31,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $propertyName
      * @param string $upperCamelName
      */
-    public function addSimpleSelector($propertyName, $upperCamelName)
+    public function addSimpleSelector(string $propertyName, string $upperCamelName)
     {
         $method = "public function select$upperCamelName()
 {
@@ -47,7 +47,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $upperCamelName
      * @param string $fieldTypeName
      */
-    public function addObjectSelector($fieldName, $upperCamelName, $fieldTypeName)
+    public function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName)
     {
         $objectClassName = $fieldTypeName . 'QueryObject';
         $method = "public function select$upperCamelName()
@@ -63,7 +63,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     /**
      * This method builds the class and writes it to the file system
      */
-    public function build()
+    public function build(): void
     {
         $this->classFile->writeFile();
     }

@@ -14,5 +14,5 @@ interface CodeFileInterface
     /**
      * This method generates the file contents from the file format and contents
      */
-    public function writeFile();
+    public function writeFile(): bool;
 }

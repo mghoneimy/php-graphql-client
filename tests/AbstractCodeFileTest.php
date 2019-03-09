@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\AbstractCodeFile;
 
 class AbstractCodeFileTest extends CodeFileTestCase
@@ -25,7 +27,7 @@ class AbstractCodeFileTest extends CodeFileTestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->fileName = 'EmptyCodeFile';
         $this->codeFile = $this->getMockForAbstractClass(

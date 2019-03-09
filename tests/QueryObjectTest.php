@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 require_once 'files_expected/query_objects/OtherObjectQueryObject.php';
 require_once 'files_expected/query_objects/TestQueryObject.php';
 require_once 'files_expected/input_objects/_TestFilterInputObject.php';
@@ -18,7 +20,7 @@ class QueryObjectTest extends TestCase
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->queryObject = new TestQueryObject();
     }
