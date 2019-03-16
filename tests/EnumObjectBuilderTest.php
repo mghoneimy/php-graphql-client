@@ -23,6 +23,7 @@ class EnumObjectBuilderTest extends CodeFileTestCase
 
     /**
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder::build
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder::__construct
      */
     public function testBuildEmptyEnum()
     {

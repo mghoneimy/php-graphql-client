@@ -96,6 +96,8 @@ abstract class AbstractCodeFile implements CodeFileInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return string
      */
     public function getFileName(): string
@@ -112,6 +114,8 @@ abstract class AbstractCodeFile implements CodeFileInterface
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return string
      */
     public function getWriteDir(): string
