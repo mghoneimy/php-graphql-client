@@ -15,6 +15,7 @@ class QueryObjectBuilderTest extends CodeFileTestCase
     }
 
     /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarField
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addObjectField
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarArgument

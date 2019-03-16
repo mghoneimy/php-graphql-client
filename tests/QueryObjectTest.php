@@ -6,10 +6,16 @@ require_once 'files_expected/query_objects/OtherObjectQueryObject.php';
 require_once 'files_expected/query_objects/TestQueryObject.php';
 require_once 'files_expected/input_objects/_TestFilterInputObject.php';
 
+use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\SchemaObject\_TestFilterInputObject;
 use GraphQL\SchemaObject\TestQueryObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class QueryObjectTest
+ *
+ * @package GraphQL\Tests
+ */
 class QueryObjectTest extends TestCase
 {
     /**
@@ -48,13 +54,11 @@ propertyTwo
     }
 
     /**
-     * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
-     *
-     * @throws \GraphQL\Exception\EmptySelectionSetException
+     * @throws EmptySelectionSetException
      */
     public function testEmptySelectionSet()
     {
-        $this->expectException(\GraphQL\Exception\EmptySelectionSetException::class);
+        $this->expectException(EmptySelectionSetException::class);
         $this->queryObject->getQueryString();
     }
 
@@ -63,7 +67,7 @@ propertyTwo
      * @covers \GraphQL\SchemaObject\QueryObject::toQuery
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
-     * @throws \GraphQL\Exception\EmptySelectionSetException
+     * @throws EmptySelectionSetException
      */
     public function testSelectFields()
     {
@@ -108,7 +112,7 @@ name
      * @covers \GraphQL\SchemaObject\QueryObject::toQuery
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
-     * @throws \GraphQL\Exception\EmptySelectionSetException
+     * @throws EmptySelectionSetException
      */
     public function testSetArguments()
     {

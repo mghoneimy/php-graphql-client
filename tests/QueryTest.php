@@ -70,6 +70,7 @@ Object {
     /**
      * @depends clone testEmptyArguments
      *
+     * @covers \GraphQL\Exception\ArgumentException
      * @covers \GraphQL\Query::setArguments
      *
      * @param Query $query
@@ -345,6 +346,7 @@ field2
     /**
      * @depends clone testEmptyQuery
      *
+     * @covers \GraphQL\Exception\InvalidSelectionException
      * @covers \GraphQL\Query::setSelectionSet
      *
      * @param Query $query
