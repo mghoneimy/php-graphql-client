@@ -36,6 +36,7 @@
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^8"
+        "phpunit/phpunit": "^8",
+        "codacy/coverage": "^1.4"
     }
 }

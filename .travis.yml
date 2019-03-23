@@ -1,7 +1,13 @@
 language: php
 php:
   - '7.2'
-install:
+
+before_script:
   - composer install
-script: vendor/bin/phpunit tests/
+
+script: vendor/phpunit/phpunit/phpunit tests/ --whitelist src/ --coverage-clover build/coverage/xml
+
+after_script:
+  - php vendor/bin/codacycoverage clover build/coverage/xml
+
 os: linux
