@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Query;
