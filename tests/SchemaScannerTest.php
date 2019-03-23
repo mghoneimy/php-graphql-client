@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\SchemaScanner;
 
 class SchemaScannerTest extends CodeFileTestCase

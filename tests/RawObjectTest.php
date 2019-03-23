@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
