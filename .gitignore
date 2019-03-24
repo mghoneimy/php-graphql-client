@@ -3,6 +3,6 @@
 local_*/
 schema_object/*
 !schema_object/.gitkeep
-composer.lock
 coverage.*
 .phpunit.result.cache
+/build/
