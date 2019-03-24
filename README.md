@@ -3,6 +3,12 @@ A GraphQL client written in PHP that provides a very simple, yet powerful, query
 GraphQL queries a very simple process. The package also generates schema objects that can be used to generate queries
 based on the types declared in the API schema using the introspection feature in GraphQL.
 
+# Installation
+Run the following command to install the package using composer:
+```
+composer require gmostafa/php-graphql-client:dev-php-5.6
+```
+
 # Query Example: Simple Query
 ```
 $gql = (new Query('Company'))
