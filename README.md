@@ -1,7 +1,6 @@
 # php-graphql-client
-[![Build Status](https://travis-ci.org/mghoneimy/php-graphql-client.svg?branch=master)](https://travis-ci.org/mghoneimy/php-graphql-client)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/cb5e0708c4244c1a848be668dbcda8b0)](https://app.codacy.com/app/mghoneimy/php-graphql-client?utm_source=github.com&utm_medium=referral&utm_content=mghoneimy/php-graphql-client&utm_campaign=Badge_Grade_Dashboard)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/c2b0ae3a556547c38e1247d63228adde)](https://www.codacy.com/app/mghoneimy/php-graphql-client?utm_source=github.com&utm_medium=referral&utm_content=mghoneimy/php-graphql-client&utm_campaign=Badge_Coverage)
+[![Build Status](https://travis-ci.org/mghoneimy/php-graphql-client.svg?branch=php5.6)](https://travis-ci.org/mghoneimy/php-graphql-client)
+
 
 A GraphQL client written in PHP that provides a very simple, yet powerful, query generator class which makes writing
 GraphQL queries a very simple process. The package also generates schema objects that can be used to generate queries
