@@ -9,7 +9,7 @@ based on the types declared in the API schema using the introspection feature in
 # Installation
 Run the following command to install the package using composer:
 ```
-composer require gmostafa/php-graphql-client:dev-php-5.6
+composer require gmostafa/php-graphql-client:dev-php5.6
 ```
 
 # Query Example: Simple Query
