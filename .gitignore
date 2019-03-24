@@ -3,6 +3,5 @@
 local_*/
 schema_object/*
 !schema_object/.gitkeep
-coverage.*
 .phpunit.result.cache
 /build/
