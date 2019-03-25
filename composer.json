@@ -29,6 +29,7 @@
             "GraphQL\\Tests\\": "tests/"
         }
     },
+    "bin": ["bin/generate_schema_objects"],
     "require": {
         "php": ">=5.6",
         "guzzlehttp/guzzle": "~6.0",
