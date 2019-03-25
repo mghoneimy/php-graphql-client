@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
 
 class QueryObjectBuilderTest extends CodeFileTestCase
@@ -13,6 +15,7 @@ class QueryObjectBuilderTest extends CodeFileTestCase
     }
 
     /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarField
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addObjectField
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder::addScalarArgument

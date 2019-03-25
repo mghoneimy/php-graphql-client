@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 
 class QueryObjectClassBuilderTest extends CodeFileTestCase
@@ -14,7 +16,9 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
 
     // TODO: Move the first six tests to ObjectClassBuilderTest
     /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::build
      */
     public function testAddProperty()
     {
@@ -125,7 +129,9 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     }
 
     /**
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addInputObjectSetter
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder::build
      */
     public function testAddInputObjectSetter()
     {

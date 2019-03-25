@@ -14,7 +14,7 @@ class StringLiteralFormatter
      *
      * @return string
      */
-    public static function formatLiteralForClass($value)
+    public static function formatLiteralForClass($value): string
     {
         if (is_string($value)) {
             $value = "'$value'";
@@ -36,7 +36,7 @@ class StringLiteralFormatter
      *
      * @return string
      */
-    public static function formatLiteralForGQLQuery($value)
+    public static function formatLiteralForGQLQuery($value): string
     {
         if (is_string($value)) {
             if ($value[0] != '"') {
@@ -63,7 +63,7 @@ class StringLiteralFormatter
      *
      * @return string
      */
-    public static function formatArrayForGQLQuery(array $array)
+    public static function formatArrayForGQLQuery(array $array): string
     {
         $arrString = '[';
         $first = true;

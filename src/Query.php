@@ -18,7 +18,7 @@ class Query
      *
      * @var string
      */
-    private static $queryFormat = "%s%s {\n%s\n}";
+    private const QUERY_FORMAT = "%s%s {\n%s\n}";
 
     /**
      * Stores the object being queried for
@@ -51,11 +51,11 @@ class Query
     /**
      * GQLQueryBuilder constructor.
      *
-     * @param string $queryObject
+     * @param string $objectName
      */
-    public function __construct($queryObject)
+    public function __construct(string $objectName)
     {
-        $this->object       = $queryObject;
+        $this->object       = $objectName;
         $this->arguments    = [];
         $this->selectionSet = [];
         $this->isNested     = false;
@@ -70,14 +70,16 @@ class Query
      * @return Query
      * @throws ArgumentException
      */
-    public function setArguments(array $arguments)
+    public function setArguments(array $arguments): Query
     {
         // If one of the arguments does not have a name provided, throw an exception
         $nonStringArgs = array_filter(array_keys($arguments), function($element) {
             return !is_string($element);
         });
         if (!empty($nonStringArgs)) {
-            throw new ArgumentException('One or more of the arguments provided for creating the query does not have a name');
+            throw new ArgumentException(
+                'One or more of the arguments provided for creating the query does not have a key, which represents argument name'
+            );
         }
 
         $this->arguments = $arguments;
@@ -91,13 +93,15 @@ class Query
      * @return Query
      * @throws InvalidSelectionException
      */
-    public function setSelectionSet(array $selectionSet)
+    public function setSelectionSet(array $selectionSet): Query
     {
         $nonStringsFields = array_filter($selectionSet, function($element) {
             return !is_string($element) && !$element instanceof Query;
         });
         if (!empty($nonStringsFields)) {
-            throw new InvalidSelectionException('One or more of the selection fields provided is not of type string ro Query');
+            throw new InvalidSelectionException(
+                'One or more of the selection fields provided is not of type string or Query'
+            );
         }
 
         $this->selectionSet = $selectionSet;
@@ -107,9 +111,8 @@ class Query
 
     /**
      * @return string
-     * @throws \Exception
      */
-    protected function constructArguments()
+    protected function constructArguments(): string
     {
         // Return empty string if list is empty
         if (empty($this->arguments)) {
@@ -147,7 +150,7 @@ class Query
     /**
      * @return string
      */
-    protected function constructSelectionSet()
+    protected function constructSelectionSet(): string
     {
         $attributesString = '';
         $first            = true;
@@ -174,13 +177,12 @@ class Query
 
     /**
      * @return string
-     * @throws \Exception
      */
     public function __toString()
     {
-        $queryFormat = static::$queryFormat;
+        $queryFormat = static::QUERY_FORMAT;
         if (!$this->isNested) {
-            $queryFormat = "query {\n" . static::$queryFormat . "\n}";
+            $queryFormat = "query {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();

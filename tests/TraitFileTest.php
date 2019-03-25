@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile;
 
 class TraitFileTest extends CodeFileTestCase
@@ -32,7 +34,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::setNamespace
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateNamespace
      */
@@ -50,7 +52,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::setNamespace
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateNamespace
      */
@@ -68,7 +70,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addImport
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateImports
      */
@@ -87,7 +89,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addImport
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateImports
      */
@@ -103,12 +105,12 @@ class TraitFileTest extends CodeFileTestCase
 
     /**
      * Maybe this should be rather moved to an integration test?
-     * 
+     *
      * @throws Exception
      *
      * @depends testTraitWithNamespace
      * @depends testTraitWithImports
-     *                              
+     *
      * @coversNothing
      */
     public function testTraitWithNamespaceAndImports()
@@ -127,7 +129,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      */
@@ -188,6 +190,7 @@ class TraitFileTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::serializeParameterValue
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForClass
      */
     public function testTraitWithPropertiesAndValues()
     {
@@ -209,7 +212,7 @@ class TraitFileTest extends CodeFileTestCase
      * @throws Exception
      *
      * @depends testEmptyTrait
-     *                        
+     *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addMethod
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateMethods
      */

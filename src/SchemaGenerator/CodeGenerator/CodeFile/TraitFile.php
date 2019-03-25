@@ -16,7 +16,7 @@ class TraitFile extends AbstractCodeFile
      *
      * @var string
      */
-    const FILE_FORMAT = '<?php
+    protected const FILE_FORMAT = '<?php
 %1$s%2$s
 trait %3$s
 {%4$s%5$s}';
@@ -54,10 +54,8 @@ trait %3$s
      *
      * @param $writeDir
      * @param $fileName
-     *
-     * @throws \Exception
      */
-    public function __construct($writeDir, $fileName)
+    public function __construct(string $writeDir, string $fileName)
     {
         parent::__construct($writeDir, $fileName);
         $this->namespace  = '';
@@ -69,7 +67,7 @@ trait %3$s
     /**
      * @param $namespaceName
      */
-    public function setNamespace($namespaceName)
+    public function setNamespace(string $namespaceName)
     {
         if (!empty($namespaceName)) {
             $this->namespace = $namespaceName;
@@ -79,7 +77,7 @@ trait %3$s
     /**
      * @param string $fullyQualifiedName
      */
-    public function addImport($fullyQualifiedName)
+    public function addImport(string $fullyQualifiedName)
     {
         if (!empty($fullyQualifiedName)) {
             $this->imports[$fullyQualifiedName] = null;
@@ -90,7 +88,7 @@ trait %3$s
      * @param string               $name
      * @param null|string|int|bool $value
      */
-    public function addProperty($name, $value = null)
+    public function addProperty(string $name, $value = null)
     {
         if (is_string($name) && !empty($name)) {
             $this->properties[$name] = $value;
@@ -100,9 +98,9 @@ trait %3$s
     /**
      * @param string $methodString
      */
-    public function addMethod($methodString)
+    public function addMethod(string $methodString)
     {
-        if (is_string($methodString) && !empty($methodString)) {
+        if (!empty($methodString)) {
             $this->methods[] = $methodString;
         }
     }
@@ -110,7 +108,7 @@ trait %3$s
     /**
      * @inheritdoc
      */
-    protected function generateFileContents()
+    protected function generateFileContents(): string
     {
         $className = $this->fileName;
 
@@ -131,7 +129,7 @@ trait %3$s
     /**
      * @return string
      */
-    protected function generateNamespace()
+    protected function generateNamespace(): string
     {
         $string = '';
         if (!empty($this->namespace)) {
@@ -144,7 +142,7 @@ trait %3$s
     /**
      * @return string
      */
-    protected function generateImports()
+    protected function generateImports(): string
     {
         $string = '';
         if (!empty($this->imports)) {
@@ -159,15 +157,15 @@ trait %3$s
     /**
      * @return string
      */
-    protected function generateProperties()
+    protected function generateProperties(): string
     {
         $string = '';
         if (!empty($this->properties)) {
             foreach ($this->properties as $name => $value) {
-                $value = $this->serializeParameterValue($value);
                 if (is_null($value)) {
                     $string .= "    protected $$name;\n";
                 } else {
+                    $value = $this->serializeParameterValue($value);
                     $string .= "    protected $$name = $value;\n";
                 }
             }
@@ -179,7 +177,7 @@ trait %3$s
     /**
      * @return string
      */
-    protected function generateMethods()
+    protected function generateMethods(): string
     {
         $string = '';
         if (!empty($this->methods)) {
@@ -198,7 +196,7 @@ trait %3$s
      *
      * @return string
      */
-    protected function serializeParameterValue($value)
+    protected function serializeParameterValue($value): string
     {
         return StringLiteralFormatter::formatLiteralForClass($value);
     }

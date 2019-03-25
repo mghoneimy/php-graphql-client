@@ -17,7 +17,10 @@ use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
  */
 class SchemaScanner
 {
-	const SCHEMA_QUERY = "
+    /**
+     * @var string
+     */
+	private const SCHEMA_QUERY = "
 	{
       __schema {
         queryType {
@@ -112,7 +115,15 @@ class SchemaScanner
     /**
      * @var string
      */
-	private $writeDir = '';
+	private $writeDir;
+
+    /**
+     * SchemaScanner constructor.
+     */
+	public function __construct()
+    {
+        $this->writeDir = '';
+    }
 
     /**
      * @param string $endpointUrl
@@ -121,11 +132,13 @@ class SchemaScanner
      * @return array
      * @throws QueryError
      */
-	public function getSchemaTypesArray($endpointUrl, $authorizationHeaders = [])
+	public function getSchemaTypesArray(string $endpointUrl, array $authorizationHeaders = []): array
     {
         // Read schema form GraphQL endpoint
-        $response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(self::SCHEMA_QUERY, true);
-        $schemaTypes   = $response->getData()['__schema']['queryType']['fields'];
+        $response = (new Client($endpointUrl, $authorizationHeaders))->runRawQuery(
+            self::SCHEMA_QUERY, true
+        );
+        $schemaTypes = $response->getData()['__schema']['queryType']['fields'];
 
         return $schemaTypes;
     }
@@ -134,7 +147,7 @@ class SchemaScanner
      * @param array  $schemaTypes
      * @param string $writeDir
      */
-	public function generateSchemaObjects(array $schemaTypes, $writeDir = '')
+	public function generateSchemaObjects(array $schemaTypes, string $writeDir = '')
 	{
 	    if (empty($writeDir)) $writeDir = $this->getWriteDir();
 
@@ -187,7 +200,11 @@ class SchemaScanner
      * @param array              $argumentArray
      * @param string             $writeDir
      */
-    private function generateObjectArguments(QueryObjectBuilder $queryObjectBuilder, array $argumentArray, $writeDir = '')
+    private function generateObjectArguments(
+        QueryObjectBuilder $queryObjectBuilder,
+        array $argumentArray,
+        string $writeDir = ''
+    ): void
     {
         $argName = $argumentArray['name'];
         $argDescription = $argumentArray['description'];
@@ -225,7 +242,7 @@ class SchemaScanner
      * @param array  $fieldsList
      * @param string $writeDir
      */
-    private function generateInputObject($objectName, array $fieldsList, $writeDir = '')
+    private function generateInputObject($objectName, array $fieldsList, string $writeDir = '')
     {
         if (empty($writeDir)) $writeDir = $this->getWriteDir();
 
@@ -259,7 +276,7 @@ class SchemaScanner
      * @param array  $values
      * @param string $writeDir
      */
-    private function generateEnumObject($objectName, array $values, $writeDir = '')
+    private function generateEnumObject($objectName, array $values, string $writeDir = '')
     {
         if (empty($writeDir)) $writeDir = $this->getWriteDir();
 
@@ -275,7 +292,7 @@ class SchemaScanner
     /**
      * Sets the write directory if it's not set for the class
      */
-	private function setWriteDir()
+	private function setWriteDir(): void
     {
         if ($this->writeDir !== '') return;
 
@@ -290,7 +307,7 @@ class SchemaScanner
     /**
      * @return string
      */
-    public function getWriteDir()
+    public function getWriteDir(): string
     {
         $this->setWriteDir();
 

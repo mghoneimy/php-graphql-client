@@ -2,6 +2,8 @@
 
 namespace GraphQL\SchemaGenerator\CodeGenerator\CodeFile;
 
+use RuntimeException;
+
 /**
  * Class AbstractCodeFile
  *
@@ -14,7 +16,7 @@ abstract class AbstractCodeFile implements CodeFileInterface
      *
      * @var string
      */
-    const FILE_FORMAT = '<?php
+    protected const FILE_FORMAT = '<?php
 ';
     /**
      * This string stores the name of this file
@@ -31,12 +33,10 @@ abstract class AbstractCodeFile implements CodeFileInterface
     /**
      * AbstractCodeFile constructor.
      *
-     * @param $writeDir
-     * @param $fileName
-     *
-     * @throws \Exception
+     * @param string $writeDir
+     * @param string $fileName
      */
-    public function __construct($writeDir, $fileName)
+    public function __construct(string $writeDir, string $fileName)
     {
         $this->validateDirectory($writeDir);
 
@@ -45,24 +45,26 @@ abstract class AbstractCodeFile implements CodeFileInterface
     }
 
     /**
-     * @param $dirName
+     * @param string $dirName
      *
-     * @throws \Exception
+     * @return bool
      */
-    private function validateDirectory($dirName)
+    private function validateDirectory(string $dirName): bool
     {
         if (!is_dir($dirName)) {
-            throw new \Exception("$dirName is not a valid directory");
+            throw new RuntimeException("$dirName is not a valid directory");
         }
         if (!is_writable($dirName)) {
-            throw new \Exception("$dirName is not writable");
+            throw new RuntimeException("$dirName is not writable");
         }
+
+        return true;
     }
 
     /**
      * @inheritdoc
      */
-    public final function writeFile()
+    public final function writeFile(): bool
     {
         $fileContents = $this->generateFileContents();
 
@@ -72,7 +74,7 @@ abstract class AbstractCodeFile implements CodeFileInterface
         }
         $filePath .= $this->fileName . '.php';
 
-        $this->writeFileToPath($fileContents, $filePath);
+        return $this->writeFileToPath($fileContents, $filePath);
     }
 
     /**
@@ -80,21 +82,25 @@ abstract class AbstractCodeFile implements CodeFileInterface
      *
      * @return string
      */
-    protected abstract function generateFileContents();
+    protected abstract function generateFileContents(): string;
 
     /**
-     * @param $fileContents
-     * @param $filePath
+     * @param string $fileContents
+     * @param string $filePath
+     *
+     * @return bool
      */
-    private function writeFileToPath($fileContents, $filePath)
+    private function writeFileToPath(string $fileContents, string $filePath): bool
     {
-        file_put_contents($filePath, $fileContents);
+        return file_put_contents($filePath, $fileContents) !== false;
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->fileName;
     }
@@ -102,25 +108,25 @@ abstract class AbstractCodeFile implements CodeFileInterface
     /**
      * @param string $fileName
      */
-    public function changeFileName($fileName)
+    public function changeFileName(string $fileName)
     {
         $this->fileName = $fileName;
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @return string
      */
-    public function getWriteDir()
+    public function getWriteDir(): string
     {
         return $this->writeDir;
     }
 
     /**
      * @param string $writeDir
-     *
-     * @throws \Exception
      */
-    public function changeWriteDir($writeDir)
+    public function changeWriteDir(string $writeDir)
     {
         $this->validateDirectory($writeDir);
 
@@ -130,7 +136,7 @@ abstract class AbstractCodeFile implements CodeFileInterface
     /**
      * @return string
      */
-    public function getWritePath()
+    public function getWritePath(): string
     {
         return $this->writeDir . "/$this->fileName.php";
     }

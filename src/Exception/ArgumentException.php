@@ -7,7 +7,7 @@ namespace GraphQL\Exception;
  *
  * @package GraphQL\Exception
  */
-class ArgumentException extends \Exception
+class ArgumentException extends \InvalidArgumentException
 {
     public function __construct($message = "")
     {

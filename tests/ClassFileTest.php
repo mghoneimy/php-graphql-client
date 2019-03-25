@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 
 class ClassFileTest extends CodeFileTestCase
@@ -178,13 +180,13 @@ class ClassFileTest extends CodeFileTestCase
 
     /**
      * @return ClassFile
-     * @throws Exception
      *
      * @depends testEmptyClass
      *
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::addConstant
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::generateConstants
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::serializeParameterValue
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForClass
      */
     public function testClassWithConstants()
     {

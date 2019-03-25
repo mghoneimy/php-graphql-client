@@ -1,5 +1,7 @@
 <?php
 
+namespace GraphQL\Tests;
+
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 
 /**
@@ -21,6 +23,7 @@ class EnumObjectBuilderTest extends CodeFileTestCase
 
     /**
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder::build
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder::__construct
      */
     public function testBuildEmptyEnum()
     {

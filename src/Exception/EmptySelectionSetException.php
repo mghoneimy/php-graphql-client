@@ -7,7 +7,7 @@ namespace GraphQL\Exception;
  *
  * @package GraphQL\Exception
  */
-class EmptySelectionSetException extends QueryObjectException
+class EmptySelectionSetException extends \UnderflowException
 {
     public function __construct($objectName)
     {
