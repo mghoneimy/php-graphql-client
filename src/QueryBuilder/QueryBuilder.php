@@ -41,9 +41,9 @@ class QueryBuilder extends AbstractQueryBuilder
      *
      * @return Query
      */
-    public function toQuery(): Query
+    public function getQuery(): Query
     {
-        return parent::toQuery();
+        return parent::getQuery();
     }
 
     /**

@@ -59,6 +59,6 @@ abstract class QueryObject extends AbstractQueryBuilder
      */
     public function getQueryString(): string
     {
-        return (string) $this->toQuery();
+        return (string) $this->getQuery();
     }
 }

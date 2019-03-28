@@ -43,7 +43,7 @@ abstract class AbstractQueryBuilder
     /**
      * @return Query
      */
-    protected function toQuery(): Query
+    protected function getQuery(): Query
     {
         if (empty($this->selectionSet)) {
             throw new EmptySelectionSetException(static::class);
@@ -56,7 +56,7 @@ abstract class AbstractQueryBuilder
         // Convert nested query builders to query objects
         foreach ($this->selectionSet as $key => $field) {
             if ($field instanceof AbstractQueryBuilder) {
-                $this->selectionSet[$key] = $field->toQuery();
+                $this->selectionSet[$key] = $field->getQuery();
             }
         }
 

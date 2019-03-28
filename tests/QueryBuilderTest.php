@@ -38,22 +38,22 @@ Object {
 field_one
 }
 }',
-            (string) $builder->toQuery()
+            (string) $builder->getQuery()
         );
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      */
     public function testEmptySelectionSet()
     {
         $this->expectException(EmptySelectionSetException::class);
-        $this->queryBuilder->toQuery();
+        $this->queryBuilder->getQuery();
     }
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      */
     public function testSelectScalarFields()
     {
@@ -66,13 +66,13 @@ field_one
 field_two
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
     }
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      */
     public function testSelectNestedQuery()
     {
@@ -88,7 +88,7 @@ some_field
 }
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
     }
 
@@ -106,13 +106,13 @@ some_field
 }
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
     }
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      */
     public function testSelectArguments()
     {
@@ -124,7 +124,7 @@ Object(str_arg: "value") {
 field
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
 
         $this->queryBuilder->setArgument('bool_arg', true);
@@ -134,7 +134,7 @@ Object(str_arg: "value" bool_arg: true) {
 field
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
 
         $this->queryBuilder->setArgument('int_arg', 10);
@@ -144,7 +144,7 @@ Object(str_arg: "value" bool_arg: true int_arg: 10) {
 field
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
 
         $this->queryBuilder->setArgument('array_arg', ['one', 'two', 'three']);
@@ -154,7 +154,7 @@ Object(str_arg: "value" bool_arg: true int_arg: 10 array_arg: ["one", "two", "th
 field
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
 
         $this->queryBuilder->setArgument('input_object_arg', new RawObject('{field_not: "x"}'));
@@ -164,14 +164,14 @@ Object(str_arg: "value" bool_arg: true int_arg: 10 array_arg: ["one", "two", "th
 field
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
     }
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
      * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      */
     public function testSetTwoLevelArguments()
     {
@@ -191,7 +191,7 @@ another_field
 }
 }
 }',
-            (string) $this->queryBuilder->toQuery()
+            (string) $this->queryBuilder->getQuery()
         );
     }
 }
