@@ -1,8 +1,10 @@
 <?php
 
-namespace GraphQL;
+namespace GraphQL\QueryBuilder;
 
 use GraphQL\Exception\EmptySelectionSetException;
+use GraphQL\Query;
+use GraphQL\RawObject;
 
 /**
  * Class AbstractQueryBuilder

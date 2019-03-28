@@ -4,7 +4,7 @@ namespace GraphQL\Tests;
 
 use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\Query;
-use GraphQL\QueryBuilder;
+use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +26,7 @@ class QueryBuilderTest extends TestCase
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
      */
     public function testConstruct()
     {
@@ -43,7 +43,7 @@ field_one
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
      */
     public function testEmptySelectionSet()
     {
@@ -52,8 +52,8 @@ field_one
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
      */
     public function testSelectScalarFields()
     {
@@ -71,8 +71,8 @@ field_two
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
      */
     public function testSelectNestedQuery()
     {
@@ -111,8 +111,8 @@ some_field
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::setArgument
-     * @covers \GraphQL\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
      */
     public function testSelectArguments()
     {
@@ -169,9 +169,9 @@ field
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder::setArgument
-     * @covers \GraphQL\QueryBuilder::selectField
-     * @covers \GraphQL\QueryBuilder::toQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::toQuery
      */
     public function testSetTwoLevelArguments()
     {

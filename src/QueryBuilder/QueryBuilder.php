@@ -1,6 +1,8 @@
 <?php
 
-namespace GraphQL;
+namespace GraphQL\QueryBuilder;
+
+use GraphQL\Query;
 
 /**
  * Class QueryBuilder
