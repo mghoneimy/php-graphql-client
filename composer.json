@@ -31,13 +31,13 @@
     },
     "bin": ["bin/generate_schema_objects"],
     "require": {
-        "php": "^7.1",
+        "php": "^7.0",
         "ext-json": "*",
         "ext-readline": "*",
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5|^8.0",
+        "phpunit/phpunit": "^6.5|^7.5|^8.0",
         "codacy/coverage": "^1.4"
     }
 }
