@@ -12,5 +12,5 @@ interface ObjectBuilderInterface
     /**
      * @return void
      */
-    public function build(): void;
+    public function build();
 }

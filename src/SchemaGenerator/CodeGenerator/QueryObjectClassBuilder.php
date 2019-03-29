@@ -63,7 +63,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     /**
      * This method builds the class and writes it to the file system
      */
-    public function build(): void
+    public function build()
     {
         $this->classFile->writeFile();
     }

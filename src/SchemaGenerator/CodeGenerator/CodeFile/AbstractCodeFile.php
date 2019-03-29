@@ -16,7 +16,7 @@ abstract class AbstractCodeFile implements CodeFileInterface
      *
      * @var string
      */
-    protected const FILE_FORMAT = '<?php
+    const FILE_FORMAT = '<?php
 ';
     /**
      * This string stores the name of this file

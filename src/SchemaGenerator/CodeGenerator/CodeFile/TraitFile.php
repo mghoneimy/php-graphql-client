@@ -16,7 +16,7 @@ class TraitFile extends AbstractCodeFile
      *
      * @var string
      */
-    protected const FILE_FORMAT = '<?php
+    const FILE_FORMAT = '<?php
 %1$s%2$s
 trait %3$s
 {%4$s%5$s}';

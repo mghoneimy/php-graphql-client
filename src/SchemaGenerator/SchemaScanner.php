@@ -20,7 +20,7 @@ class SchemaScanner
     /**
      * @var string
      */
-	private const SCHEMA_QUERY = "
+	const SCHEMA_QUERY = "
 	{
       __schema {
         queryType {
@@ -204,7 +204,7 @@ class SchemaScanner
         QueryObjectBuilder $queryObjectBuilder,
         array $argumentArray,
         string $writeDir = ''
-    ): void
+    )
     {
         $argName = $argumentArray['name'];
         $argDescription = $argumentArray['description'];
@@ -292,7 +292,7 @@ class SchemaScanner
     /**
      * Sets the write directory if it's not set for the class
      */
-	private function setWriteDir(): void
+	private function setWriteDir()
     {
         if ($this->writeDir !== '') return;
 

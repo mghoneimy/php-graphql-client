@@ -43,7 +43,7 @@ class EnumObjectBuilder implements ObjectBuilderInterface
     /**
      * @return void
      */
-    public function build(): void
+    public function build()
     {
         $this->classFile->writeFile();
     }

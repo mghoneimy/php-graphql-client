@@ -14,7 +14,7 @@ class ClassFile extends TraitFile
      *
      * @var string
      */
-    protected const FILE_FORMAT = '<?php
+    const FILE_FORMAT = '<?php
 %1$s%2$s
 class %3$s
 {%4$s%5$s%6$s%7$s}';

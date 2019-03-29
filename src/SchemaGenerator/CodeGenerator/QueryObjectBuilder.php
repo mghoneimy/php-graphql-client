@@ -94,7 +94,7 @@ class QueryObjectBuilder implements ObjectBuilderInterface
     /**
      * @inheritdoc
      */
-    public function build(): void
+    public function build()
     {
         $this->classBuilder->build();
     }

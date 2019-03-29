@@ -20,7 +20,7 @@ class InputObjectTest extends TestCase
     /**
      *
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->inputObject = new _TestFilterInputObject();
     }

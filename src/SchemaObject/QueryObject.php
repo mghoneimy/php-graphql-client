@@ -19,7 +19,7 @@ abstract class QueryObject extends AbstractQueryBuilder
      *
      * @var string
      */
-    private const OBJECT_NAME = '';
+    const OBJECT_NAME = '';
 
     /**
      * SchemaObject constructor.

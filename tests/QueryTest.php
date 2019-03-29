@@ -22,7 +22,7 @@ class QueryTest extends TestCase
     public function testConvertsToString()
     {
         $query = new Query('Object');
-        $this->assertIsString((string) $query, 'Failed to convert query to string');
+        $this->assertInternalType('string', (string) $query, 'Failed to convert query to string');
 
         return $query;
     }
@@ -38,7 +38,7 @@ class QueryTest extends TestCase
      */
     public function testEmptyArguments(Query $query)
     {
-        $this->assertStringNotContainsString("()", (string) $query, 'Query has empty arguments list');
+        $this->assertNotContains("()", (string) $query, 'Query has empty arguments list');
 
         return $query;
     }
@@ -408,7 +408,7 @@ field2
                     ->setSelectionSet(['field3'])
             ]
         );
-        $this->assertStringNotContainsString(
+        $this->assertNotContains(
             "\nquery {",
             (string) $query,
             'Nested query contains "query" word'

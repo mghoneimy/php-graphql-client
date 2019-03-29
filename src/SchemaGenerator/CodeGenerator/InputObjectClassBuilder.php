@@ -62,7 +62,7 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     /**
      * @return void
      */
-    public function build(): void
+    public function build()
     {
         $this->classFile->writeFile();
     }

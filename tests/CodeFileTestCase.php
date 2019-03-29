@@ -25,7 +25,7 @@ abstract class CodeFileTestCase extends TestCase
     /**
      * Create directory before executing the tests
      */
-    public static function setUpBeforeClass(): void
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         mkdir(static::getGeneratedFilesDir());
@@ -34,7 +34,7 @@ abstract class CodeFileTestCase extends TestCase
     /**
      * Remove directory created during running this class' tests
      */
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         parent::tearDownAfterClass();
         static::removeDirRecursive(static::getGeneratedFilesDir());

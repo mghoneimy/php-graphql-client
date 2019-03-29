@@ -32,7 +32,7 @@ class AbstractCodeFileTest extends CodeFileTestCase
     /**
      *
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->fileName = 'EmptyCodeFile';
         $this->codeFile = $this->getMockForAbstractClass(

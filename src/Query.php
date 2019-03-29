@@ -18,7 +18,7 @@ class Query
      *
      * @var string
      */
-    private const QUERY_FORMAT = "%s%s {\n%s\n}";
+    const QUERY_FORMAT = "%s%s {\n%s\n}";
 
     /**
      * Stores the object being queried for
