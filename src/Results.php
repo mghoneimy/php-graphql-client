@@ -44,7 +44,10 @@ class Results
         $this->results        = json_decode($this->responseBody, $asArray);
 
         // Check if any errors exist, and throw exception if they do
-        if (isset($this->results->errors)) {
+        if ($asArray) $containsErrors = array_key_exists('errors', $this->results);
+        else $containsErrors = isset($this->results->errors);
+
+        if ($containsErrors) {
 
             // Reformat results to an array and use it to initialize exception object
             $this->reformatResults(true);
