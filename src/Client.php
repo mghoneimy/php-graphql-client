@@ -4,6 +4,7 @@ namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
 use GraphQL\SchemaObject\QueryObject;
+use GuzzleHttp\Exception\ClientException;
 
 /**
  * Class Client
@@ -41,6 +42,8 @@ class Client
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param Query $query
      * @param bool  $resultsAsArray
      *
@@ -53,6 +56,8 @@ class Client
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param QueryObject $queryObject
      * @param bool        $resultsAsArray
      *
@@ -71,6 +76,8 @@ class Client
      *
      * @return Results|null
      * @throws QueryError
+     *
+     * TODO: Rename this to runStringQuery on v1.0
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false): ?Results
     {
@@ -84,13 +91,21 @@ class Client
         $options['body'] = json_encode(['query' => (string) $queryString]);
 
         // Send api request and get response
-        $response = $this->httpClient->post($this->endpointUrl, $options);
+        try {
+            $response = $this->httpClient->post($this->endpointUrl, $options);
+        }
+        catch (ClientException $exception) {
+            $response = $exception->getResponse();
+
+            // If exception thrown by client is "400 Bad Request ", then it can be treated as a successful API request
+            // with a syntax error in the query, otherwise the exceptions will be propagated
+            if ($response->getStatusCode() !== 400) {
+                throw $exception;
+            }
+        }
 
         // Parse response to extract results
-        $results = null;
-        if ($response->getStatusCode() === 200) {
-            $results = new Results($response, $resultsAsArray);
-        }
+        $results = new Results($response, $resultsAsArray);
 
         return $results;
     }

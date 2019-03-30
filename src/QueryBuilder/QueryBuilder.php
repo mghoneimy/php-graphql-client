@@ -29,7 +29,7 @@ class QueryBuilder extends AbstractQueryBuilder
      * @param string $argumentName
      * @param        $argumentValue
      *
-     * @return AbstractQueryBuilder
+     * @return AbstractQueryBuilder|QueryBuilder
      */
     public function setArgument(string $argumentName, $argumentValue)
     {
