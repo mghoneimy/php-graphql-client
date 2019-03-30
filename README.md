@@ -3,18 +3,16 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/cb5e0708c4244c1a848be668dbcda8b0)](https://app.codacy.com/app/mghoneimy/php-graphql-client?utm_source=github.com&utm_medium=referral&utm_content=mghoneimy/php-graphql-client&utm_campaign=Badge_Grade_Dashboard)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/c2b0ae3a556547c38e1247d63228adde)](https://www.codacy.com/app/mghoneimy/php-graphql-client?utm_source=github.com&utm_medium=referral&utm_content=mghoneimy/php-graphql-client&utm_campaign=Badge_Coverage)
 
-A GraphQL client written in PHP that provides a very simple, yet powerful, query generator class which makes writing
-GraphQL queries a very simple process. The package also generates schema objects that can be used to generate queries
-based on the types declared in the API schema using the introspection feature in GraphQL.
+A GraphQL client written in PHP that provides very simple, yet powerful, query generator classes which make the process
+of writing GraphQL queries a very simple one. The package also generates schema objects that can be used to write queries
+based on the types declared in the API schema using the introspection feature in GraphQL, this feature is still under
+development though.
 
 # Installation
 Run the following command to install the package using composer:
 ```
 composer require gmostafa/php-graphql-client
 ```
-### Note:
-To install the package for php versions older than php7.2 (which are currently out of support), go to branch `php5.6`
-and check the installation instructions.
 
 # Query Example: Simple Query
 ```
@@ -97,6 +95,20 @@ The RawObject class being constructed is used for injecting the string into the 
 into the RawObject constructor will be put in the query as it is without any custom formatting normally done by the
 query class.
 
+# The Query Builder
+The QueryBuilder class can be used to construct Query objects dynamically, which can be useful in some cases. It works
+very similarly to the Query class, but the Query building is divided into steps.
+
+That's how the "Query With Input Object Argument" example can be created using the
+QueryBuilder:
+```
+$builder = (new QueryBuilder('Company'))
+    ->setArgument('filter', new RawObject('{name_starts_with: "Face"}'))
+    ->selectField('name')
+    ->selectField('serialNumber');
+$gql = $builder->getQuery();
+```
+
 # Constructing The Client
 A Client object can easily be instantiated by providing the GraphQL endpoint URL. The Client constructor also receives
 an optional "authorizationHeaders" array, which can be used to add authorization headers to all requests being sent to
@@ -110,7 +122,7 @@ $client = new Client(
 );
 ```
 
-# Running Queries:
+# Running Queries
 
 Running query with the GraphQL client and getting the results in object structure:
 ```
@@ -123,27 +135,121 @@ $results = $client->runQuery($gql, true);
 $results->getData()['Company'][1]['branches']['address']
 ```
 
-# Complex Query Examples
+# Live API Example
+GraphQL Pokemon is a very cool public GraphQL API available to retrieve Pokemon data. The API is available publicly on
+the web, we'll use it to demo the capabilities of this client.
+
+Github Repo link: https://github.com/lucasbento/graphql-pokemon
+ 
+API link: https://graphql-pokemon.now.sh/
+
+This query retrieves Pikachu's evolutions and their attacks:
 ```
-$gql = (new Query('Company'))
-    ->setArguments(['name' => 'XYZ', 'first' => 3])
+{
+  pokemon(name: "Pikachu") {
+    id
+    number
+    name
+    evolutions {
+      id
+      number
+      name
+      weight {
+        minimum
+        maximum
+      }
+      attacks {
+        fast {
+          name
+          type
+          damage
+        }
+      }
+    }
+  }
+}
+
+```
+
+That's how this query can be written using the query class and run using the client:
+```
+$client = new Client(
+    'https://graphql-pokemon.now.sh/'
+);
+$gql = (new Query('pokemon'))
+    ->setArguments(['name' => 'Pikachu'])
     ->setSelectionSet(
         [
+            'id',
+            'number',
             'name',
-            (new Query('branches'))
-                ->setArguments(['first' => 1])
+            (new Query('evolutions'))
                 ->setSelectionSet(
                     [
-                        'address',
-                        (new Query('contracts'))
-                            ->setArguments(['first' => 3])
-                            ->setSelectionSet(['date'])
+                        'id',
+                        'number',
+                        'name',
+                        (new Query('attacks'))
+                            ->setSelectionSet(
+                                [
+                                    (new Query('fast'))
+                                        ->setSelectionSet(
+                                            [
+                                                'name',
+                                                'type',
+                                                'damage',
+                                            ]
+                                        )
+                                ]
+                            )
                     ]
                 )
         ]
     );
+try {
+    $results = $client->runQuery($gql, true);
+}
+catch (QueryError $exception) {
+    print_r($exception->getErrorDetails());
+    exit;
+}
+print_r($results->getData()['pokemon']);
 ```
-
+Or alternatively, That's how this query can be generated using the QueryBuilder class:
+```
+$client = new Client(
+    'https://graphql-pokemon.now.sh/'
+);
+$builder = (new QueryBuilder('pokemon'))
+    ->setArgument('name', 'Pikachu')
+    ->selectField('id')
+    ->selectField('number')
+    ->selectField('name')
+    ->selectField(
+        (new QueryBuilder('evolutions'))
+            ->selectField('id')
+            ->selectField('name')
+            ->selectField('number')
+            ->selectField(
+                (new QueryBuilder('attacks'))
+                    ->selectField(
+                        (new QueryBuilder('fast'))
+                            ->selectField('name')
+                            ->selectField('type')
+                            ->selectField('damage')
+                    )
+            )
+    );
+$gql = $builder->getQuery();
+try {
+    $results = $client->runQuery($gql, true);
+}
+catch (QueryError $exception) {
+    print_r($exception->getErrorDetails());
+    exit;
+}
+print_r($results->getData()['pokemon']);
+```
 # Working With Schema Objects (Beta)
 The greatest advantage of getting to use this package is that it generates GraphQL schema objects for you to interact
 with, without having to write queries or worry about typos or about GraphQL syntax.
@@ -350,8 +456,3 @@ class _OrderingEnumObject extends EnumObject
 - Reporting API errors
 - Generating schema objects from API types (Beta)
 - Using schema objects to build queries
-
-# Features on-Track
-- Mutation types
-- Query and field aliases
-- Fragment types

@@ -64,7 +64,7 @@ propertyTwo
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::selectField
-     * @covers \GraphQL\SchemaObject\QueryObject::toQuery
+     * @covers \GraphQL\SchemaObject\QueryObject::getQuery
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
      * @throws EmptySelectionSetException
@@ -109,7 +109,7 @@ name
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::constructArgumentsList
-     * @covers \GraphQL\SchemaObject\QueryObject::toQuery
+     * @covers \GraphQL\SchemaObject\QueryObject::getQuery
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
      * @throws EmptySelectionSetException
