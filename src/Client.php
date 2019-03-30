@@ -42,6 +42,8 @@ class Client
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param Query $query
      * @param bool  $resultsAsArray
      *
@@ -54,6 +56,8 @@ class Client
     }
 
     /**
+     * @codeCoverageIgnore
+     *
      * @param QueryObject $queryObject
      * @param bool        $resultsAsArray
      *
@@ -72,6 +76,8 @@ class Client
      *
      * @return Results|null
      * @throws QueryError
+     *
+     * TODO: Rename this to runStringQuery on v1.0
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false): ?Results
     {
