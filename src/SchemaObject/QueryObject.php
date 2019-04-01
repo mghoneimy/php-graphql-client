@@ -15,6 +15,13 @@ use GraphQL\QueryBuilder\AbstractQueryBuilder;
 abstract class QueryObject extends AbstractQueryBuilder
 {
     /**
+     * This constant stores the name to be given to the root query object
+     *
+     * @var  string
+     */
+    public const ROOT_QUERY_OBJECT_NAME = 'Root';
+
+    /**
      * This constant stores the name of the object name in the API definition
      *
      * @var string

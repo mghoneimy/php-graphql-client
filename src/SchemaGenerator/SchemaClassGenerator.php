@@ -6,6 +6,7 @@ use GraphQL\Client;
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
+use GraphQL\SchemaObject\QueryObject;
 use RuntimeException;
 
 /**
@@ -55,7 +56,7 @@ class SchemaClassGenerator
 	public function generateRootQueryObject()
 	{
 	    $queryType = $this->schemaInspector->getQueryTypeSchema();
-	    $rootObjectName = 'Root';
+	    $rootObjectName = QueryObject::ROOT_QUERY_OBJECT_NAME;
 	    $queryTypeName  = $queryType['name'];
 	    //$rootObjectDescr = $queryType['description'];
 	    $queryObjectBuilder = new QueryObjectBuilder($this->writeDir, $rootObjectName);
