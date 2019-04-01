@@ -66,18 +66,4 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     {
         $this->classFile->writeFile();
     }
-
-    /**
-     * @param string $propertyName
-     *
-     * @return string
-     */
-    private function getUpperCamelCase(string $propertyName): string
-    {
-        if (strpos($propertyName, '_') === false) {
-            return ucfirst($propertyName);
-        } else {
-            return str_replace('_', '', ucwords($propertyName, '_'));
-        }
-    }
 }

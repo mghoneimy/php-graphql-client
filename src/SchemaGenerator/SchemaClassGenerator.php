@@ -5,7 +5,7 @@ namespace GraphQL\SchemaGenerator;
 use GraphQL\Client;
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
-use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectBuilder;
+use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 use GraphQL\SchemaObject\QueryObject;
 use RuntimeException;
 
@@ -59,7 +59,7 @@ class SchemaClassGenerator
 	    $rootObjectName = QueryObject::ROOT_QUERY_OBJECT_NAME;
 	    $queryTypeName  = $queryType['name'];
 	    //$rootObjectDescr = $queryType['description'];
-	    $queryObjectBuilder = new QueryObjectBuilder($this->writeDir, $rootObjectName);
+	    $queryObjectBuilder = new QueryObjectClassBuilder($this->writeDir, $rootObjectName);
         $this->generatedObjects[$queryTypeName] = true;
         $this->appendObjectFields($queryObjectBuilder, $queryType['fields']);
 
@@ -69,10 +69,10 @@ class SchemaClassGenerator
     /**
      * This method receives the array of object fields as an input and adds the fields to the query object building
      *
-     * @param QueryObjectBuilder $queryObjectBuilder
-     * @param array              $fieldsArray
+     * @param QueryObjectClassBuilder $queryObjectBuilder
+     * @param array                   $fieldsArray
      */
-	private function appendObjectFields(QueryObjectBuilder $queryObjectBuilder, array $fieldsArray)
+	private function appendObjectFields(QueryObjectClassBuilder $queryObjectBuilder, array $fieldsArray)
     {
         foreach ($fieldsArray as $fieldArray) {
             $name = $fieldArray['name'];
@@ -128,7 +128,7 @@ class SchemaClassGenerator
     private function generateQueryObject(string $objectName): bool
     {
         $objectArray = $this->schemaInspector->getObjectSchema($objectName);
-        $objectBuilder = new QueryObjectBuilder($this->writeDir, $objectName);
+        $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName);
 
         $this->generatedObjects[$objectName] = true;
         $this->appendObjectFields($objectBuilder, $objectArray['fields']);
@@ -198,12 +198,12 @@ class SchemaClassGenerator
     }
 
     /**
-     * @param QueryObjectBuilder $queryObjectBuilder
-     * @param array              $argumentArray
-     * @param string             $writeDir
+     * @param QueryObjectClassBuilder $queryObjectBuilder
+     * @param array                   $argumentArray
+     * @param string                  $writeDir
      */
     private function generateObjectArguments(
-        QueryObjectBuilder $queryObjectBuilder,
+        QueryObjectClassBuilder $queryObjectBuilder,
         array $argumentArray,
         string $writeDir = ''
     ): void

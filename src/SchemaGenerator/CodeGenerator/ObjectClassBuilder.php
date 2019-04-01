@@ -19,7 +19,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
     /**
      * @param string $propertyName
      */
-    public function addProperty($propertyName)
+    protected function addProperty($propertyName)
     {
         $this->classFile->addProperty($propertyName);
     }
@@ -28,7 +28,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
      * @param string $propertyName
      * @param string $upperCamelName
      */
-    public function addSimpleSetter($propertyName, $upperCamelName)
+    protected function addSimpleSetter($propertyName, $upperCamelName)
     {
         $lowerCamelName = lcfirst($upperCamelName);
         $method = "public function set$upperCamelName($$lowerCamelName)
@@ -45,7 +45,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
      * @param string $upperCamelName
      * @param string $propertyType
      */
-    public function addListSetter(string $propertyName, string $upperCamelName, string $propertyType)
+    protected function addListSetter(string $propertyName, string $upperCamelName, string $propertyType)
     {
         $lowerCamelName = lcfirst($upperCamelName);
         $method = "public function set$upperCamelName(array $$lowerCamelName)
@@ -62,7 +62,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
      * @param string $upperCamelName
      * @param string $objectClass
      */
-    public function addInputObjectSetter(string $propertyName, string $upperCamelName, string $objectClass)
+    protected function addInputObjectSetter(string $propertyName, string $upperCamelName, string $objectClass)
     {
         $lowerCamelName = lcfirst(str_replace('_', '', $objectClass));
         $method         = "public function set$upperCamelName($objectClass $$lowerCamelName)
@@ -72,5 +72,19 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
     return \$this;
 }";
         $this->classFile->addMethod($method);
+    }
+
+    /**
+     * @param string $propertyName
+     *
+     * @return string
+     */
+    protected function getUpperCamelCase(string $propertyName)
+    {
+        if (strpos($propertyName, '_') === false) {
+            return ucfirst($propertyName);
+        } else {
+            return str_replace('_', '', ucwords($propertyName, '_'));
+        }
     }
 }

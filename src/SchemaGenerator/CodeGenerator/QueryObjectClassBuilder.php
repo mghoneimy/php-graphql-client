@@ -34,10 +34,29 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     }
 
     /**
+     * @param string $fieldName
+     */
+    public function addScalarField(string $fieldName)
+    {
+        $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
+        $this->addSimpleSelector($fieldName, $upperCamelCaseProp);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $typeName
+     */
+    public function addObjectField(string $fieldName, string $typeName)
+    {
+        $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
+        $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName);
+    }
+
+    /**
      * @param string $propertyName
      * @param string $upperCamelName
      */
-    public function addSimpleSelector(string $propertyName, string $upperCamelName)
+    protected function addSimpleSelector(string $propertyName, string $upperCamelName)
     {
         $method = "public function select$upperCamelName()
 {
@@ -53,7 +72,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $upperCamelName
      * @param string $fieldTypeName
      */
-    public function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName)
+    protected function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName)
     {
         $objectClassName = $fieldTypeName . 'QueryObject';
         $method = "public function select$upperCamelName(array \$args = [])
