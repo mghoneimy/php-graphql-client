@@ -2,7 +2,7 @@
 
 namespace GraphQL\Tests;
 
-use GraphQL\SchemaGenerator\SchemaScanner;
+use GraphQL\SchemaGenerator\SchemaClassGenerator;
 
 class SchemaScannerTest extends CodeFileTestCase
 {
@@ -15,12 +15,12 @@ class SchemaScannerTest extends CodeFileTestCase
     }
 
     /**
-     * @covers \GraphQL\SchemaGenerator\SchemaScanner::setWriteDir
-     * @covers \GraphQL\SchemaGenerator\SchemaScanner::getWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::setWriteDir
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::getWriteDir
      */
     public function testSetWriteDirectory()
     {
-        $schemaScanner = new SchemaScanner();
+        $schemaScanner = new SchemaClassGenerator();
         $this->assertStringEndsWith('/php-graphql-client/schema_object', $schemaScanner->getWriteDir());
     }
 
@@ -29,13 +29,13 @@ class SchemaScannerTest extends CodeFileTestCase
      * @param array $expectedFileNames
      *
      * @dataProvider schemaStringProvider
-     * 
-     * @covers \GraphQL\SchemaGenerator\SchemaScanner::generateSchemaObjects
+     *
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateRootQueryObject
      */
     public function testSchemaTypesReading(array $schemaTypes, array $expectedFileNames)
     {
-        $schemaScanner = new SchemaScanner();
-        $schemaScanner->generateSchemaObjects($schemaTypes, static::getGeneratedFilesDir());
+        $schemaScanner = new SchemaClassGenerator();
+        $schemaScanner->generateRootQueryObject($schemaTypes, static::getGeneratedFilesDir());
 
         foreach ($expectedFileNames as $expectedFileName) {
             $this->assertFileEquals(
@@ -155,7 +155,7 @@ class SchemaScannerTest extends CodeFileTestCase
                 ],
             ],
         ];
-        
+
         $complexObjectSchema = [
             [
                 'name' => 'ComplexObject',

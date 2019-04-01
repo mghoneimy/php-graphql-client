@@ -181,7 +181,7 @@ class Query
     public function __toString()
     {
         $queryFormat = static::QUERY_FORMAT;
-        if (!$this->isNested) {
+        if (!$this->isNested && $this->object !== 'query') {
             $queryFormat = "query {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();

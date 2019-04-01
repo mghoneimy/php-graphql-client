@@ -3,6 +3,7 @@
 namespace GraphQL\SchemaGenerator\CodeGenerator;
 
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
+use GraphQL\SchemaObject\QueryObject;
 
 /**
  * Class QueryObjectClassBuilder
@@ -24,6 +25,11 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
         $this->classFile = new ClassFile($writeDir, $className);
         $this->classFile->setNamespace('GraphQL\\SchemaObject');
         $this->classFile->extendsClass('QueryObject');
+
+        // Special case for handling root query object
+        if ($objectName === QueryObject::ROOT_QUERY_OBJECT_NAME) {
+            $objectName = 'query';
+        }
         $this->classFile->addConstant('OBJECT_NAME', $objectName);
     }
 
