@@ -56,9 +56,10 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     public function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName)
     {
         $objectClassName = $fieldTypeName . 'QueryObject';
-        $method = "public function select$upperCamelName()
+        $method = "public function select$upperCamelName(array \$args = [])
 {
     \$object = new $objectClassName('$fieldName');
+    \$object->appendArguments(\$args);
     \$this->selectField(\$object);
 
     return \$object;
