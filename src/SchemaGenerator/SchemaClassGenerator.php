@@ -76,6 +76,9 @@ class SchemaClassGenerator
     {
         foreach ($fieldsArray as $fieldArray) {
             $name = $fieldArray['name'];
+            // Skip fields with name "query"
+            if ($name === 'query') continue;
+
             //$description = $fieldArray['description'];
             [$typeName, $typeKind] = $this->getTypeInfo($fieldArray);
 
