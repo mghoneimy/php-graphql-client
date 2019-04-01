@@ -40,24 +40,21 @@ abstract class QueryObject extends AbstractQueryBuilder
     }
 
     /**
-     * Constructs the object's arguments list from its attributes
+     * @param array $arguments
+     *
+     * @return $this
      */
-	protected function constructArgumentsList(): array
+    protected function appendArguments(array $arguments): QueryObject
     {
-        $argumentsList = [];
-        foreach ($this as $name => $value) {
-            // TODO: Use annotations to avoid having to check on specific keys
-            if (empty($value) || in_array($name, ['nameAlias', 'selectionSet', 'argumentsList', 'query'])) continue;
-
-            // Handle input objects before adding them to the arguments list
-            if ($value instanceof InputObject) {
-                $value = $value->toRawObject();
+        foreach ($arguments as $argName => $argValue) {
+            if ($argValue instanceof InputObject) {
+                $argValue = $argValue->toRawObject();
             }
 
-            $argumentsList[$name] = $value;
+            $this->setArgument($argName, $argValue);
         }
 
-        return $argumentsList;
+        return $this;
     }
 
     /**
