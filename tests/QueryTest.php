@@ -44,6 +44,36 @@ class QueryTest extends TestCase
     }
 
     /**
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testExplicitQueryObject()
+    {
+        $query = new Query('query');
+
+        $this->assertEquals(
+            "query {
+
+}",
+            (string) $query
+        );
+
+        $query->setSelectionSet(
+            [
+                new Query('Object')
+            ]
+        );
+
+        $this->assertEquals(
+            "query {
+Object {
+
+}
+}",
+            (string) $query
+        );
+    }
+
+    /**
      * @depends clone testEmptyArguments
      *
      * @covers \GraphQL\Query::__toString
