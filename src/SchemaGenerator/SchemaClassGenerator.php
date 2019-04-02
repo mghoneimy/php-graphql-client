@@ -3,7 +3,7 @@
 namespace GraphQL\SchemaGenerator;
 
 use GraphQL\Client;
-use GraphQL\SchemaGenerator\CodeGenerator\ArgumentsMapClassBuilder;
+use GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
@@ -95,13 +95,13 @@ class SchemaClassGenerator
                 if ($objectGenerated) {
 
                     // Generate nested type arguments object if it wasn't generated
-                    $argsMapName = $currentTypeName . StringLiteralFormatter::formatUpperCamelCase($name);
-                    $mapGenerated = array_key_exists($argsMapName, $this->generatedObjects) ? :
-                        $this->generateArgumentsMap($argsMapName, $fieldArray['args']);
+                    $argsObjectName = $currentTypeName . StringLiteralFormatter::formatUpperCamelCase($name);
+                    $mapGenerated = array_key_exists($argsObjectName, $this->generatedObjects) ? :
+                        $this->generateArgumentsMap($argsObjectName, $fieldArray['args']);
                     if ($mapGenerated) {
 
                         // Add sub type as a field to the query object if all generation happened successfully
-                        $queryObjectBuilder->addObjectField($name, $typeName, $argsMapName);
+                        $queryObjectBuilder->addObjectField($name, $typeName, $argsObjectName);
                     }
                 }
             }
@@ -210,7 +210,7 @@ class SchemaClassGenerator
      */
     private function generateArgumentsMap(string $argsMapName, array $arguments): bool
     {
-        $objectBuilder = new ArgumentsMapClassBuilder($this->writeDir, $argsMapName);
+        $objectBuilder = new ArgumentsObjectClassBuilder($this->writeDir, $argsMapName);
 
         $this->generatedObjects[$argsMapName] = true;
         foreach ($arguments as $argumentArray) {

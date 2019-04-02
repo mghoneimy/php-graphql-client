@@ -3,11 +3,11 @@
 namespace GraphQL\SchemaObject;
 
 /**
- * Class ArgumentsMap
+ * Class ArgumentsObject
  *
  * @package GraphQL\SchemaObject
  */
-abstract class ArgumentsMap
+abstract class ArgumentsObject
 {
     /**
      * @return array

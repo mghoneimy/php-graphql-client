@@ -46,12 +46,12 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     /**
      * @param string $fieldName
      * @param string $typeName
-     * @param string $argsMapName
+     * @param string $argsObjectName
      */
-    public function addObjectField(string $fieldName, string $typeName, string $argsMapName)
+    public function addObjectField(string $fieldName, string $typeName, string $argsObjectName)
     {
         $upperCamelCaseProp = StringLiteralFormatter::formatUpperCamelCase($fieldName);
-        $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName, $argsMapName);
+        $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName, $argsObjectName);
     }
 
     /**
@@ -73,12 +73,12 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $fieldName
      * @param string $upperCamelName
      * @param string $fieldTypeName
-     * @param string $argsMapName
+     * @param string $argsObjectName
      */
-    protected function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName, string $argsMapName)
+    protected function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName, string $argsObjectName)
     {
         $objectClassName  = $fieldTypeName . 'QueryObject';
-        $argsMapClassName = $argsMapName . 'ArgumentsMap';
+        $argsMapClassName = $argsObjectName . 'ArgumentsObject';
         $method = "public function select$upperCamelName($argsMapClassName \$argsMap = null)
 {
     \$object = new $objectClassName('$fieldName');

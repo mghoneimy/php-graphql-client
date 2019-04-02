@@ -5,21 +5,26 @@ namespace GraphQL\SchemaGenerator\CodeGenerator;
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 use GraphQL\Util\StringLiteralFormatter;
 
-class ArgumentsMapClassBuilder extends ObjectClassBuilder
+/**
+ * Class ArgumentsObjectClassBuilder
+ *
+ * @package GraphQL\SchemaGenerator\CodeGenerator
+ */
+class ArgumentsObjectClassBuilder extends ObjectClassBuilder
 {
     /**
-     * ArgumentsMapClassBuilder constructor.
+     * ArgumentsObjectClassBuilder constructor.
      *
      * @param string $writeDir
      * @param string $objectName
      */
     public function __construct(string $writeDir, string $objectName)
     {
-        $className = $objectName . 'ArgumentsMap';
+        $className = $objectName . 'ArgumentsObject';
 
         $this->classFile = new ClassFile($writeDir, $className);
         $this->classFile->setNamespace('GraphQL\\SchemaObject');
-        $this->classFile->extendsClass('ArgumentsMap');
+        $this->classFile->extendsClass('ArgumentsObject');
     }
 
     /**
