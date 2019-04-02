@@ -79,4 +79,18 @@ class StringLiteralFormatter
 
         return $arrString;
     }
+
+    /**
+     * @param string $propertyName
+     *
+     * @return string
+     */
+    public static function formatUpperCamelCase(string $propertyName): string
+    {
+        if (strpos($propertyName, '_') === false) {
+            return ucfirst($propertyName);
+        } else {
+            return str_replace('_', '', ucwords($propertyName, '_'));
+        }
+    }
 }

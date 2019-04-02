@@ -73,18 +73,4 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
 }";
         $this->classFile->addMethod($method);
     }
-
-    /**
-     * @param string $propertyName
-     *
-     * @return string
-     */
-    protected function getUpperCamelCase(string $propertyName)
-    {
-        if (strpos($propertyName, '_') === false) {
-            return ucfirst($propertyName);
-        } else {
-            return str_replace('_', '', ucwords($propertyName, '_'));
-        }
-    }
 }

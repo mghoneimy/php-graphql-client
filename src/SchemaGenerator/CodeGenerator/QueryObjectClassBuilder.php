@@ -4,6 +4,7 @@ namespace GraphQL\SchemaGenerator\CodeGenerator;
 
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 use GraphQL\SchemaObject\QueryObject;
+use GraphQL\Util\StringLiteralFormatter;
 
 /**
  * Class QueryObjectClassBuilder
@@ -38,18 +39,19 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      */
     public function addScalarField(string $fieldName)
     {
-        $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
+        $upperCamelCaseProp = StringLiteralFormatter::formatUpperCamelCase($fieldName);
         $this->addSimpleSelector($fieldName, $upperCamelCaseProp);
     }
 
     /**
      * @param string $fieldName
      * @param string $typeName
+     * @param string $argsMapName
      */
-    public function addObjectField(string $fieldName, string $typeName)
+    public function addObjectField(string $fieldName, string $typeName, string $argsMapName)
     {
-        $upperCamelCaseProp = $this->getUpperCamelCase($fieldName);
-        $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName);
+        $upperCamelCaseProp = StringLiteralFormatter::formatUpperCamelCase($fieldName);
+        $this->addObjectSelector($fieldName, $upperCamelCaseProp, $typeName, $argsMapName);
     }
 
     /**
@@ -71,14 +73,18 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
      * @param string $fieldName
      * @param string $upperCamelName
      * @param string $fieldTypeName
+     * @param string $argsMapName
      */
-    protected function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName)
+    protected function addObjectSelector(string $fieldName, string $upperCamelName, string $fieldTypeName, string $argsMapName)
     {
-        $objectClassName = $fieldTypeName . 'QueryObject';
-        $method = "public function select$upperCamelName(array \$args = [])
+        $objectClassName  = $fieldTypeName . 'QueryObject';
+        $argsMapClassName = $argsMapName . 'ArgumentsMap';
+        $method = "public function select$upperCamelName($argsMapClassName \$argsMap = null)
 {
     \$object = new $objectClassName('$fieldName');
-    \$object->appendArguments(\$args);
+    if (\$argsMap !== null) { 
+        \$object->appendArguments(\$argsMap->toArray());
+    }
     \$this->selectField(\$object);
 
     return \$object;

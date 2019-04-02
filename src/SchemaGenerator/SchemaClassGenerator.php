@@ -3,10 +3,12 @@
 namespace GraphQL\SchemaGenerator;
 
 use GraphQL\Client;
+use GraphQL\SchemaGenerator\CodeGenerator\ArgumentsMapClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 use GraphQL\SchemaObject\QueryObject;
+use GraphQL\Util\StringLiteralFormatter;
 use RuntimeException;
 
 /**
@@ -61,7 +63,7 @@ class SchemaClassGenerator
 	    //$rootObjectDescr = $queryType['description'];
 	    $queryObjectBuilder = new QueryObjectClassBuilder($this->writeDir, $rootObjectName);
         $this->generatedObjects[$queryTypeName] = true;
-        $this->appendObjectFields($queryObjectBuilder, $queryType['fields']);
+        $this->appendObjectFields($queryObjectBuilder, $rootObjectName, $queryType['fields']);
 
         $queryObjectBuilder->build();
     }
@@ -70,9 +72,10 @@ class SchemaClassGenerator
      * This method receives the array of object fields as an input and adds the fields to the query object building
      *
      * @param QueryObjectClassBuilder $queryObjectBuilder
+     * @param string                  $currentTypeName
      * @param array                   $fieldsArray
      */
-	private function appendObjectFields(QueryObjectClassBuilder $queryObjectBuilder, array $fieldsArray)
+	private function appendObjectFields(QueryObjectClassBuilder $queryObjectBuilder, string $currentTypeName, array $fieldsArray)
     {
         foreach ($fieldsArray as $fieldArray) {
             $name = $fieldArray['name'];
@@ -85,18 +88,23 @@ class SchemaClassGenerator
             if ($typeKind === 'SCALAR') {
                 $queryObjectBuilder->addScalarField($name);
             } else {
-                $objectGenerated = array_key_exists($typeName, $this->generatedObjects) ?: $this->generateObject($typeName, $typeKind);
+
+                // Generate nested type object if it wasn't generated
+                $objectGenerated = array_key_exists($typeName, $this->generatedObjects) ? :
+                    $this->generateObject($typeName, $typeKind);
                 if ($objectGenerated) {
-                    $queryObjectBuilder->addObjectField($name, $typeName);
+
+                    // Generate nested type arguments object if it wasn't generated
+                    $argsMapName = $currentTypeName . StringLiteralFormatter::formatUpperCamelCase($name);
+                    $mapGenerated = array_key_exists($argsMapName, $this->generatedObjects) ? :
+                        $this->generateArgumentsMap($argsMapName, $fieldArray['args']);
+                    if ($mapGenerated) {
+
+                        // Add sub type as a field to the query object if all generation happened successfully
+                        $queryObjectBuilder->addObjectField($name, $typeName, $argsMapName);
+                    }
                 }
             }
-
-            //// Get query object args
-            //$arguments = $fieldArray['args'];
-            //foreach ($arguments as $argument) {
-            //    $this->generateObjectArguments($queryObjectBuilder, $argument, $writeDir);
-            //}
-
         }
     }
 
@@ -131,7 +139,7 @@ class SchemaClassGenerator
         $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName);
 
         $this->generatedObjects[$objectName] = true;
-        $this->appendObjectFields($objectBuilder, $objectArray['fields']);
+        $this->appendObjectFields($objectBuilder, $objectName, $objectArray['fields']);
         $objectBuilder->build();
 
         return true;
@@ -157,10 +165,7 @@ class SchemaClassGenerator
             if ($typeKind === 'SCALAR') {
                 $objectBuilder->addScalarValue($name);
             } else {
-                $objectGenerated = false;
-                if ($typeKind === 'OBJECT' || $typeKind === 'INPUT_OBJECT'){
-                    $objectGenerated = array_key_exists($typeName, $this->generatedObjects) ?: $this->generateObject($typeName, $typeKind);
-                }
+                $objectGenerated = array_key_exists($typeName, $this->generatedObjects) ?: $this->generateObject($typeName, $typeKind);
                 if ($objectGenerated) {
                     if (in_array('LIST', $typeKindWrappers)) {
                         $objectBuilder->addListValue($name, $typeName);
@@ -198,45 +203,38 @@ class SchemaClassGenerator
     }
 
     /**
-     * @param QueryObjectClassBuilder $queryObjectBuilder
-     * @param array                   $argumentArray
-     * @param string                  $writeDir
+     * @param string $argsMapName
+     * @param array  $arguments
+     *
+     * @return bool
      */
-    private function generateObjectArguments(
-        QueryObjectClassBuilder $queryObjectBuilder,
-        array $argumentArray,
-        string $writeDir = ''
-    ): void
+    private function generateArgumentsMap(string $argsMapName, array $arguments): bool
     {
-        $argName = $argumentArray['name'];
-        $argDescription = $argumentArray['description'];
-        $argType = $argumentArray['type'];
+        $objectBuilder = new ArgumentsMapClassBuilder($this->writeDir, $argsMapName);
 
-        $argKind = $argType['kind'];
-        if ($argKind === 'SCALAR') {
-            $argTypeName = $argType['name'];
-            $argTypeDescription = $argType['description'];
-            $queryObjectBuilder->addScalarArgument($argName);
-        } elseif ($argKind === 'INPUT_OBJECT') {
-            $argTypeName = $argType['name'];
-            $argTypeDescription = $argType['description'];
-            $queryObjectBuilder->addInputObjectArgument($argName, $argTypeName);
+        $this->generatedObjects[$argsMapName] = true;
+        foreach ($arguments as $argumentArray) {
+            $name = $argumentArray['name'];
+            //$description = $inputFieldArray['description'];
+            //$defaultValue = $inputFieldArray['defaultValue'];
+            [$typeName, $typeKind, $typeKindWrappers] = $this->getTypeInfo($argumentArray);
 
-            // Generate input object class
-            $this->generateInputObject($argTypeName, $argType['inputFields'], $writeDir);
-        } elseif ($argKind === 'LIST') {
-            // Get type wrapped by list
-            $wrappedType = $argType['ofType'];
-            $wrappedTypeName = $wrappedType['name'];
-            $wrappedTypeDescription = $wrappedType['description'];
-            $wrappedTypeKind = $wrappedType['kind'];
-            $queryObjectBuilder->addListArgument($argName, $wrappedTypeName);
-
-            // Handle generation of ENUM object if needed
-            if ($wrappedTypeKind === 'ENUM') {
-                $this->generateEnumObject($wrappedTypeName, $wrappedType['enumValues'], $writeDir);
+            if ($typeKind === 'SCALAR') {
+                $objectBuilder->addScalarArgument($name);
+            } else {
+                $objectGenerated = array_key_exists($typeName, $this->generatedObjects) ?: $this->generateObject($typeName, $typeKind);
+                if ($objectGenerated) {
+                    if (in_array('LIST', $typeKindWrappers)) {
+                        $objectBuilder->addListArgument($name, $typeName);
+                    } else {
+                        $objectBuilder->addInputObjectArgument($name, $typeName);
+                    }
+                }
             }
         }
+        $objectBuilder->build();
+
+        return true;
     }
 
     /**
