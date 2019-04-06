@@ -4,6 +4,7 @@ namespace GraphQL\Tests;
 
 use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\SchemaObject\ArgumentsObject;
+use GraphQL\SchemaObject\InputObject;
 use GraphQL\SchemaObject\QueryObject;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +30,7 @@ class QueryObjectTest extends TestCase
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::__construct
+     * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      */
     public function testConstruct()
     {
@@ -108,6 +110,7 @@ scalar
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::appendArguments
+     * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
      * @throws EmptySelectionSetException
      */
@@ -118,6 +121,33 @@ scalar
             'query {
 simples {
 siblings(first: 5 ids: [1, 2]) {
+scalar
+}
+}
+}',
+            $this->queryObject->getQueryString()
+        );
+
+        $this->setUp();
+        $this->queryObject
+            ->selectSiblings(
+                (new SimpleSiblingsArgumentObject())
+                    ->setObject(
+                        (new class extends InputObject {
+                            protected $field;
+
+                            public function setField($field) {
+                                $this->field = $field;
+                                return $this;
+                            }
+                        })->setField('something')
+                    )
+            )
+            ->selectScalar();
+        $this->assertEquals(
+            'query {
+simples {
+siblings(obj: {field: "something"}) {
 scalar
 }
 }
@@ -161,18 +191,23 @@ class SimpleSiblingsArgumentObject extends ArgumentsObject
 {
     protected $first;
     protected $ids;
+    protected $obj;
 
     public function setFirst($first)
     {
         $this->first = $first;
-
         return $this;
     }
 
     public function setIds(array $ids)
     {
         $this->ids = $ids;
+        return $this;
+    }
 
+    public function setObject($obj)
+    {
+        $this->obj = $obj;
         return $this;
     }
 }

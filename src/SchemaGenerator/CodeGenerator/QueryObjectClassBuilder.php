@@ -62,7 +62,7 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     {
         $method = "public function select$upperCamelName()
 {
-    \$this->selectField('$propertyName');
+    \$this->selectField(\"$propertyName\");
 
     return \$this;
 }";
@@ -79,11 +79,11 @@ class QueryObjectClassBuilder extends ObjectClassBuilder
     {
         $objectClassName  = $fieldTypeName . 'QueryObject';
         $argsMapClassName = $argsObjectName . 'ArgumentsObject';
-        $method = "public function select$upperCamelName($argsMapClassName \$argsMap = null)
+        $method = "public function select$upperCamelName($argsMapClassName \$argsObject = null)
 {
-    \$object = new $objectClassName('$fieldName');
-    if (\$argsMap !== null) { 
-        \$object->appendArguments(\$argsMap->toArray());
+    \$object = new $objectClassName(\"$fieldName\");
+    if (\$argsObject !== null) {
+        \$object->appendArguments(\$argsObject->toArray());
     }
     \$this->selectField(\$object);
 

@@ -89,7 +89,7 @@ class StringLiteralFormatterTest extends TestCase
     }
 
     /**
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatUpperCamelCase
+     * @covers \GraphQL\Util\StringLiteralFormatter::formatLowerCamelCase
      */
     public function testFormatLowerCamelCase()
     {
