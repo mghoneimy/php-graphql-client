@@ -9,6 +9,8 @@ use GraphQL\RawObject;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * This test case is responsible for testing the QueryBuilder and AbstractQueryBuilder classes
+ *
  * Class QueryBuilderTest
  *
  * @package GraphQL\Tests
@@ -27,6 +29,7 @@ class QueryBuilderTest extends TestCase
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
      */
     public function testConstruct()
     {
@@ -44,6 +47,7 @@ field_one
 
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
      */
     public function testEmptySelectionSet()
     {
@@ -52,8 +56,9 @@ field_one
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::selectField
      */
     public function testSelectScalarFields()
     {
@@ -71,8 +76,8 @@ field_two
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
      */
     public function testSelectNestedQuery()
     {
@@ -111,8 +116,9 @@ some_field
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::setArgument
      */
     public function testSelectArguments()
     {
@@ -169,9 +175,11 @@ field
     }
 
     /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::setArgument
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::setArgument
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::selectField
      */
     public function testSetTwoLevelArguments()
     {

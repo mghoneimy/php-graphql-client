@@ -3,6 +3,7 @@
 namespace GraphQL\Tests;
 
 use GraphQL\SchemaObject\ArgumentsObject;
+use GraphQL\SchemaObject\InputObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -27,34 +28,86 @@ class ArgumentsObjectTest extends TestCase
      */
     public function testGetArray()
     {
-        $array = (new class extends ArgumentsObject {
-            protected $stringProperty;
-            protected $integerProperty;
-            protected $arrayProperty;
+        $argumentsObj = (new SimpleArgumentsObject())->setStringProperty('string');
+        $this->assertEquals(
+            [
+                'stringProperty'  => 'string',
+            ],
+            $argumentsObj->toArray()
+        );
 
-            public function setStringProperty(string $stringValue) {
-                $this->stringProperty = $stringValue;
-                return $this;
-            }
+        $argumentsObj->setIntegerProperty(5);
+        $this->assertEquals(
+            [
+                'stringProperty'  => 'string',
+                'integerProperty' => 5,
+            ],
+            $argumentsObj->toArray()
+        );
 
-            public function setIntegerProperty(int $integerValue) {
-                $this->integerProperty = $integerValue;
-                return $this;
-            }
-
-            public function setArrayProperty(array $arrayValue) {
-                $this->arrayProperty = $arrayValue;
-                return $this;
-            }
-        })->setStringProperty('string')->setIntegerProperty(5)->setArrayProperty([1, 2, 3])->toArray();
-        $this->assertIsArray($array);
+        $argumentsObj->setArrayProperty([1, 2, 3]);
         $this->assertEquals(
             [
                 'stringProperty'  => 'string',
                 'integerProperty' => 5,
                 'arrayProperty'   => [1, 2, 3]
             ],
-            $array
+            $argumentsObj->toArray()
         );
+
+        $filter = (new FilterInputObject())->setIds([1, 2]);
+        $argumentsObj->setObjectProperty($filter);
+        $this->assertEquals(
+            [
+                'stringProperty'  => 'string',
+                'integerProperty' => 5,
+                'arrayProperty'   => [1, 2, 3],
+                'objectProperty'  => $filter
+            ],
+            $argumentsObj->toArray()
+        );
+    }
+}
+
+class SimpleArgumentsObject extends ArgumentsObject
+{
+    protected $stringProperty;
+    protected $integerProperty;
+    protected $arrayProperty;
+    protected $objectProperty;
+
+    public function setStringProperty(string $stringValue)
+    {
+        $this->stringProperty = $stringValue;
+        return $this;
+    }
+
+    public function setIntegerProperty(int $integerValue)
+    {
+        $this->integerProperty = $integerValue;
+        return $this;
+    }
+
+    public function setArrayProperty(array $arrayValue)
+    {
+        $this->arrayProperty = $arrayValue;
+        return $this;
+    }
+
+    public function setObjectProperty(FilterInputObject $filterInputObject)
+    {
+        $this->objectProperty = $filterInputObject;
+        return $this;
+    }
+}
+
+class FilterInputObject extends InputObject
+{
+    protected $ids;
+
+    public function setIds($ids)
+    {
+        $this->ids = $ids;
+        return $this;
     }
 }

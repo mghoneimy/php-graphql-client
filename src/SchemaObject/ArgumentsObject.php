@@ -16,7 +16,9 @@ abstract class ArgumentsObject
     {
         $argsArray = [];
         foreach ($this as $name => $value) {
-            $argsArray[$name] = $value;
+            if ($value !== null) {
+                $argsArray[$name] = $value;
+            }
         }
 
         return $argsArray;
