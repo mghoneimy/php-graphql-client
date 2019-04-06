@@ -2,5 +2,5 @@
 
 class ClassWithConstant
 {
-    const CONST_ONE = 'ONE';
+    const CONST_ONE = "ONE";
 }

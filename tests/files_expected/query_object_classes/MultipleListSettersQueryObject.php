@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class MultipleListSettersQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'MultipleListSetters';
+    const OBJECT_NAME = "MultipleListSetters";
 
     public function setLastNames(array $lastNames)
     {

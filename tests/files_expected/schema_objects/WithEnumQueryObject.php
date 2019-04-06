@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class WithEnumQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'WithEnum';
+    const OBJECT_NAME = "WithEnum";
 
     protected $_id;
     protected $creation_date;
@@ -12,14 +12,14 @@ class WithEnumQueryObject extends QueryObject
 
     public function selectId()
     {
-        $this->selectField('_id');
+        $this->selectField("_id");
     
         return $this;
     }
 
     public function selectCreationDate()
     {
-        $this->selectField('creation_date');
+        $this->selectField("creation_date");
     
         return $this;
     }

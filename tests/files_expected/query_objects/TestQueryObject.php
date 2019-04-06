@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class TestQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'Test';
+    const OBJECT_NAME = "Test";
 
     protected $property_one;
     protected $propertyTwo;
@@ -13,28 +13,28 @@ class TestQueryObject extends QueryObject
 
     public function selectPropertyOne()
     {
-        $this->selectField('property_one');
+        $this->selectField("property_one");
     
         return $this;
     }
 
     public function selectPropertyTwo()
     {
-        $this->selectField('propertyTwo');
+        $this->selectField("propertyTwo");
     
         return $this;
     }
 
     public function selectPropertyWithoutSetter()
     {
-        $this->selectField('propertyWithoutSetter');
+        $this->selectField("propertyWithoutSetter");
     
         return $this;
     }
 
     public function selectOtherObjects()
     {
-        $object = new OtherObjectQueryObject('other_objects');
+        $object = new OtherObjectQueryObject("other_objects");
         $this->selectField($object);
     
         return $object;

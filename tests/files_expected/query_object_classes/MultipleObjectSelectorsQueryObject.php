@@ -4,11 +4,11 @@ namespace GraphQL\SchemaObject;
 
 class MultipleObjectSelectorsQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'MultipleObjectSelectors';
+    const OBJECT_NAME = "MultipleObjectSelectors";
 
     public function selectRightObjects()
     {
-        $object = new RightObjectQueryObject('right_objects');
+        $object = new RightObjectQueryObject("right_objects");
         $this->selectField($object);
     
         return $object;
@@ -16,7 +16,7 @@ class MultipleObjectSelectorsQueryObject extends QueryObject
 
     public function selectLeftObjects()
     {
-        $object = new LeftObjectQueryObject('left_objects');
+        $object = new LeftObjectQueryObject("left_objects");
         $this->selectField($object);
     
         return $object;

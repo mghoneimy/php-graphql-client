@@ -4,21 +4,21 @@ namespace GraphQL\SchemaObject;
 
 class ComplexObjectQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'ComplexObject';
+    const OBJECT_NAME = "ComplexObject";
 
     protected $_id;
     protected $creation_date;
 
     public function selectId()
     {
-        $this->selectField('_id');
+        $this->selectField("_id");
     
         return $this;
     }
 
     public function selectSimples()
     {
-        $object = new SimpleObjectQueryObject('simples');
+        $object = new SimpleObjectQueryObject("simples");
         $this->selectField($object);
     
         return $object;
@@ -26,7 +26,7 @@ class ComplexObjectQueryObject extends QueryObject
 
     public function selectCreationDate()
     {
-        $this->selectField('creation_date');
+        $this->selectField("creation_date");
     
         return $this;
     }

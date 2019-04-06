@@ -4,18 +4,18 @@ namespace GraphQL\SchemaObject;
 
 class MultipleSimpleSelectorsQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'MultipleSimpleSelectors';
+    const OBJECT_NAME = "MultipleSimpleSelectors";
 
     public function selectFirstName()
     {
-        $this->selectField('first_name');
+        $this->selectField("first_name");
     
         return $this;
     }
 
     public function selectLastName()
     {
-        $this->selectField('last_name');
+        $this->selectField("last_name");
     
         return $this;
     }

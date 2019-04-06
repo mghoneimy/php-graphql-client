@@ -13,7 +13,7 @@ class OtherObjectQueryObject extends QueryObject
 
     public function selectName()
     {
-        $this->selectField('name');
+        $this->selectField("name");
 
         return $this;
     }

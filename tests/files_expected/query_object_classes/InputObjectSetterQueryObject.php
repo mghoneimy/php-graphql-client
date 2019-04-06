@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class InputObjectSetterQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'InputObjectSetter';
+    const OBJECT_NAME = "InputObjectSetter";
 
     public function setFilterBy(_TestFilter $testFilter)
     {

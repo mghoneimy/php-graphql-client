@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class WithInputQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'WithInput';
+    const OBJECT_NAME = "WithInput";
 
     protected $_id;
     protected $name;
@@ -12,14 +12,14 @@ class WithInputQueryObject extends QueryObject
 
     public function selectId()
     {
-        $this->selectField('_id');
+        $this->selectField("_id");
     
         return $this;
     }
 
     public function selectName()
     {
-        $this->selectField('name');
+        $this->selectField("name");
     
         return $this;
     }

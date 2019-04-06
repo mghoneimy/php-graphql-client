@@ -4,7 +4,7 @@ namespace GraphQL\SchemaObject;
 
 class SimpleObjectQueryObject extends QueryObject
 {
-    const OBJECT_NAME = 'SimpleObject';
+    const OBJECT_NAME = "SimpleObject";
 
     protected $_id;
     protected $_ids;
@@ -14,21 +14,21 @@ class SimpleObjectQueryObject extends QueryObject
 
     public function selectId()
     {
-        $this->selectField('_id');
+        $this->selectField("_id");
     
         return $this;
     }
 
     public function selectName()
     {
-        $this->selectField('name');
+        $this->selectField("name");
     
         return $this;
     }
 
     public function selectCreationDate()
     {
-        $this->selectField('creation_date');
+        $this->selectField("creation_date");
     
         return $this;
     }
