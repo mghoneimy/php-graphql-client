@@ -19,7 +19,7 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->classGenerator = new TransparentSchemaClassGenerator(
             new Client(static::TEST_API_URL),
