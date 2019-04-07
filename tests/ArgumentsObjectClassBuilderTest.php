@@ -12,6 +12,8 @@ use GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder;
  */
 class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
 {
+    private const TESTING_NAMESPACE = 'GraphQL\\Tests\\SchemaObject';
+
     /**
      * @return string
      */
@@ -28,7 +30,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddScalarArgument()
     {
         $objectName = 'WithScalarArg';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addScalarArgument('scalarProperty');
         $classBuilder->build();
@@ -47,7 +49,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleScalarArguments()
     {
         $objectName = 'WithMultipleScalarArgs';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addScalarArgument('scalarProperty');
         $classBuilder->addScalarArgument('another_scalar_property');
@@ -67,7 +69,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddListArgument()
     {
         $objectName = 'WithListArg';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addListArgument('listProperty', 'string');
         $classBuilder->build();
@@ -86,7 +88,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleListArguments()
     {
         $objectName = 'WithMultipleListArgs';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addListArgument('listProperty', 'string');
         $classBuilder->addListArgument('another_list_property', 'string');
@@ -106,7 +108,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddInputObjectArgument()
     {
         $objectName = 'WithInputObjectArg';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addInputObjectArgument('objectProperty', 'Some');
         $classBuilder->build();
@@ -125,7 +127,7 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleInputObjectArguments()
     {
         $objectName = 'WithMultipleInputObjectArgs';
-        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new ArgumentsObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'ArgumentsObject';
         $classBuilder->addInputObjectArgument('objectProperty', 'Some');
         $classBuilder->addInputObjectArgument('another_object_property', 'Another');

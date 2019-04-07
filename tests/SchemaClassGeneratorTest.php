@@ -4,6 +4,7 @@ namespace GraphQL\Tests;
 
 use GraphQL\Client;
 use GraphQL\Enumeration\FieldTypeKindEnum;
+use GraphQL\SchemaGenerator\CodeGenerator\ObjectBuilderInterface;
 use GraphQL\SchemaGenerator\SchemaClassGenerator;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -681,6 +682,13 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
 
 class TransparentSchemaClassGenerator extends SchemaClassGenerator
 {
+    public function __construct(
+        Client $client,
+        string $writeDir = ''
+    ) {
+        parent::__construct($client, $writeDir, 'GraphQL\\Tests\\SchemaObject');
+    }
+
     public function generateRootQueryObject(): bool
     {
         return parent::generateRootQueryObject();

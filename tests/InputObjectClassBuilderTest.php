@@ -9,6 +9,8 @@ use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
  */
 class InputObjectClassBuilderTest extends CodeFileTestCase
 {
+    private const TESTING_NAMESPACE = 'GraphQL\\Tests\\SchemaObject';
+
     /**
      * @return string
      */
@@ -25,7 +27,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddScalarValue()
     {
         $objectName = 'WithScalarValue';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addScalarValue('valOne');
         $classBuilder->build();
@@ -44,7 +46,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleScalarValues()
     {
         $objectName = 'WithMultipleScalarValues';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addScalarValue('valOne');
         $classBuilder->addScalarValue('val_two');
@@ -64,7 +66,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddListValue()
     {
         $objectName = 'WithListValue';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addListValue('listOne', '');
         $classBuilder->build();
@@ -83,7 +85,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleListValues()
     {
         $objectName = 'WithMultipleListValues';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addListValue('listOne', '');
         $classBuilder->addListValue('list_two', '');
@@ -103,7 +105,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddInputObjectValue()
     {
         $objectName = 'WithInputObjectValue';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addInputObjectValue('inputObject', 'WithListValue');
         $classBuilder->build();
@@ -122,7 +124,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleInputObjectValues()
     {
         $objectName = 'WithMultipleInputObjectValues';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addInputObjectValue('inputObject', 'WithListValue');
         $classBuilder->addInputObjectValue('inputObjectTwo', '_TestFilter');
@@ -141,7 +143,7 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     public function testInputObjectIntegration()
     {
         $objectName = '_TestFilter';
-        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new InputObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'InputObject';
         $classBuilder->addScalarValue('first_name');
         $classBuilder->addScalarValue('lastName');

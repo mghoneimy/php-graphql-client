@@ -1,6 +1,8 @@
 <?php
 
-namespace GraphQL\SchemaObject;
+namespace GraphQL\Tests\SchemaObject;
+
+use GraphQL\SchemaObject\InputObject;
 
 class WithMultipleScalarValuesInputObject extends InputObject
 {

@@ -7,6 +7,8 @@ use GraphQL\SchemaObject\QueryObject;
 
 class QueryObjectClassBuilderTest extends CodeFileTestCase
 {
+    private const TESTING_NAMESPACE = 'GraphQL\\Tests\\SchemaObject';
+
     /**
      * @return string
      */
@@ -22,7 +24,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testBuildEmptyQueryObject()
     {
         $objectName = 'Empty';
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->build();
 
@@ -39,7 +41,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testBuildRootQueryObject()
     {
         $objectName = QueryObject::ROOT_QUERY_OBJECT_NAME;
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->build();
 
@@ -56,7 +58,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testAddSimpleSelector()
     {
         $objectName = 'SimpleSelector';
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->addScalarField('name');
         $classBuilder->build();
@@ -76,7 +78,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleSimpleSelectors()
     {
         $objectName = 'MultipleSimpleSelectors';
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->addScalarField('first_name');
         $classBuilder->addScalarField('last_name');
@@ -95,7 +97,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testAddObjectSelector()
     {
         $objectName = 'ObjectSelector';
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->addObjectField('others', 'Other', 'RootOthers');
         $classBuilder->build();
@@ -115,7 +117,7 @@ class QueryObjectClassBuilderTest extends CodeFileTestCase
     public function testAddMultipleObjectSelectors()
     {
         $objectName = 'MultipleObjectSelectors';
-        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName);
+        $classBuilder = new QueryObjectClassBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'QueryObject';
         $classBuilder->addObjectField('right_objects', 'Right', 'MultipleObjectSelectorsRightObjects');
         $classBuilder->addObjectField('left_objects', 'Left', 'MultipleObjectSelectorsLeftObjects');

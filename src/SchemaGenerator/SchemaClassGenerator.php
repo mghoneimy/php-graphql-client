@@ -7,6 +7,7 @@ use GraphQL\Enumeration\FieldTypeKindEnum;
 use GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 use GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder;
+use GraphQL\SchemaGenerator\CodeGenerator\ObjectBuilderInterface;
 use GraphQL\SchemaGenerator\CodeGenerator\QueryObjectClassBuilder;
 use GraphQL\SchemaObject\QueryObject;
 use GraphQL\Util\StringLiteralFormatter;
@@ -32,6 +33,11 @@ class SchemaClassGenerator
 	private $writeDir;
 
     /**
+     * @var string
+     */
+	private $generationNamespace;
+
+    /**
      * This array is used as a set to store the already generated objects
      * Array structure: [$objectName] => true
      *AND complete covering the schema scanner class
@@ -44,12 +50,14 @@ class SchemaClassGenerator
      *
      * @param Client $client
      * @param string $writeDir
+     * @param string $namespace
      */
-	public function __construct(Client $client, string $writeDir = '')
+	public function __construct(Client $client, string $writeDir = '', string $namespace = ObjectBuilderInterface::DEFAULT_NAMESPACE)
     {
-        $this->schemaInspector  = new SchemaInspector($client);
-        $this->generatedObjects = [];
-        $this->writeDir         = $writeDir;
+        $this->schemaInspector     = new SchemaInspector($client);
+        $this->generatedObjects    = [];
+        $this->writeDir            = $writeDir;
+        $this->generationNamespace = $namespace;
         $this->setWriteDir();
     }
 
@@ -63,7 +71,7 @@ class SchemaClassGenerator
         $queryTypeName  = $objectArray['name'];
         //$rootObjectDescr = $objectArray['description'];
 
-        $queryObjectBuilder = new QueryObjectClassBuilder($this->writeDir, $rootObjectName);
+        $queryObjectBuilder = new QueryObjectClassBuilder($this->writeDir, $rootObjectName, $this->generationNamespace);
         $this->generatedObjects[$queryTypeName] = true;
         $this->appendQueryObjectFields($queryObjectBuilder, $rootObjectName, $objectArray['fields']);
 
@@ -141,7 +149,7 @@ class SchemaClassGenerator
     {
         $objectArray   = $this->schemaInspector->getObjectSchema($objectName);
         $objectName    = $objectArray['name'];
-        $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName);
+        $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName, $this->generationNamespace);
 
         $this->generatedObjects[$objectName] = true;
         $this->appendQueryObjectFields($objectBuilder, $objectName, $objectArray['fields']);
@@ -159,7 +167,7 @@ class SchemaClassGenerator
     {
         $objectArray   = $this->schemaInspector->getInputObjectSchema($objectName);
         $objectName    = $objectArray['name'];
-        $objectBuilder = new InputObjectClassBuilder($this->writeDir, $objectName);
+        $objectBuilder = new InputObjectClassBuilder($this->writeDir, $objectName, $this->generationNamespace);
 
         $this->generatedObjects[$objectName] = true;
         foreach ($objectArray['inputFields'] as $inputFieldArray) {
@@ -200,7 +208,7 @@ class SchemaClassGenerator
     {
         $objectArray   = $this->schemaInspector->getEnumObjectSchema($objectName);
         $objectName    = $objectArray['name'];
-        $objectBuilder = new EnumObjectBuilder($this->writeDir, $objectName);
+        $objectBuilder = new EnumObjectBuilder($this->writeDir, $objectName, $this->generationNamespace);
 
         $this->generatedObjects[$objectName] = true;
         foreach ($objectArray['enumValues'] as $enumValue) {
@@ -221,7 +229,7 @@ class SchemaClassGenerator
      */
     protected function generateArgumentsObject(string $argsObjectName, array $arguments): bool
     {
-        $objectBuilder = new ArgumentsObjectClassBuilder($this->writeDir, $argsObjectName);
+        $objectBuilder = new ArgumentsObjectClassBuilder($this->writeDir, $argsObjectName, $this->generationNamespace);
 
         $this->generatedObjects[$argsObjectName] = true;
         foreach ($arguments as $argumentArray) {
