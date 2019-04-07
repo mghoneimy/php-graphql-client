@@ -4,5 +4,5 @@ namespace GraphQL\SchemaObject;
 
 class WithConstantEnumObject extends EnumObject
 {
-    const FIXED_VALUE = 'fixed_value';
+    const FIXED_VALUE = "fixed_value";
 }

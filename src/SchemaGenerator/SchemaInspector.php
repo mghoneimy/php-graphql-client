@@ -7,6 +7,8 @@ use GraphQL\Client;
 /**
  * Class SchemaInspector
  *
+ * @codeCoverageIgnore
+ *
  * @package GraphQL\SchemaGenerator
  */
 class SchemaInspector

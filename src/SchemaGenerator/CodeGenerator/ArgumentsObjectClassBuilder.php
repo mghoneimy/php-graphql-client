@@ -6,31 +6,31 @@ use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
 use GraphQL\Util\StringLiteralFormatter;
 
 /**
- * Class InputObjectClassBuilder
+ * Class ArgumentsObjectClassBuilder
  *
  * @package GraphQL\SchemaGenerator\CodeGenerator
  */
-class InputObjectClassBuilder extends ObjectClassBuilder
+class ArgumentsObjectClassBuilder extends ObjectClassBuilder
 {
     /**
-     * SchemaObjectBuilder constructor.
+     * ArgumentsObjectClassBuilder constructor.
      *
      * @param string $writeDir
      * @param string $objectName
      */
     public function __construct(string $writeDir, string $objectName)
     {
-        $className = $objectName . 'InputObject';
+        $className = $objectName . 'ArgumentsObject';
 
         $this->classFile = new ClassFile($writeDir, $className);
         $this->classFile->setNamespace('GraphQL\\SchemaObject');
-        $this->classFile->extendsClass('InputObject');
+        $this->classFile->extendsClass('ArgumentsObject');
     }
 
     /**
      * @param string $argumentName
      */
-    public function addScalarValue(string $argumentName)
+    public function addScalarArgument(string $argumentName)
     {
         $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
@@ -38,10 +38,10 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     }
 
     /**
-     * @param string $argumentName
-     * @param string $typeName
+     * @param string string $argumentName
+     * @param string string $typeName
      */
-    public function addListValue(string $argumentName, string $typeName)
+    public function addListArgument(string $argumentName, string $typeName)
     {
         $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
@@ -52,7 +52,7 @@ class InputObjectClassBuilder extends ObjectClassBuilder
      * @param string $argumentName
      * @param string $typeName
      */
-    public function addInputObjectValue(string $argumentName, string $typeName)
+    public function addInputObjectArgument(string $argumentName, string $typeName)
     {
         $typeName .= 'InputObject';
         $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);

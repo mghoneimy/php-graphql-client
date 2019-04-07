@@ -134,7 +134,7 @@ class Query
             // Convert argument values to graphql string literal equivalent
             if (is_scalar($value)) {
                 // Convert scalar value to its literal in graphql
-                $value = StringLiteralFormatter::formatLiteralForGQLQuery($value);
+                $value = StringLiteralFormatter::formatValueForRHS($value);
             } elseif (is_array($value)) {
                 // Convert PHP array to its array representation in graphql arguments
                 $value = StringLiteralFormatter::formatArrayForGQLQuery($value);

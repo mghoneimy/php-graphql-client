@@ -2,13 +2,10 @@
 
 namespace GraphQL\Tests;
 
-require_once 'files_expected/query_objects/OtherObjectQueryObject.php';
-require_once 'files_expected/query_objects/TestQueryObject.php';
-require_once 'files_expected/input_objects/_TestFilterInputObject.php';
-
 use GraphQL\Exception\EmptySelectionSetException;
-use GraphQL\SchemaObject\_TestFilterInputObject;
-use GraphQL\SchemaObject\TestQueryObject;
+use GraphQL\SchemaObject\ArgumentsObject;
+use GraphQL\SchemaObject\InputObject;
+use GraphQL\SchemaObject\QueryObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -19,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class QueryObjectTest extends TestCase
 {
     /**
-     * @var TestQueryObject
+     * @var SimpleQueryObject
      */
     protected $queryObject;
 
@@ -28,32 +25,39 @@ class QueryObjectTest extends TestCase
      */
     public function setUp(): void
     {
-        $this->queryObject = new TestQueryObject();
+        $this->queryObject = new SimpleQueryObject('simples');
     }
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::__construct
+     * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      */
     public function testConstruct()
     {
-        $object = new TestQueryObject();
-        $object->selectPropertyTwo();
-        $this->assertEquals('query {
-Test {
-propertyTwo
+        $object = new SimpleQueryObject();
+        $object->selectScalar();
+        $this->assertEquals(
+            'query {
+Simple {
+scalar
 }
-}', $object->getQueryString());
+}',
+            $object->getQueryString());
 
-        $object = new TestQueryObject('test');
-        $object->selectPropertyTwo();
-        $this->assertEquals('query {
+        $object = new SimpleQueryObject('test');
+        $object->selectScalar();
+        $this->assertEquals(
+            'query {
 test {
-propertyTwo
+scalar
 }
-}', $object->getQueryString());
+}',
+            $object->getQueryString());
     }
 
     /**
+     * @covers \GraphQL\SchemaObject\QueryObject::__construct
+     *
      * @throws EmptySelectionSetException
      */
     public function testEmptySelectionSet()
@@ -64,42 +68,39 @@ propertyTwo
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::selectField
-     * @covers \GraphQL\SchemaObject\QueryObject::getQuery
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
-     *
-     * @throws EmptySelectionSetException
      */
     public function testSelectFields()
     {
-        $this->queryObject->selectPropertyOne();
+        $this->queryObject->selectScalar();
         $this->assertEquals(
             'query {
-Test {
-property_one
+simples {
+scalar
 }
 }',
             $this->queryObject->getQueryString()
         );
 
-        $this->queryObject->selectPropertyTwo();
+        $this->queryObject->selectAnotherScalar();
         $this->assertEquals(
             'query {
-Test {
-property_one
-propertyTwo
+simples {
+scalar
+anotherScalar
 }
 }',
             $this->queryObject->getQueryString()
         );
 
-        $this->queryObject->selectOtherObjects()->selectName();
+        $this->queryObject->selectSiblings()->selectScalar();
         $this->assertEquals(
             'query {
-Test {
-property_one
-propertyTwo
-other_objects {
-name
+simples {
+scalar
+anotherScalar
+siblings {
+scalar
 }
 }
 }',
@@ -108,69 +109,105 @@ name
     }
 
     /**
-     * @covers \GraphQL\SchemaObject\QueryObject::constructArgumentsList
-     * @covers \GraphQL\SchemaObject\QueryObject::getQuery
+     * @covers \GraphQL\SchemaObject\QueryObject::appendArguments
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
      *
      * @throws EmptySelectionSetException
      */
-    public function testSetArguments()
+    public function testSelectSubFieldsWithArguments()
     {
-        $this->queryObject->selectPropertyTwo();
-        $this->queryObject->setPropertyOne('value');
+        $this->queryObject->selectSiblings((new SimpleSiblingsArgumentObject())->setFirst(5)->setIds([1,2]))->selectScalar();
         $this->assertEquals(
             'query {
-Test(property_one: "value") {
-propertyTwo
-}
-}',
-            $this->queryObject->getQueryString()
-        );
-
-        $this->queryObject->setPropertyTwo(true);
-        $this->assertEquals(
-            'query {
-Test(property_one: "value" propertyTwo: true) {
-propertyTwo
-}
-}',
-            $this->queryObject->getQueryString()
-        );
-
-        $this->queryObject->setPropertyTwos([1, 25, 87]);
-        $this->assertEquals(
-            'query {
-Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87]) {
-propertyTwo
-}
-}',
-            $this->queryObject->getQueryString()
-        );
-
-        $this->queryObject->selectOtherObjects()->selectName()->setName('some');
-        $this->assertEquals(
-            'query {
-Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87]) {
-propertyTwo
-other_objects(name: "some") {
-name
+simples {
+siblings(first: 5 ids: [1, 2]) {
+scalar
 }
 }
 }',
             $this->queryObject->getQueryString()
         );
 
-        $this->queryObject->setFilterBy((new _TestFilterInputObject())->setFirstName('Nameyy')->setIds([1, 5, 8]));
+        $this->setUp();
+        $this->queryObject
+            ->selectSiblings(
+                (new SimpleSiblingsArgumentObject())
+                    ->setObject(
+                        (new class extends InputObject {
+                            protected $field;
+
+                            public function setField($field) {
+                                $this->field = $field;
+                                return $this;
+                            }
+                        })->setField('something')
+                    )
+            )
+            ->selectScalar();
         $this->assertEquals(
             'query {
-Test(property_one: "value" propertyTwo: true propertyTwos: [1, 25, 87] filterBy: {first_name: "Nameyy", ids: [1, 5, 8]}) {
-propertyTwo
-other_objects(name: "some") {
-name
+simples {
+siblings(obj: {field: "something"}) {
+scalar
 }
 }
 }',
             $this->queryObject->getQueryString()
         );
+    }
+}
+
+class SimpleQueryObject extends QueryObject
+{
+    const OBJECT_NAME = 'Simple';
+
+    public function selectScalar()
+    {
+        $this->selectField('scalar');
+
+        return $this;
+    }
+
+    public function selectAnotherScalar()
+    {
+        $this->selectField('anotherScalar');
+
+        return $this;
+    }
+
+    public function selectSiblings(SimpleSiblingsArgumentObject $argumentObject = null)
+    {
+        $object = new SimpleQueryObject('siblings');
+        if ($argumentObject !== null) {
+            $object->appendArguments($argumentObject->toArray());
+        }
+        $this->selectField($object);
+
+        return $object;
+    }
+}
+
+class SimpleSiblingsArgumentObject extends ArgumentsObject
+{
+    protected $first;
+    protected $ids;
+    protected $obj;
+
+    public function setFirst($first)
+    {
+        $this->first = $first;
+        return $this;
+    }
+
+    public function setIds(array $ids)
+    {
+        $this->ids = $ids;
+        return $this;
+    }
+
+    public function setObject($obj)
+    {
+        $this->obj = $obj;
+        return $this;
     }
 }

@@ -186,7 +186,6 @@ class ClassFileTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::addConstant
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::generateConstants
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile::serializeParameterValue
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForClass
      */
     public function testClassWithConstants()
     {

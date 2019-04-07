@@ -120,7 +120,6 @@ Object {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -147,7 +146,6 @@ Object(arg1: \"value\") {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -173,7 +171,6 @@ Object(arg1: 23) {
 
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -199,7 +196,6 @@ Object(arg1: true) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
      *
      * @param  Query $query
      *
@@ -251,7 +247,6 @@ Object(obj: {json_string_array: [\"json value\"]}) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
      *
      * @param  Query $query
      *

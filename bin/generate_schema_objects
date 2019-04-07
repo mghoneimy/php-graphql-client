@@ -16,7 +16,8 @@ if (!$autoLoadFound) {
 	throw new RuntimeException('Could not find vendor/autoload.php');
 }
 
-use GraphQL\SchemaGenerator\SchemaScanner;
+use GraphQL\Client;
+use GraphQL\SchemaGenerator\SchemaClassGenerator;
 
 $endpointUrl = readline('GraphlQL endpoint URL: ');
 
@@ -27,21 +28,17 @@ if (!empty($authHeaderName)) {
     $authHeaders = [$authHeaderName => $authHeaderValue];
 }
 
-$scanner = new SchemaScanner();
-$schemaTypes = $scanner->getSchemaTypesArray(
-    $endpointUrl, $authHeaders
-);
+$customWriteDir = readline('Custom classes writing dir (optional): ');
+if (empty($customWriteDir)) $customWriteDir = '';
 
-if (empty($schemaTypes)) {
-	print "No schema types found in the specified GraphQL endpoint\n";
-    exit;
-}
+$client  = new Client($endpointUrl, $authHeaders);
+$scanner = new SchemaClassGenerator($client, $customWriteDir);
 
 print "-------------------------------------------\n";
 print "Generating schema objects from schema types\n";
 print "-------------------------------------------\n";
 
-$scanner->generateSchemaObjects($schemaTypes);
+$scanner->generateRootQueryObject();
 
 print "-------------------------------------------\n";
 print "Schema objects generation complete\n";

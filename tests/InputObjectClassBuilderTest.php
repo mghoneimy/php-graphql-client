@@ -39,7 +39,6 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addScalarValue
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::getUpperCamelCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
      */
     public function testAddMultipleScalarValues()
@@ -79,7 +78,6 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
     /**
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addListValue
-     * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::getUpperCamelCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
      */
     public function testAddMultipleListValues()

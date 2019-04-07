@@ -162,7 +162,7 @@ trait %3$s
         $string = '';
         if (!empty($this->properties)) {
             foreach ($this->properties as $name => $value) {
-                if (is_null($value)) {
+                if ($value === null) {
                     $string .= "    protected $$name;\n";
                 } else {
                     $value = $this->serializeParameterValue($value);
@@ -198,6 +198,6 @@ trait %3$s
      */
     protected function serializeParameterValue($value): string
     {
-        return StringLiteralFormatter::formatLiteralForClass($value);
+        return StringLiteralFormatter::formatValueForRHS($value);
     }
 }

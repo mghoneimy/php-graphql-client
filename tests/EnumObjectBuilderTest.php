@@ -69,7 +69,7 @@ class EnumObjectBuilderTest extends CodeFileTestCase
         $objectName .= 'EnumObject';
         $enumBuilder->addEnumValue('some_value');
         $enumBuilder->addEnumValue('another_value');
-        $enumBuilder->addEnumValue('one_more_value');
+        $enumBuilder->addEnumValue('oneMoreValue');
         $enumBuilder->build();
 
         $this->assertFileEquals(

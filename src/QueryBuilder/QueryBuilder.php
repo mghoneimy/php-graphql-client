@@ -45,12 +45,4 @@ class QueryBuilder extends AbstractQueryBuilder
     {
         return parent::getQuery();
     }
-
-    /**
-     * @return array
-     */
-    protected function constructArgumentsList(): array
-    {
-        return [];
-    }
 }
