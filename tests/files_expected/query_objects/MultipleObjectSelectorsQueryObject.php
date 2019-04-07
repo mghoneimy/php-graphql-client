@@ -6,7 +6,7 @@ class MultipleObjectSelectorsQueryObject extends QueryObject
 {
     const OBJECT_NAME = "MultipleObjectSelectors";
 
-    public function selectRightObjects(RootRightArgumentsObject $argsObject = null)
+    public function selectRightObjects(MultipleObjectSelectorsRightObjectsArgumentsObject $argsObject = null)
     {
         $object = new RightQueryObject("right_objects");
         if ($argsObject !== null) {
@@ -17,7 +17,7 @@ class MultipleObjectSelectorsQueryObject extends QueryObject
         return $object;
     }
 
-    public function selectLeftObjects(RootLeftArgumentsObject $argsObject = null)
+    public function selectLeftObjects(MultipleObjectSelectorsLeftObjectsArgumentsObject $argsObject = null)
     {
         $object = new LeftQueryObject("left_objects");
         if ($argsObject !== null) {

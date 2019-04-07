@@ -34,7 +34,7 @@ class SchemaClassGenerator
     /**
      * This array is used as a set to store the already generated objects
      * Array structure: [$objectName] => true
-     *
+     *AND complete covering the schema scanner class
      * @var array
      */
 	private $generatedObjects;
@@ -58,21 +58,11 @@ class SchemaClassGenerator
      */
 	public function generateRootQueryObject(): bool
 	{
-	    $queryType = $this->schemaInspector->getQueryTypeSchema();
-
-	    return $this->generateRootQueryObjectFromArray($queryType);
-    }
-
-    /**
-     * @param array $objectArray
-     *
-     * @return bool
-     */
-    protected function generateRootQueryObjectFromArray(array $objectArray): bool
-    {
+	    $objectArray    = $this->schemaInspector->getQueryTypeSchema();
         $rootObjectName = QueryObject::ROOT_QUERY_OBJECT_NAME;
         $queryTypeName  = $objectArray['name'];
         //$rootObjectDescr = $objectArray['description'];
+
         $queryObjectBuilder = new QueryObjectClassBuilder($this->writeDir, $rootObjectName);
         $this->generatedObjects[$queryTypeName] = true;
         $this->appendQueryObjectFields($queryObjectBuilder, $rootObjectName, $objectArray['fields']);
@@ -111,7 +101,7 @@ class SchemaClassGenerator
                     // Generate nested type arguments object if it wasn't generated
                     $argsObjectName = $currentTypeName . StringLiteralFormatter::formatUpperCamelCase($name);
                     $argsObjectGenerated = array_key_exists($argsObjectName, $this->generatedObjects) ? :
-                        $this->generateArgumentsObject($argsObjectName, $fieldArray['args']);
+                        $this->generateArgumentsObject($argsObjectName, $fieldArray['args'] ?? []);
                     if ($argsObjectGenerated) {
 
                         // Add sub type as a field to the query object if all generation happened successfully
@@ -149,18 +139,7 @@ class SchemaClassGenerator
      */
     protected function generateQueryObject(string $objectName): bool
     {
-        $objectArray = $this->schemaInspector->getObjectSchema($objectName);
-
-        return $this->generateQueryObjectFromArray($objectArray);
-    }
-
-    /**
-     * @param array $objectArray
-     *
-     * @return bool
-     */
-    protected function generateQueryObjectFromArray(array $objectArray): bool
-    {
+        $objectArray   = $this->schemaInspector->getObjectSchema($objectName);
         $objectName    = $objectArray['name'];
         $objectBuilder = new QueryObjectClassBuilder($this->writeDir, $objectName);
 
@@ -178,18 +157,7 @@ class SchemaClassGenerator
      */
     protected function generateInputObject(string $objectName): bool
     {
-        $objectArray = $this->schemaInspector->getInputObjectSchema($objectName);
-
-        return $this->generateInputObjectFromArray($objectArray);
-    }
-
-    /**
-     * @param array $objectArray
-     *
-     * @return bool
-     */
-    protected function generateInputObjectFromArray(array $objectArray): bool
-    {
+        $objectArray   = $this->schemaInspector->getInputObjectSchema($objectName);
         $objectName    = $objectArray['name'];
         $objectBuilder = new InputObjectClassBuilder($this->writeDir, $objectName);
 
@@ -230,18 +198,7 @@ class SchemaClassGenerator
      */
     protected function generateEnumObject(string $objectName): bool
     {
-        $objectArray = $this->schemaInspector->getEnumObjectSchema($objectName);
-
-        return $this->generateEnumObjectFromArray($objectArray);
-    }
-
-    /**
-     * @param array $objectArray
-     *
-     * @return bool
-     */
-    protected function generateEnumObjectFromArray(array $objectArray): bool
-    {
+        $objectArray   = $this->schemaInspector->getEnumObjectSchema($objectName);
         $objectName    = $objectArray['name'];
         $objectBuilder = new EnumObjectBuilder($this->writeDir, $objectName);
 

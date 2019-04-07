@@ -5,7 +5,8 @@ namespace GraphQL\Tests;
 use GraphQL\Client;
 use GraphQL\Enumeration\FieldTypeKindEnum;
 use GraphQL\SchemaGenerator\SchemaClassGenerator;
-
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Response;
 
 class SchemaClassGeneratorTest extends CodeFileTestCase
 {
@@ -17,12 +18,18 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
     protected $classGenerator;
 
     /**
+     * @var MockHandler
+     */
+    protected $mockHandler;
+
+    /**
      *
      */
     protected function setUp(): void
     {
+        $this->mockHandler    = new MockHandler();
         $this->classGenerator = new TransparentSchemaClassGenerator(
-            new Client(static::TEST_API_URL),
+            new MockClient(static::TEST_API_URL, $this->mockHandler),
             static::getGeneratedFilesDir()
         );
     }
@@ -132,30 +139,34 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateEnumObject
-     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateEnumObjectFromArray
      */
     public function testGenerateEnumObject()
     {
         $objectName = 'WithMultipleConstants';
-        $enumArray = [
-            'name' => $objectName,
-            'kind' => FieldTypeKindEnum::ENUM_OBJECT,
-            'enumValues' => [
-                [
-                    'name' => 'some_value',
-                    'description' => null,
-                ], [
-                    'name' => 'another_value',
-                    'description' => null,
-                ], [
-                    'name' => 'oneMoreValue',
-                    'description' => null,
-                ],
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::ENUM_OBJECT,
+                    'enumValues' => [
+                        [
+                            'name' => 'some_value',
+                            'description' => null,
+                        ], [
+                            'name' => 'another_value',
+                            'description' => null,
+                        ], [
+                            'name' => 'oneMoreValue',
+                            'description' => null,
+                        ],
+                    ]
+                ]
             ]
-        ];
-        $objectName .= 'EnumObject';
+        ])));
+        $this->classGenerator->generateEnumObject($objectName);
 
-        $this->classGenerator->generateEnumObjectFromArray($enumArray);
+        $objectName .= 'EnumObject';
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/enum_objects/$objectName.php",
             static::getGeneratedFilesDir() . "/$objectName.php"
@@ -164,42 +175,46 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObject
-     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObjectFromArray
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
      */
     public function testGenerateInputObjectWithScalarValues()
     {
         $objectName = 'WithMultipleScalarValues';
-        $enumArray = [
-            'name' => $objectName,
-            'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-            'inputFields' => [
-                [
-                    'name' => 'valOne',
-                    'description' => null,
-                    'defaultValue' => null,
-                    'type' => [
-                        'name' => 'String',
-                        'kind' => FieldTypeKindEnum::SCALAR,
-                        'description' => null,
-                        'ofType' => null,
-                    ],
-                ], [
-                    'name' => 'val_two',
-                    'description' => null,
-                    'defaultValue' => null,
-                    'type' => [
-                        'name' => 'String',
-                        'kind' => FieldTypeKindEnum::SCALAR,
-                        'description' => null,
-                        'ofType' => null,
-                    ],
-                ],
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => [
+                        [
+                            'name' => 'valOne',
+                            'description' => null,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => 'String',
+                                'kind' => FieldTypeKindEnum::SCALAR,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                        ], [
+                            'name' => 'val_two',
+                            'description' => null,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => 'String',
+                                'kind' => FieldTypeKindEnum::SCALAR,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                        ],
+                    ]
+                ]
             ]
-        ];
-        $objectName .= 'InputObject';
+        ])));
+        $this->classGenerator->generateInputObject($objectName);
 
-        $this->classGenerator->generateInputObjectFromArray($enumArray);
+        $objectName .= 'InputObject';
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/input_objects/$objectName.php",
             static::getGeneratedFilesDir() . "/$objectName.php"
@@ -208,104 +223,132 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObject
-     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObjectFromArray
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
      */
     public function testGenerateInputObjectWithListValues()
     {
         $objectName = 'WithMultipleListValues';
-        $enumArray = [
-            'name' => $objectName,
-            'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-            'inputFields' => [
-                [
-                    'name' => 'listOne',
-                    'description' => null,
-                    'defaultValue' => null,
-                    'type' => [
-                        'name' => null,
-                        'kind' => FieldTypeKindEnum::LIST,
-                        'description' => null,
-                        'ofType' => [
-                            'name' => 'String',
-                            'kind' => FieldTypeKindEnum::SCALAR,
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => [
+                        [
+                            'name' => 'listOne',
                             'description' => null,
-                            'ofType' => null,
-                        ],
-                    ],
-                ], [
-                    'name' => 'list_two',
-                    'description' => null,
-                    'defaultValue' => null,
-                    'type' => [
-                        'name' => null,
-                        'kind' => FieldTypeKindEnum::NON_NULL,
-                        'description' => null,
-                        'ofType' => [
-                            'name' => null,
-                            'kind' => FieldTypeKindEnum::LIST,
-                            'description' => null,
-                            'ofType' => [
-                                'name' => 'Integer',
-                                'kind' => FieldTypeKindEnum::SCALAR,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => null,
+                                'kind' => FieldTypeKindEnum::LIST,
                                 'description' => null,
-                                'ofType' => null,
+                                'ofType' => [
+                                    'name' => 'String',
+                                    'kind' => FieldTypeKindEnum::SCALAR,
+                                    'description' => null,
+                                    'ofType' => null,
+                                ],
+                            ],
+                        ], [
+                            'name' => 'list_two',
+                            'description' => null,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => null,
+                                'kind' => FieldTypeKindEnum::NON_NULL,
+                                'description' => null,
+                                'ofType' => [
+                                    'name' => null,
+                                    'kind' => FieldTypeKindEnum::LIST,
+                                    'description' => null,
+                                    'ofType' => [
+                                        'name' => 'Integer',
+                                        'kind' => FieldTypeKindEnum::SCALAR,
+                                        'description' => null,
+                                        'ofType' => null,
+                                    ],
+                                ],
                             ],
                         ],
-                    ],
-                ],
+                    ]
+                ]
             ]
-        ];
-        $objectName .= 'InputObject';
+        ])));
+        $this->classGenerator->generateInputObject($objectName);
 
-        $this->classGenerator->generateInputObjectFromArray($enumArray);
+        $objectName .= 'InputObject';
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/input_objects/$objectName.php",
             static::getGeneratedFilesDir() . "/$objectName.php"
         );
     }
 
-    ///**
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObject
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
-    // */
-    //public function testGenerateInputObjectWithNestedObjectValues()
-    //{
-    //    $objectName = 'WithMultipleInputObjectValues';
-    //    $enumArray = [
-    //        'name' => $objectName,
-    //        'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-    //        'inputFields' => [
-    //            [
-    //                'name' => 'inputObject',
-    //                'description' => null,
-    //                'defaultValue' => null,
-    //                'type' => [
-    //                    'name' => 'WithListValueInputObject',
-    //                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-    //                    'description' => null,
-    //                    'ofType' => null,
-    //                ],
-    //            ], [
-    //                'name' => 'inputObjectTwo',
-    //                'description' => null,
-    //                'defaultValue' => null,
-    //                'type' => [
-    //                    'name' => '_TestFilterInputObject',
-    //                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-    //                    'description' => null,
-    //                ],
-    //            ],
-    //        ]
-    //    ];
-    //    $objectName .= 'InputObject';
-    //
-    //    $this->classGenerator->generateInputObjectFromArray($enumArray);
-    //    $this->assertFileEquals(
-    //        static::getExpectedFilesDir() . "/input_objects/$objectName.php",
-    //        static::getGeneratedFilesDir() . "/$objectName.php"
-    //    );
-    //}
+    /**
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateInputObject
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
+     */
+    public function testGenerateInputObjectWithNestedObjectValues()
+    {
+        $objectName = 'WithMultipleInputObjectValues';
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => [
+                        [
+                            'name' => 'inputObject',
+                            'description' => null,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => 'WithListValue',
+                                'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                        ], [
+                            'name' => 'inputObjectTwo',
+                            'description' => null,
+                            'defaultValue' => null,
+                            'type' => [
+                                'name' => '_TestFilter',
+                                'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                        ],
+                    ]
+                ]
+            ]
+        ])));
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'WithListValue',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => []
+                ]
+            ]
+        ])));
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => '_TestFilter',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => []
+                ]
+            ]
+        ])));
+        $this->classGenerator->generateInputObject($objectName);
+
+        $objectName .= 'InputObject';
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/input_objects/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateArgumentsObject
@@ -353,6 +396,21 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
     public function testGenerateArgumentsObjectWithListArgs()
     {
         $objectName = 'WithMultipleListArgs';
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'Some',
+                    'kind' => FieldTypeKindEnum::ENUM_OBJECT,
+                    'enumValues' => [
+                        [
+                            'name' => 'some_value',
+                            'description' => null,
+                        ]
+                    ]
+                ]
+            ]
+        ])));
         $argsArray  = [
             [
                 'name' => 'listProperty',
@@ -363,8 +421,8 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
                     'kind' => FieldTypeKindEnum::LIST,
                     'description' => null,
                     'ofType' => [
-                        'name' => 'String',
-                        'kind' => FieldTypeKindEnum::SCALAR,
+                        'name' => 'Some',
+                        'kind' => FieldTypeKindEnum::ENUM_OBJECT,
                         'description' => null,
                         'ofType' => null,
                     ]
@@ -400,143 +458,209 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
         );
     }
 
-    ///**
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateArgumentsObject
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
-    // */
-    //public function testGenerateArgumentsObjectWithNestedObjectArgs()
-    //{
-    //    $objectName = 'WithMultipleInputObjectArgs';
-    //    $argsArray  = [
-    //        [
-    //            'name' => 'objectProperty',
-    //            'description' => null,
-    //            'defaultValue' => null,
-    //            'type' => [
-    //                'name' => 'SomeInputObject',
-    //                'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-    //                'description' => null,
-    //                'ofType' => null,
-    //            ],
-    //        ], [
-    //            'name' => 'another_object_property',
-    //            'description' => null,
-    //            'defaultValue' => null,
-    //            'type' => [
-    //                'name' => 'AnotherInputObject',
-    //                'kind' => FieldTypeKindEnum::INPUT_OBJECT,
-    //                'description' => null,
-    //            ],
-    //        ],
-    //    ];
-    //    $this->classGenerator->generateArgumentsObject($objectName, $argsArray);
-    //
-    //    $objectName .= 'ArgumentsObject';
-    //    $this->assertFileEquals(
-    //        static::getExpectedFilesDir() . "/arguments_objects/$objectName.php",
-    //        static::getGeneratedFilesDir() . "/$objectName.php"
-    //    );
-    //}
+    /**
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateArgumentsObject
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
+     */
+    public function testGenerateArgumentsObjectWithInputObjectArgs()
+    {
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'Some',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => []
+                ]
+            ]
+        ])));
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'Another',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'inputFields' => []
+                ]
+            ]
+        ])));
+
+        $objectName = 'WithMultipleInputObjectArgs';
+        $argsArray  = [
+            [
+                'name' => 'objectProperty',
+                'description' => null,
+                'defaultValue' => null,
+                'type' => [
+                    'name' => 'Some',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'description' => null,
+                    'ofType' => null,
+                ],
+            ], [
+                'name' => 'another_object_property',
+                'description' => null,
+                'defaultValue' => null,
+                'type' => [
+                    'name' => 'Another',
+                    'kind' => FieldTypeKindEnum::INPUT_OBJECT,
+                    'description' => null,
+                    'ofType' => null,
+                ],
+            ],
+        ];
+        $this->classGenerator->generateArgumentsObject($objectName, $argsArray);
+
+        $objectName .= 'ArgumentsObject';
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/arguments_objects/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateQueryObject
-     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateQueryObjectFromArray
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::appendQueryObjectFields
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
      */
     public function testGenerateQueryObjectWithScalarFields()
     {
         $objectName  = 'MultipleSimpleSelectors';
-        $objectArray = [
-            'name' => $objectName,
-            'kind' => FieldTypeKindEnum::OBJECT,
-            'fields' => [
-                [
-                    'name' => 'first_name',
-                    'description' => null,
-                    'type' => [
-                        'name' => 'String',
-                        'kind' => FieldTypeKindEnum::SCALAR,
-                        'description' => null,
-                        'ofType' => null,
-                    ],
-                    'args' => null,
-                ], [
-                    'name' => 'last_name',
-                    'description' => null,
-                    'type' => [
-                        'name' => 'String',
-                        'kind' => FieldTypeKindEnum::SCALAR,
-                        'description' => null,
-                        'ofType' => null,
-                    ],
-                    'args' => null,
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::OBJECT,
+                    'fields' => [
+                        [
+                            'name' => 'first_name',
+                            'description' => null,
+                            'type' => [
+                                'name' => 'String',
+                                'kind' => FieldTypeKindEnum::SCALAR,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                            'args' => null,
+                        ], [
+                            'name' => 'last_name',
+                            'description' => null,
+                            'type' => [
+                                'name' => 'String',
+                                'kind' => FieldTypeKindEnum::SCALAR,
+                                'description' => null,
+                                'ofType' => null,
+                            ],
+                            'args' => null,
+                        ]
+                    ]
                 ]
             ]
-        ];
-        $objectName .= 'QueryObject';
+        ])));
+        $this->classGenerator->generateQueryObject($objectName);
 
-        $this->classGenerator->generateQueryObjectFromArray($objectArray);
+        $objectName .= 'QueryObject';
         $this->assertFileEquals(
             static::getExpectedFilesDir() . "/query_objects/$objectName.php",
             static::getGeneratedFilesDir() . "/$objectName.php"
         );
     }
 
-    ///**
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateQueryObject
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateQueryObjectFromArray
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::appendQueryObjectFields
-    // * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
-    // */
-    //public function testGenerateQueryObjectWithObjectFields()
-    //{
-    //    $objectName  = 'MultipleObjectSelectors';
-    //    $objectArray = [
-    //        'name' => $objectName,
-    //        'kind' => FieldTypeKindEnum::OBJECT,
-    //        'fields' => [
-    //            [
-    //                'name' => '',
-    //                'description' => null,
-    //                'type' => [
-    //
-    //                ],
-    //                'args' => [
-    //                    'name' => '',
-    //                    'description' => null,
-    //                    'defaultValue' => null,
-    //                    'type' => [
-    //
-    //                    ],
-    //                ],
-    //            ], [
-    //
-    //            ],
-    //        ]
-    //    ];
-    //    $objectName .= 'QueryObject';
-    //
-    //    $this->classGenerator->generateQueryObjectFromArray($objectArray);
-    //    $this->assertFileEquals(
-    //        static::getExpectedFilesDir() . "/query_objects/$objectName.php",
-    //        static::getGeneratedFilesDir() . "/$objectName.php"
-    //    );
-    //}
+    /**
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateQueryObject
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::appendQueryObjectFields
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
+     */
+    public function testGenerateQueryObjectWithObjectFields()
+    {
+        $objectName  = 'MultipleObjectSelectors';
+        // Add mock responses
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => $objectName,
+                    'kind' => FieldTypeKindEnum::OBJECT,
+                    'fields' => [
+                        [
+                            'name' => 'right_objects',
+                            'description' => null,
+                            'type' => [
+                                'name' => null,
+                                'kind' => FieldTypeKindEnum::LIST,
+                                'description' => null,
+                                'ofType' => [
+                                    'name' => 'Right',
+                                    'kind' => FieldTypeKindEnum::OBJECT,
+                                    'description' => null,
+                                    'ofType' => null,
+                                ]
+                            ],
+                            'args' => null,
+                        ], [
+                            'name' => 'left_objects',
+                            'description' => null,
+                            'type' => [
+                                'name' => null,
+                                'kind' => FieldTypeKindEnum::LIST,
+                                'description' => null,
+                                'ofType' => [
+                                    'name' => 'Left',
+                                    'kind' => FieldTypeKindEnum::OBJECT,
+                                    'description' => null,
+                                    'ofType' => null,
+                                ]
+                            ],
+                            'args' => null,
+                        ],
+                    ]
+                ]
+            ]
+        ])));
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'Right',
+                    'kind' => FieldTypeKindEnum::OBJECT,
+                    'fields' => []
+                ]
+            ]
+        ])));
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__type' => [
+                    'name' => 'Left',
+                    'kind' => FieldTypeKindEnum::OBJECT,
+                    'fields' => []
+                ]
+            ]
+        ])));
+        $objectName .= 'QueryObject';
+
+        $this->classGenerator->generateQueryObject($objectName);
+        $this->assertFileEquals(
+            static::getExpectedFilesDir() . "/query_objects/$objectName.php",
+            static::getGeneratedFilesDir() . "/$objectName.php"
+        );
+    }
 
     /**
      * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateRootQueryObject
-     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateRootQueryObjectFromArray
      */
     public function testGenerateRootObject()
     {
-        $objectArray = [
-            'name' => 'Query',
-            'kind' => FieldTypeKindEnum::OBJECT,
-            'description' => null,
-            'fields' => []
-        ];
-        $this->classGenerator->generateRootQueryObjectFromArray($objectArray);
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                '__schema' => [
+                    'queryType' => [
+                        'name' => 'Query',
+                        'kind' => FieldTypeKindEnum::OBJECT,
+                        'description' => null,
+                        'fields' => []
+                    ]
+                ]
+            ]
+        ])));
+        $this->classGenerator->generateRootQueryObject();
 
         $objectName = 'RootQueryObject';
         $this->assertFileEquals(
@@ -544,28 +668,42 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
             static::getGeneratedFilesDir() . "/$objectName.php"
         );
     }
+
+    /**
+     * @covers \GraphQL\SchemaGenerator\SchemaClassGenerator::generateObject
+     */
+    public function testGenerateObjectWithUnregisteredKind()
+    {
+        $this->expectExceptionMessage('Unsupported object type');
+        $this->classGenerator->generateObject('someNae', 'someKind');
+    }
 }
 
 class TransparentSchemaClassGenerator extends SchemaClassGenerator
 {
-    public function generateRootQueryObjectFromArray(array $objectArray): bool
+    public function generateRootQueryObject(): bool
     {
-        return parent::generateRootQueryObjectFromArray($objectArray);
+        return parent::generateRootQueryObject();
     }
 
-    public function generateQueryObjectFromArray(array $objectArray): bool
+    public function generateQueryObject(string $objectName): bool
     {
-        return parent::generateQueryObjectFromArray($objectArray);
+        return parent::generateQueryObject($objectName);
     }
 
-    public function generateInputObjectFromArray(array $objectArray): bool
+    public function generateEnumObject(string $objectName): bool
     {
-        return parent::generateInputObjectFromArray($objectArray);
+        return parent::generateEnumObject($objectName);
     }
 
-    public function generateEnumObjectFromArray(array $objectArray): bool
+    public function generateInputObject(string $objectName): bool
     {
-        return parent::generateEnumObjectFromArray($objectArray);
+        return parent::generateInputObject($objectName);
+    }
+
+    public function generateObject(string $objectName, string $objectKind): bool
+    {
+        return parent::generateObject($objectName, $objectKind);
     }
 
     public function generateArgumentsObject(string $argsObjectName, array $arguments): bool
