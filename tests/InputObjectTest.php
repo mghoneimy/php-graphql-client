@@ -4,7 +4,7 @@ namespace GraphQL\Tests;
 
 require_once 'files_expected/input_objects/_TestFilterInputObject.php';
 
-use GraphQL\SchemaObject\_TestFilterInputObject;
+use GraphQL\Tests\SchemaObject\_TestFilterInputObject;
 use PHPUnit\Framework\TestCase;
 
 /**

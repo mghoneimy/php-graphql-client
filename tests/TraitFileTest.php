@@ -2,6 +2,7 @@
 
 namespace GraphQL\Tests;
 
+use Exception;
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile;
 
 class TraitFileTest extends CodeFileTestCase
@@ -190,7 +191,6 @@ class TraitFileTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::addProperty
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::generateProperties
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\CodeFile\TraitFile::serializeParameterValue
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForClass
      */
     public function testTraitWithPropertiesAndValues()
     {

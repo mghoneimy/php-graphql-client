@@ -3,6 +3,7 @@
 namespace GraphQL\SchemaGenerator\CodeGenerator;
 
 use GraphQL\SchemaGenerator\CodeGenerator\CodeFile\ClassFile;
+use GraphQL\Util\StringLiteralFormatter;
 
 /**
  * Class InputObjectClassBuilder
@@ -16,13 +17,17 @@ class InputObjectClassBuilder extends ObjectClassBuilder
      *
      * @param string $writeDir
      * @param string $objectName
+     * @param string $namespace
      */
-    public function __construct(string $writeDir, string $objectName)
+    public function __construct(string $writeDir, string $objectName, string $namespace = self::DEFAULT_NAMESPACE)
     {
         $className = $objectName . 'InputObject';
 
         $this->classFile = new ClassFile($writeDir, $className);
-        $this->classFile->setNamespace('GraphQL\\SchemaObject');
+        $this->classFile->setNamespace($namespace);
+        if ($namespace !== self::DEFAULT_NAMESPACE) {
+            $this->classFile->addImport('GraphQL\\SchemaObject\\InputObject');
+        }
         $this->classFile->extendsClass('InputObject');
     }
 
@@ -31,9 +36,9 @@ class InputObjectClassBuilder extends ObjectClassBuilder
      */
     public function addScalarValue(string $argumentName)
     {
-        $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
+        $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
-        $this->addSimpleSetter($argumentName, $upperCamelCaseArg);
+        $this->addScalarSetter($argumentName, $upperCamelCaseArg);
     }
 
     /**
@@ -42,7 +47,7 @@ class InputObjectClassBuilder extends ObjectClassBuilder
      */
     public function addListValue(string $argumentName, string $typeName)
     {
-        $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
+        $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
         $this->addListSetter($argumentName, $upperCamelCaseArg, $typeName);
     }
@@ -54,9 +59,9 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     public function addInputObjectValue(string $argumentName, string $typeName)
     {
         $typeName .= 'InputObject';
-        $upperCamelCaseArg = $this->getUpperCamelCase($argumentName);
+        $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
-        $this->addInputObjectSetter($argumentName, $upperCamelCaseArg, $typeName);
+        $this->addObjectSetter($argumentName, $upperCamelCaseArg, $typeName);
     }
 
     /**
@@ -65,19 +70,5 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     public function build(): void
     {
         $this->classFile->writeFile();
-    }
-
-    /**
-     * @param string $propertyName
-     *
-     * @return string
-     */
-    private function getUpperCamelCase(string $propertyName): string
-    {
-        if (strpos($propertyName, '_') === false) {
-            return ucfirst($propertyName);
-        } else {
-            return str_replace('_', '', ucwords($propertyName, '_'));
-        }
     }
 }

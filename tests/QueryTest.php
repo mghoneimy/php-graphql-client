@@ -44,6 +44,36 @@ class QueryTest extends TestCase
     }
 
     /**
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testExplicitQueryObject()
+    {
+        $query = new Query('query');
+
+        $this->assertEquals(
+            "query {
+
+}",
+            (string) $query
+        );
+
+        $query->setSelectionSet(
+            [
+                new Query('Object')
+            ]
+        );
+
+        $this->assertEquals(
+            "query {
+Object {
+
+}
+}",
+            (string) $query
+        );
+    }
+
+    /**
      * @depends clone testEmptyArguments
      *
      * @covers \GraphQL\Query::__toString
@@ -90,7 +120,6 @@ Object {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -117,7 +146,6 @@ Object(arg1: \"value\") {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -143,7 +171,6 @@ Object(arg1: 23) {
 
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatLiteralForGQLQuery
      *
      * @param Query $query
      *
@@ -169,7 +196,6 @@ Object(arg1: true) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
      *
      * @param  Query $query
      *
@@ -221,7 +247,6 @@ Object(obj: {json_string_array: [\"json value\"]}) {
      *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     * @covers \GraphQL\Util\StringLiteralFormatter::formatArrayForGQLQuery
      *
      * @param  Query $query
      *

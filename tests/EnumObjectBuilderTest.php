@@ -13,6 +13,8 @@ use GraphQL\SchemaGenerator\CodeGenerator\EnumObjectBuilder;
 
 class EnumObjectBuilderTest extends CodeFileTestCase
 {
+    private const TESTING_NAMESPACE = 'GraphQL\\Tests\\SchemaObject';
+
     /**
      * @return string
      */
@@ -28,7 +30,7 @@ class EnumObjectBuilderTest extends CodeFileTestCase
     public function testBuildEmptyEnum()
     {
         $objectName = 'Empty';
-        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName);
+        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'EnumObject';
         $enumBuilder->build();
 
@@ -46,7 +48,7 @@ class EnumObjectBuilderTest extends CodeFileTestCase
     public function testAddValue()
     {
         $objectName = 'WithConstant';
-        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName);
+        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'EnumObject';
         $enumBuilder->addEnumValue('fixed_value');
         $enumBuilder->build();
@@ -65,11 +67,11 @@ class EnumObjectBuilderTest extends CodeFileTestCase
     public function testAddMultipleValues()
     {
         $objectName = 'WithMultipleConstants';
-        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName);
+        $enumBuilder = new EnumObjectBuilder(static::getGeneratedFilesDir(), $objectName, static::TESTING_NAMESPACE);
         $objectName .= 'EnumObject';
         $enumBuilder->addEnumValue('some_value');
         $enumBuilder->addEnumValue('another_value');
-        $enumBuilder->addEnumValue('one_more_value');
+        $enumBuilder->addEnumValue('oneMoreValue');
         $enumBuilder->build();
 
         $this->assertFileEquals(

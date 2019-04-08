@@ -14,10 +14,10 @@ class ClassWithEverything extends Base implements Intr1, Intr2
     use Trait2;
 
     const CONST_ONE = 1;
-    const CONST_TWO = '';
+    const CONST_TWO = "";
 
     protected $propertyOne;
-    protected $propertyTwo = '';
+    protected $propertyTwo = "";
 
     public function dumpAll() {
         print 'dumping';

@@ -21,13 +21,17 @@ class EnumObjectBuilder implements ObjectBuilderInterface
      *
      * @param string $writeDir
      * @param string $objectName
+     * @param string $namespace
      */
-    public function __construct(string $writeDir, string $objectName)
+    public function __construct(string $writeDir, string $objectName, string $namespace = self::DEFAULT_NAMESPACE)
     {
         $className = $objectName . 'EnumObject';
 
         $this->classFile = new ClassFile($writeDir, $className);
-        $this->classFile->setNamespace('GraphQL\\SchemaObject');
+        $this->classFile->setNamespace($namespace);
+        if ($namespace !== self::DEFAULT_NAMESPACE) {
+            $this->classFile->addImport('GraphQL\\SchemaObject\\EnumObject');
+        }
         $this->classFile->extendsClass('EnumObject');
     }
 

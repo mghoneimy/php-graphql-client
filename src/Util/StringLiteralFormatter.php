@@ -10,52 +10,29 @@ namespace GraphQL\Util;
 class StringLiteralFormatter
 {
     /**
+     * Converts the value provided to the equivalent RHS value to be put in a file declaration
+     *
      * @param string|int|float|bool $value
      *
      * @return string
      */
-    public static function formatLiteralForClass($value): string
+    public static function formatValueForRHS($value): string
     {
         if (is_string($value)) {
-            $value = "'$value'";
+            $value = "\"$value\"";
         } elseif (is_bool($value)) {
             if ($value) {
                 $value = 'true';
             } else {
                 $value = 'false';
             }
-        } elseif (!is_null($value)) {
+        } elseif (is_null($value)) {
+            $value = 'null';
+        } else {
             $value = (string) $value;
         }
 
         return $value;
-    }
-
-    /**
-     * @param string|int|float|bool $value
-     *
-     * @return string
-     */
-    public static function formatLiteralForGQLQuery($value): string
-    {
-        if (is_string($value)) {
-            if ($value[0] != '"') {
-                $value = '"' . $value;
-            }
-            if (substr($value, -1) != '"') {
-                $value .= '"';
-            }
-        } elseif (is_bool($value)) {
-            if ($value) {
-                $value = 'true';
-            } else {
-                $value = 'false';
-            }
-        } elseif (!is_null($value)) {
-            $value = (string) $value;
-        }
-
-        return (string) $value;
     }
 
     /**
@@ -73,10 +50,29 @@ class StringLiteralFormatter
             } else {
                 $arrString .= ', ';
             }
-            $arrString .= StringLiteralFormatter::formatLiteralForGQLQuery($element);
+            $arrString .= StringLiteralFormatter::formatValueForRHS($element);
         }
         $arrString .= ']';
 
         return $arrString;
+    }
+
+    /**
+     * @param string $stringValue
+     *
+     * @return string
+     */
+    public static function formatUpperCamelCase(string $stringValue): string
+    {
+        if (strpos($stringValue, '_') === false) {
+            return ucfirst($stringValue);
+        } else {
+            return str_replace('_', '', ucwords($stringValue, '_'));
+        }
+    }
+
+    public static function formatLowerCamelCase(string $stringValue): string
+    {
+        return lcfirst(static::formatUpperCamelCase($stringValue));
     }
 }

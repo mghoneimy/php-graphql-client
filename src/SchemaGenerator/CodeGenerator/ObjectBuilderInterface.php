@@ -9,6 +9,8 @@ namespace GraphQL\SchemaGenerator\CodeGenerator;
  */
 interface ObjectBuilderInterface
 {
+    const DEFAULT_NAMESPACE = 'GraphQL\\SchemaObject';
+
     /**
      * @return void
      */
