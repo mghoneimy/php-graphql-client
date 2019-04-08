@@ -157,7 +157,6 @@ class ResultsTest extends TestCase
                             'column' => 3,
                         ]
                     ],
-                    'stack' => 'server error stack trace',
                 ]
             ]
         ]);

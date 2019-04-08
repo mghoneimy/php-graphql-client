@@ -51,7 +51,7 @@ class Results
 
             // Reformat results to an array and use it to initialize exception object
             $this->reformatResults(true);
-            throw new QueryError($this->results['errors'][0]);
+            throw new QueryError($this->results);
         }
     }
 
