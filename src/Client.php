@@ -56,21 +56,6 @@ class Client
     }
 
     /**
-     * @codeCoverageIgnore
-     *
-     * @param QueryObject $queryObject
-     * @param bool        $resultsAsArray
-     *
-     * @return Results|null
-     * @throws Exception\EmptySelectionSetException
-     * @throws QueryError
-     */
-    public function runQueryObject(QueryObject $queryObject, bool $resultsAsArray = false): ?Results
-    {
-        return $this->runRawQuery($queryObject->getQueryString(), $resultsAsArray);
-    }
-
-    /**
      * @param string $queryString
      * @param bool   $resultsAsArray
      *

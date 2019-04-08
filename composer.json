@@ -20,8 +20,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "GraphQL\\": "src/",
-            "GraphQL\\SchemaObject\\": "schema_object/"
+            "GraphQL\\": "src/"
         }
     },
     "autoload-dev": {
@@ -29,7 +28,6 @@
             "GraphQL\\Tests\\": "tests/"
         }
     },
-    "bin": ["bin/generate_schema_objects"],
     "require": {
         "php": "^7.1",
         "ext-json": "*",
