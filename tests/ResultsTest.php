@@ -30,7 +30,7 @@ class ResultsTest extends TestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->mockHandler = new MockHandler();
         $this->client      = new Client(['handler' => $this->mockHandler]);
