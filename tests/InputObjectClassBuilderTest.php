@@ -23,6 +23,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addScalarValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addScalarSetter
      */
     public function testAddScalarValue()
     {
@@ -42,6 +45,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addScalarValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addScalarSetter
      */
     public function testAddMultipleScalarValues()
     {
@@ -62,6 +68,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addListValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddListValue()
     {
@@ -81,6 +90,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addListValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddMultipleListValues()
     {
@@ -101,6 +113,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addInputObjectValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addObjectSetter
      */
     public function testAddInputObjectValue()
     {
@@ -120,6 +135,9 @@ class InputObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::addInputObjectValue
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\InputObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addObjectSetter
      */
     public function testAddMultipleInputObjectValues()
     {

@@ -28,7 +28,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
      * @param string $propertyName
      * @param string $upperCamelName
      */
-    protected function addSimpleSetter($propertyName, $upperCamelName)
+    protected function addScalarSetter($propertyName, $upperCamelName)
     {
         $lowerCamelName = lcfirst($upperCamelName);
         $method = "public function set$upperCamelName($$lowerCamelName)
@@ -62,7 +62,7 @@ abstract class ObjectClassBuilder implements ObjectBuilderInterface
      * @param string $upperCamelName
      * @param string $objectClass
      */
-    protected function addInputObjectSetter(string $propertyName, string $upperCamelName, string $objectClass)
+    protected function addObjectSetter(string $propertyName, string $upperCamelName, string $objectClass)
     {
         $lowerCamelName = lcfirst(str_replace('_', '', $objectClass));
         $method         = "public function set$upperCamelName($objectClass $$lowerCamelName)

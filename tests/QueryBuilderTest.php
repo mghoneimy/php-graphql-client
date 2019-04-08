@@ -48,6 +48,7 @@ field_one
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
+     * @covers \GraphQL\Exception\EmptySelectionSetException
      */
     public function testEmptySelectionSet()
     {

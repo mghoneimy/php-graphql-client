@@ -7,12 +7,11 @@ use GraphQL\Enumeration\FieldTypeKindEnum;
 use GraphQL\SchemaGenerator\CodeGenerator\ObjectBuilderInterface;
 use GraphQL\SchemaGenerator\SchemaClassGenerator;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 
 class SchemaClassGeneratorTest extends CodeFileTestCase
 {
-    private const TEST_API_URL = 'https://graphql-pokemon.now.sh/';
-
     /**
      * @var TransparentSchemaClassGenerator
      */
@@ -28,9 +27,10 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
      */
     protected function setUp(): void
     {
-        $this->mockHandler    = new MockHandler();
+        $this->mockHandler = new MockHandler();
+        $handler = HandlerStack::create($this->mockHandler);
         $this->classGenerator = new TransparentSchemaClassGenerator(
-            new MockClient(static::TEST_API_URL, $this->mockHandler),
+            new MockClient('', $handler),
             static::getGeneratedFilesDir()
         );
     }
@@ -43,12 +43,12 @@ class SchemaClassGeneratorTest extends CodeFileTestCase
     public function testSetWriteDirectory()
     {
         $this->classGenerator = new SchemaClassGenerator(
-            new Client(static::TEST_API_URL)
+            new Client('')
         );
         $this->assertStringEndsWith('/php-graphql-client/schema_object', $this->classGenerator->getWriteDir());
 
         $this->classGenerator = new SchemaClassGenerator(
-            new Client(static::TEST_API_URL),
+            new Client(''),
             static::getGeneratedFilesDir()
         );
         $this->assertStringEndsWith('/tests/files_generated', $this->classGenerator->getWriteDir());
