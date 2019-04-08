@@ -3,7 +3,6 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Client;
-use GuzzleHttp\Handler\MockHandler;
 
 /**
  * Class MockClient
@@ -12,9 +11,16 @@ use GuzzleHttp\Handler\MockHandler;
  */
 class MockClient extends Client
 {
-    public function __construct(string $endpointUrl, MockHandler $mockHandler, array $authorizationHeaders = [])
+    /**
+     * MockClient constructor.
+     *
+     * @param string $endpointUrl
+     * @param object $handler
+     * @param array  $authorizationHeaders
+     */
+    public function __construct(string $endpointUrl, $handler, array $authorizationHeaders = [])
     {
         parent::__construct($endpointUrl, $authorizationHeaders);
-        $this->httpClient = new \GuzzleHttp\Client(['handler' => $mockHandler]);
+        $this->httpClient = new \GuzzleHttp\Client(['handler' => $handler]);
     }
 }

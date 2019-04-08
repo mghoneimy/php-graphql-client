@@ -239,17 +239,17 @@ class ResultsTest extends TestCase
     public function testReformatResultsFromArrayToObject()
     {
         $body = json_encode([
-                                'data' => [
-                                    'someField' => [
-                                        [
-                                            'data' => 'value',
-                                        ],
-                                        [
-                                            'data' => 'value',
-                                        ]
-                                    ]
-                                ]
-                            ]);
+            'data' => [
+                'someField' => [
+                    [
+                        'data' => 'value',
+                    ],
+                    [
+                        'data' => 'value',
+                    ]
+                ]
+            ]
+        ]);
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
