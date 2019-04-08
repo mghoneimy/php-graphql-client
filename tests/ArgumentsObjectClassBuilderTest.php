@@ -26,6 +26,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addScalarArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addScalarSetter
      */
     public function testAddScalarArgument()
     {
@@ -45,6 +48,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addScalarArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addScalarSetter
      */
     public function testAddMultipleScalarArguments()
     {
@@ -65,6 +71,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addListArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddListArgument()
     {
@@ -84,6 +93,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addListArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addListSetter
      */
     public function testAddMultipleListArguments()
     {
@@ -104,6 +116,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addInputObjectArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addObjectSetter
      */
     public function testAddInputObjectArgument()
     {
@@ -123,6 +138,9 @@ class ArgumentsObjectClassBuilderTest extends CodeFileTestCase
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::__construct
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::addInputObjectArgument
      * @covers \GraphQL\SchemaGenerator\CodeGenerator\ArgumentsObjectClassBuilder::build
+     *
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addProperty
+     * @covers \GraphQL\SchemaGenerator\CodeGenerator\ObjectClassBuilder::addObjectSetter
      */
     public function testAddMultipleInputObjectArguments()
     {

@@ -38,7 +38,7 @@ class InputObjectClassBuilder extends ObjectClassBuilder
     {
         $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
-        $this->addSimpleSetter($argumentName, $upperCamelCaseArg);
+        $this->addScalarSetter($argumentName, $upperCamelCaseArg);
     }
 
     /**
@@ -61,7 +61,7 @@ class InputObjectClassBuilder extends ObjectClassBuilder
         $typeName .= 'InputObject';
         $upperCamelCaseArg = StringLiteralFormatter::formatUpperCamelCase($argumentName);
         $this->addProperty($argumentName);
-        $this->addInputObjectSetter($argumentName, $upperCamelCaseArg, $typeName);
+        $this->addObjectSetter($argumentName, $upperCamelCaseArg, $typeName);
     }
 
     /**
