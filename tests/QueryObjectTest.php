@@ -57,8 +57,7 @@ scalar
 
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::__construct
-     *
-     * @throws EmptySelectionSetException
+     * @covers \GraphQL\Exception\EmptySelectionSetException
      */
     public function testEmptySelectionSet()
     {
@@ -111,8 +110,6 @@ scalar
     /**
      * @covers \GraphQL\SchemaObject\QueryObject::appendArguments
      * @covers \GraphQL\SchemaObject\QueryObject::getQueryString
-     *
-     * @throws EmptySelectionSetException
      */
     public function testSelectSubFieldsWithArguments()
     {
