@@ -3,7 +3,6 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
-use GraphQL\SchemaObject\QueryObject;
 use GuzzleHttp\Exception\ClientException;
 
 /**

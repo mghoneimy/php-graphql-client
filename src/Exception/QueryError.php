@@ -2,6 +2,8 @@
 
 namespace GraphQL\Exception;
 
+use RuntimeException;
+
 /**
  * This exception is triggered when the GraphQL endpoint returns an error in the provided query
  *
@@ -9,7 +11,7 @@ namespace GraphQL\Exception;
  *
  * @package GraphQl\Exception
  */
-class QueryError extends \RuntimeException
+class QueryError extends RuntimeException
 {
     /**
      * @var array
