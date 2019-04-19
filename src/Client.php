@@ -3,7 +3,6 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
-use GraphQL\SchemaObject\QueryObject;
 use GuzzleHttp\Exception\ClientException;
 
 /**
@@ -53,21 +52,6 @@ class Client
     public function runQuery(Query $query, bool $resultsAsArray = false): ?Results
     {
         return $this->runRawQuery((string) $query, $resultsAsArray);
-    }
-
-    /**
-     * @codeCoverageIgnore
-     *
-     * @param QueryObject $queryObject
-     * @param bool        $resultsAsArray
-     *
-     * @return Results|null
-     * @throws Exception\EmptySelectionSetException
-     * @throws QueryError
-     */
-    public function runQueryObject(QueryObject $queryObject, bool $resultsAsArray = false): ?Results
-    {
-        return $this->runRawQuery($queryObject->getQueryString(), $resultsAsArray);
     }
 
     /**

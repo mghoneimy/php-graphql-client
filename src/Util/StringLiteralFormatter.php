@@ -26,7 +26,7 @@ class StringLiteralFormatter
             } else {
                 $value = 'false';
             }
-        } elseif (is_null($value)) {
+        } elseif ($value === null) {
             $value = 'null';
         } else {
             $value = (string) $value;
@@ -66,11 +66,16 @@ class StringLiteralFormatter
     {
         if (strpos($stringValue, '_') === false) {
             return ucfirst($stringValue);
-        } else {
-            return str_replace('_', '', ucwords($stringValue, '_'));
         }
+
+        return str_replace('_', '', ucwords($stringValue, '_'));
     }
 
+    /**
+     * @param string $stringValue
+     *
+     * @return string
+     */
     public static function formatLowerCamelCase(string $stringValue): string
     {
         return lcfirst(static::formatUpperCamelCase($stringValue));
