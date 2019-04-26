@@ -35,14 +35,4 @@ class QueryBuilder extends AbstractQueryBuilder
     {
         return parent::setArgument($argumentName, $argumentValue);
     }
-
-    /**
-     * Changing method visibility to public
-     *
-     * @return Query
-     */
-    public function getQuery(): Query
-    {
-        return parent::getQuery();
-    }
 }

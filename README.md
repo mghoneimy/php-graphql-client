@@ -256,9 +256,8 @@ $builder = (new QueryBuilder('pokemon'))
                     )
             )
     );
-$gql = $builder->getQuery();
 try {
-    $results = $client->runQuery($gql, true);
+    $results = $client->runQuery($builder, true);
 }
 catch (QueryError $exception) {
     print_r($exception->getErrorDetails());

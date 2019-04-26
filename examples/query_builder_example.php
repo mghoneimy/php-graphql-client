@@ -43,11 +43,9 @@ $builder = (new QueryBuilder('pokemon'))
             )
     );
 
-$gql = $builder->getQuery();
-
 // Run query to get results
 try {
-    $results = $client->runQuery($gql);
+    $results = $client->runQuery($builder);
 }
 catch (QueryError $exception) {
 

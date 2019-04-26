@@ -3,7 +3,9 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
+use GraphQL\QueryBuilder\QueryBuilderInterface;
 use GuzzleHttp\Exception\ClientException;
+use TypeError;
 
 /**
  * Class Client
@@ -41,16 +43,22 @@ class Client
     }
 
     /**
-     * @codeCoverageIgnore
-     *
-     * @param Query $query
-     * @param bool  $resultsAsArray
+     * @param Query|QueryBuilderInterface $query
+     * @param bool                        $resultsAsArray
      *
      * @return Results|null
      * @throws QueryError
      */
-    public function runQuery(Query $query, bool $resultsAsArray = false): ?Results
+    public function runQuery($query, bool $resultsAsArray = false): ?Results
     {
+        if ($query instanceof QueryBuilderInterface) {
+            $query = $query->getQuery();
+        }
+
+        if (!$query instanceof Query) {
+            throw new TypeError('Client::runQuery accepts the first argument of type Query or QueryBuilderInterface');
+        }
+
         return $this->runRawQuery((string) $query, $resultsAsArray);
     }
 
@@ -60,8 +68,6 @@ class Client
      *
      * @return Results|null
      * @throws QueryError
-     *
-     * TODO: Rename this to runStringQuery on v1.0
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false): ?Results
     {
