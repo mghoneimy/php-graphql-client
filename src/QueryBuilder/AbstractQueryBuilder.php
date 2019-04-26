@@ -11,7 +11,7 @@ use GraphQL\RawObject;
  *
  * @package GraphQL
  */
-abstract class AbstractQueryBuilder
+abstract class AbstractQueryBuilder implements QueryBuilderInterface
 {
     /**
      * @var Query
@@ -43,7 +43,7 @@ abstract class AbstractQueryBuilder
     /**
      * @return Query
      */
-    protected function getQuery(): Query
+    public function getQuery(): Query
     {
         if (empty($this->selectionSet)) {
             throw new EmptySelectionSetException(static::class);

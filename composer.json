@@ -39,6 +39,6 @@
         "codacy/coverage": "^1.4"
     },
     "suggest": {
-        "gmostafa/php-graphql-oqm": "^1.0"
+        "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"
     }
 }

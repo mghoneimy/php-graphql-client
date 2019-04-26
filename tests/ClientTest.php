@@ -4,6 +4,8 @@ namespace GraphQL\Tests;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
+use GraphQL\QueryBuilder\QueryBuilder;
+use GraphQL\RawObject;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\MockHandler;
@@ -12,6 +14,7 @@ use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 /**
  * Class ClientTest
@@ -72,6 +75,30 @@ class ClientTest extends TestCase
             ['Basic xyz'],
             $secondRequest->getHeader('Authorization')
         );
+    }
+
+    /**
+     * @covers \GraphQL\Client::runQuery
+     */
+    public function testRunQueryBuilder()
+    {
+        $this->mockHandler->append(new Response(200, [], json_encode([
+            'data' => [
+                'someData'
+            ]
+        ])));
+
+        $response = $this->client->runQuery((new QueryBuilder('obj'))->selectField('field'));
+        $this->assertNotNull($response->getData());
+    }
+
+    /**
+     * @covers \GraphQL\Client::runQuery
+     */
+    public function testRunInvalidQueryClass()
+    {
+        $this->expectException(TypeError::class);
+        $this->client->runQuery(new RawObject('obj'));
     }
 
     /**
