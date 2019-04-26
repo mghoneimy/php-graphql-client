@@ -151,6 +151,25 @@ $results = $client->runQuery($gql, true);
 $results->getData()['Company'][1]['branches']['address']
 ```
 
+# Mutations
+Mutations follow the same rules of queries in GraphQL, they select fields on returned objects, receive arguments, and
+can have sub-fields.
+
+Here's a sample example on how to construct and run mutations:
+```
+$mutation = (new Mutation('createCompany'))
+    ->setArguments(['companyObject' => new RawObject('{name: "Trial Company", employees: 200}')])
+    ->setSelectionSet(
+        [
+            '_id',
+            'name',
+            'serialNumber',
+        ]
+    );
+$results = $client->runQuery($mutation);
+```
+Mutations can be run by the client the same way queries are run.
+
 # Live API Example
 GraphQL Pokemon is a very cool public GraphQL API available to retrieve Pokemon data. The API is available publicly on
 the web, we'll use it to demo the capabilities of this client.
@@ -264,4 +283,28 @@ catch (QueryError $exception) {
     exit;
 }
 print_r($results->getData()['pokemon']);
+```
+
+# Running Raw Queries
+Although not the primary goal of this package, but it supports running raw string queries, just like any other client
+using the `runRawQuery` method in the `Client` class. Here's an example on how to use it:
+```
+$gql = <<<QUERY
+query {
+    pokemon(name: "Pikachu") {
+        id
+        number
+        name
+        attacks {
+            special {
+                name
+                type
+                damage
+            }
+        }
+    }
+}
+QUERY;
+
+$results = $client->runQuery($gql);
 ```
