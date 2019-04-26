@@ -46,7 +46,7 @@ class QueryTest extends TestCase
     /**
      * @covers \GraphQL\Query::__toString
      */
-    public function testExplicitQueryObject()
+    public function testQueryWithOperationType()
     {
         $query = new Query('query');
 

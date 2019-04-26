@@ -18,7 +18,14 @@ class Query
      *
      * @var string
      */
-    private const QUERY_FORMAT = "%s%s {\n%s\n}";
+    protected const QUERY_FORMAT = "%s%s {\n%s\n}";
+
+    /**
+     * Stores the name of the type of the operation to be executed on the GraphQL server
+     *
+     * @var string
+     */
+    protected const OPERATION_TYPE = 'query';
 
     /**
      * Stores the object being queried for
@@ -181,8 +188,8 @@ class Query
     public function __toString()
     {
         $queryFormat = static::QUERY_FORMAT;
-        if (!$this->isNested && $this->object !== 'query') {
-            $queryFormat = "query {\n" . static::QUERY_FORMAT . "\n}";
+        if (!$this->isNested && $this->object !== static::OPERATION_TYPE) {
+            $queryFormat = static::OPERATION_TYPE . " {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();
