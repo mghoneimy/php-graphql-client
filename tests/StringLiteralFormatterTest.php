@@ -28,6 +28,15 @@ class StringLiteralFormatterTest extends TestCase
         $formattedString = StringLiteralFormatter::formatValueForRHS('someString');
         $this->assertEquals('"someString"', $formattedString);
 
+        $formattedString = StringLiteralFormatter::formatValueForRHS('"quotedString"');
+        $this->assertEquals('"\"quotedString\""', $formattedString);
+
+        $formattedString = StringLiteralFormatter::formatValueForRHS("\"quotedString\"");
+        $this->assertEquals('"\"quotedString\""', $formattedString);
+
+        $formattedString = StringLiteralFormatter::formatValueForRHS('\'singleQuotes\'');
+        $this->assertEquals('"\'singleQuotes\'"', $formattedString);
+
         // Integer tests
         $integerString = StringLiteralFormatter::formatValueForRHS(25);
         $this->assertEquals('25', $integerString);
