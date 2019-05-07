@@ -19,6 +19,7 @@ class StringLiteralFormatter
     public static function formatValueForRHS($value): string
     {
         if (is_string($value)) {
+            $value = str_replace('"', '\"', $value);
             $value = "\"$value\"";
         } elseif (is_bool($value)) {
             if ($value) {
