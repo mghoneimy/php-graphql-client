@@ -4,6 +4,7 @@ namespace GraphQL;
 
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
+use GraphQL\Exception\InvalidVariableException;
 use GraphQL\Util\StringLiteralFormatter;
 
 /**
@@ -35,6 +36,13 @@ class Query
     private $object;
 
     /**
+     * Stores the list of variables to be used in the query
+     *
+     * @var array|Variable[]
+     */
+    private $variables;
+
+    /**
      * Stores the list of arguments used when querying data
      *
      * @var array
@@ -63,9 +71,29 @@ class Query
     public function __construct(string $objectName)
     {
         $this->object       = $objectName;
+        $this->variables    = [];
         $this->arguments    = [];
         $this->selectionSet = [];
         $this->isNested     = false;
+    }
+
+    /**
+     * @param array $variables
+     *
+     * @return Query
+     */
+    public function setVariables(array $variables)
+    {
+        $nonVarObjects = array_filter($variables, function($e) {
+            return !$e instanceof Variable;
+        });
+        if (count($nonVarObjects) > 0) {
+            throw new InvalidVariableException('One or more of the elements of the variables array provided is not an instance of GraphQL\\Variable');
+        }
+
+        $this->variables = $variables;
+
+        return $this;
     }
 
     /**
@@ -114,6 +142,34 @@ class Query
         $this->selectionSet = $selectionSet;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function constructVariables(): string
+    {
+        if (empty($this->variables)) {
+            return '';
+        }
+
+        $varsString = '(';
+        $first      = true;
+        foreach ($this->variables as $variable) {
+
+            // Append space at the beginning if it's not the first item on the list
+            if ($first) {
+                $first = false;
+            } else {
+                $varsString .= ' ';
+            }
+
+            // Append variable string value to the variables string
+            $varsString .= (string) $variable;
+        }
+        $varsString .= ')';
+
+        return $varsString;
     }
 
     /**
@@ -189,12 +245,22 @@ class Query
     {
         $queryFormat = static::QUERY_FORMAT;
         if (!$this->isNested && $this->object !== static::OPERATION_TYPE) {
-            $queryFormat = static::OPERATION_TYPE . " {\n" . static::QUERY_FORMAT . "\n}";
+            $queryFormat = $this->generateSignature() . " {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();
 
         return sprintf($queryFormat, $this->object, $argumentsString, $selectionSetString);
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateSignature(): string
+    {
+        $signatureFormat = '%s %s%s';
+
+        return sprintf($signatureFormat, static::OPERATION_TYPE, '', $this->constructVariables());
     }
 
     /**

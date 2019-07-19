@@ -2,6 +2,10 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release.
 
+## In Progress
+
+- Add support for variables attachment to query
+- Add support for variables passing query
 
 ## 1.1: 2019-04-26
 
