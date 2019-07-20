@@ -45,11 +45,12 @@ class Client
     /**
      * @param Query|QueryBuilderInterface $query
      * @param bool                        $resultsAsArray
+     * @param array                       $variables
      *
      * @return Results|null
      * @throws QueryError
      */
-    public function runQuery($query, bool $resultsAsArray = false): ?Results
+    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): ?Results
     {
         if ($query instanceof QueryBuilderInterface) {
             $query = $query->getQuery();
@@ -59,17 +60,18 @@ class Client
             throw new TypeError('Client::runQuery accepts the first argument of type Query or QueryBuilderInterface');
         }
 
-        return $this->runRawQuery((string) $query, $resultsAsArray);
+        return $this->runRawQuery((string) $query, $resultsAsArray, $variables);
     }
 
     /**
      * @param string $queryString
      * @param bool   $resultsAsArray
+     * @param array  $variables
      *
      * @return Results|null
      * @throws QueryError
      */
-    public function runRawQuery(string $queryString, $resultsAsArray = false): ?Results
+    public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): ?Results
     {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
@@ -78,7 +80,8 @@ class Client
         $options['headers']['Content-Type'] = 'application/json';
 
         // Set query in the request body
-        $options['body'] = json_encode(['query' => (string) $queryString]);
+        $bodyArray       = ['query' => (string) $queryString, 'variables' => $variables];
+        $options['body'] = json_encode($bodyArray);
 
         // Send api request and get response
         try {
