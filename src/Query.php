@@ -92,7 +92,9 @@ class Query
      */
     public function setOperationName(string $operationName)
     {
-        $this->operationName = $operationName;
+        if (!empty($operationName)) {
+            $this->operationName = " $operationName";
+        }
 
         return $this;
     }
@@ -278,7 +280,7 @@ class Query
      */
     protected function generateSignature(): string
     {
-        $signatureFormat = '%s %s%s';
+        $signatureFormat = '%s%s%s';
 
         return sprintf($signatureFormat, static::OPERATION_TYPE, $this->operationName, $this->constructVariables());
     }

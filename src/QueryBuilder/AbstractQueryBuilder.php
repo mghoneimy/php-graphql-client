@@ -42,6 +42,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     public function __construct(string $queryObject)
     {
         $this->query         = new Query($queryObject);
+        $this->variables     = [];
         $this->selectionSet  = [];
         $this->argumentsList = [];
     }
