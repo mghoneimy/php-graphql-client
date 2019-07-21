@@ -5,6 +5,7 @@ namespace GraphQL\QueryBuilder;
 use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\Query;
 use GraphQL\RawObject;
+use GraphQL\Variable;
 
 /**
  * Class AbstractQueryBuilder
@@ -17,6 +18,11 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
      * @var Query
      */
     private $query;
+
+    /**
+     * @var array|Variable[]
+     */
+    private $variables;
 
     /**
      * @var array
@@ -56,6 +62,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
             }
         }
 
+        $this->query->setVariables($this->variables);
         $this->query->setArguments($this->argumentsList);
         $this->query->setSelectionSet($this->selectionSet);
 
@@ -87,6 +94,18 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         if (is_scalar($argumentValue) || is_array($argumentValue) || $argumentValue instanceof RawObject) {
             $this->argumentsList[$argumentName] = $argumentValue;
         }
+
+        return $this;
+    }
+
+    /**
+     * @param Variable $variable
+     *
+     * @return $this
+     */
+    protected function setVariable(Variable $variable)
+    {
+        $this->variables[] = $variable;
 
         return $this;
     }

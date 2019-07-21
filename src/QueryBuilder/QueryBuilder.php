@@ -3,6 +3,7 @@
 namespace GraphQL\QueryBuilder;
 
 use GraphQL\Query;
+use GraphQL\Variable;
 
 /**
  * Class QueryBuilder
@@ -34,5 +35,15 @@ class QueryBuilder extends AbstractQueryBuilder
     public function setArgument(string $argumentName, $argumentValue)
     {
         return parent::setArgument($argumentName, $argumentValue);
+    }
+
+    /**
+     * @param Variable $variable
+     *
+     * @return AbstractQueryBuilder
+     */
+    public function setVariable(Variable $variable)
+    {
+        return parent::setVariable($variable);
     }
 }
