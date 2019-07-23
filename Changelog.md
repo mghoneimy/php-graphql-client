@@ -2,11 +2,16 @@
 
 The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release.
 
-## In Progress
+## 2019-07-24
 
-- Add support for variables attachment to query
-- Add support for variables passing query
-- Support for input objects variables
+### Added
+
+- Variables support for queries and mutations
+- Operation name during in queries
+
+### Fixed
+
+- Issue in mutation string generation when no selection set is provided
 
 ## 1.1: 2019-04-26
 

@@ -221,6 +221,26 @@ $results = $client->runQuery($mutation);
 ```
 Mutations can be run by the client the same way queries are run.
 
+## Mutations With Variables Example
+Mutations can utilize the variables in the same way Queries can. Here's an example on how to use the variables to pass
+input objects to the GraphQL server dynamically:
+```
+$mutation = (new Mutation('createCompany'))
+    ->setVariables([new Variable('company', 'CompanyInputObject', true)])
+    ->setArguments(['companyObject' => '$company']);
+
+$variables = ['company' => ['name' => 'Tech Company', 'type' => 'Testing', 'size' => 'Medium']];
+$client->runQuery(
+    $mutation, true, $variables
+);
+```
+These are the resulting mutation and the variables passed with it:
+```
+mutation($company: CompanyInputObject!) {
+  createCompany(companyObject: $company)
+}
+{"company":{"name":"Tech Company","type":"Testing","size":"Medium"}}
+```
 # Live API Example
 GraphQL Pokemon is a very cool public GraphQL API available to retrieve Pokemon data. The API is available publicly on
 the web, we'll use it to demo the capabilities of this client.
@@ -229,10 +249,10 @@ Github Repo link: https://github.com/lucasbento/graphql-pokemon
  
 API link: https://graphql-pokemon.now.sh/
 
-This query retrieves Pikachu's evolutions and their attacks:
+This query retrieves any pokemon's evolutions and their attacks:
 ```
-{
-  pokemon(name: "Pikachu") {
+query($name: String!) {
+  pokemon(name: $name) {
     id
     number
     name
@@ -263,7 +283,8 @@ $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
 $gql = (new Query('pokemon'))
-    ->setArguments(['name' => 'Pikachu'])
+    ->setVariables([new Variable('name', 'String', true)])
+    ->setArguments(['name' => '$name'])
     ->setSelectionSet(
         [
             'id',
@@ -293,7 +314,8 @@ $gql = (new Query('pokemon'))
         ]
     );
 try {
-    $results = $client->runQuery($gql, true);
+    $name = readline('Enter pokemon name: ');
+    $results = $client->runQuery($gql, true, ['name' => $name]);
 }
 catch (QueryError $exception) {
     print_r($exception->getErrorDetails());
@@ -307,7 +329,8 @@ $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
 $builder = (new QueryBuilder('pokemon'))
-    ->setArgument('name', 'Pikachu')
+    ->setVariable('name', 'String', true)
+    ->setArgument('name', '$name')
     ->selectField('id')
     ->selectField('number')
     ->selectField('name')
@@ -327,7 +350,8 @@ $builder = (new QueryBuilder('pokemon'))
             )
     );
 try {
-    $results = $client->runQuery($builder, true);
+    $name = readline('Enter pokemon name: ');
+    $results = $client->runQuery($builder, true, ['name' => $name]);
 }
 catch (QueryError $exception) {
     print_r($exception->getErrorDetails());
