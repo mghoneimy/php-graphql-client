@@ -79,6 +79,8 @@ class Client
         }
         $options['headers']['Content-Type'] = 'application/json';
 
+        // Convert empty variables array to empty json object
+        if (empty($variables)) $variables = (object) null;
         // Set query in the request body
         $bodyArray       = ['query' => (string) $queryString, 'variables' => $variables];
         $options['body'] = json_encode($bodyArray);
