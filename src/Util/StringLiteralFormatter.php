@@ -19,8 +19,11 @@ class StringLiteralFormatter
     public static function formatValueForRHS($value): string
     {
         if (is_string($value)) {
-            $value = str_replace('"', '\"', $value);
-            $value = "\"$value\"";
+            // Do not treat value as a string if it starts with '$', which indicates that it's a variable name
+            if (strpos($value, '$') !== 0) {
+                $value = str_replace('"', '\"', $value);
+                $value = "\"$value\"";
+            }
         } elseif (is_bool($value)) {
             if ($value) {
                 $value = 'true';

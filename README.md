@@ -111,6 +111,34 @@ The RawObject class being constructed is used for injecting the string into the 
 into the RawObject constructor will be put in the query as it is without any custom formatting normally done by the
 query class.
 
+## Query With Variables
+```
+$gql = (new Query('companies'))
+    ->setVariables(
+        [
+            new Variable('name', 'String', true),
+            new Variable('limit', 'Int', false, 5)
+        ]
+    )
+    ->setArguments(['name' => '$name', 'first' => '$limit'])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This query shows how variables can be used in this package to allow for dynamic requests enabled by GraphQL standards.
+
+### The Variable Class
+The Variable class is an immutable class that represents a variable in GraphQL standards. Its constructor receives 4
+arguments:
+- name: Represents the variable name
+- type: Represents the variable type according to the GraphQL server schema
+- isRequired (Optional): Represents if the variable is required or not, it's false by default
+- defaultValue (Optional): Represents the default value to be assigned to the variable. The default value will only be
+considered if the isRequired argument is set to false.
+
 # The Query Builder
 The QueryBuilder class can be used to construct Query objects dynamically, which can be useful in some cases. It works
 very similarly to the Query class, but the Query building is divided into steps.
@@ -119,7 +147,8 @@ That's how the "Query With Input Object Argument" example can be created using t
 QueryBuilder:
 ```
 $builder = (new QueryBuilder('companies'))
-    ->setArgument('filter', new RawObject('{name_starts_with: "Face"}'))
+    ->setVariable('namePrefix', 'String', true)
+    ->setArgument('filter', new RawObject('{name_starts_with: $namePrefix}'))
     ->selectField('name')
     ->selectField('serialNumber');
 $gql = $builder->getQuery();
@@ -139,7 +168,7 @@ $client = new Client(
 ```
 
 # Running Queries
-
+## Result Formatting
 Running query with the GraphQL client and getting the results in object structure:
 ```
 $results = $client->runQuery($gql);
@@ -149,6 +178,28 @@ Or getting results in array structure:
 ```
 $results = $client->runQuery($gql, true);
 $results->getData()['Company'][1]['branches']['address']
+```
+
+## Passing Variables to Queries
+Running queries containing variables requires passing an associative array which maps variable names (keys) to variable
+values (values) to the `runQuery` method. Here's an example:
+```
+$gql = (new Query('companies'))
+    ->setVariables(
+        [
+            new Variable('name', 'String', true),
+            new Variable('limit', 'Int', false, 5)
+        ]
+    )
+    ->setArguments(['name' => '$name', 'first' => '$limit'])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+$variablesArray = ['name' => 'Tech Co.', 'first' => 5];
+$results = $client->runQuery($gql, true, $variablesArray);
 ```
 
 # Mutations
@@ -170,6 +221,26 @@ $results = $client->runQuery($mutation);
 ```
 Mutations can be run by the client the same way queries are run.
 
+## Mutations With Variables Example
+Mutations can utilize the variables in the same way Queries can. Here's an example on how to use the variables to pass
+input objects to the GraphQL server dynamically:
+```
+$mutation = (new Mutation('createCompany'))
+    ->setVariables([new Variable('company', 'CompanyInputObject', true)])
+    ->setArguments(['companyObject' => '$company']);
+
+$variables = ['company' => ['name' => 'Tech Company', 'type' => 'Testing', 'size' => 'Medium']];
+$client->runQuery(
+    $mutation, true, $variables
+);
+```
+These are the resulting mutation and the variables passed with it:
+```
+mutation($company: CompanyInputObject!) {
+  createCompany(companyObject: $company)
+}
+{"company":{"name":"Tech Company","type":"Testing","size":"Medium"}}
+```
 # Live API Example
 GraphQL Pokemon is a very cool public GraphQL API available to retrieve Pokemon data. The API is available publicly on
 the web, we'll use it to demo the capabilities of this client.
@@ -178,10 +249,10 @@ Github Repo link: https://github.com/lucasbento/graphql-pokemon
  
 API link: https://graphql-pokemon.now.sh/
 
-This query retrieves Pikachu's evolutions and their attacks:
+This query retrieves any pokemon's evolutions and their attacks:
 ```
-{
-  pokemon(name: "Pikachu") {
+query($name: String!) {
+  pokemon(name: $name) {
     id
     number
     name
@@ -212,7 +283,8 @@ $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
 $gql = (new Query('pokemon'))
-    ->setArguments(['name' => 'Pikachu'])
+    ->setVariables([new Variable('name', 'String', true)])
+    ->setArguments(['name' => '$name'])
     ->setSelectionSet(
         [
             'id',
@@ -242,7 +314,8 @@ $gql = (new Query('pokemon'))
         ]
     );
 try {
-    $results = $client->runQuery($gql, true);
+    $name = readline('Enter pokemon name: ');
+    $results = $client->runQuery($gql, true, ['name' => $name]);
 }
 catch (QueryError $exception) {
     print_r($exception->getErrorDetails());
@@ -256,7 +329,8 @@ $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
 $builder = (new QueryBuilder('pokemon'))
-    ->setArgument('name', 'Pikachu')
+    ->setVariable('name', 'String', true)
+    ->setArgument('name', '$name')
     ->selectField('id')
     ->selectField('number')
     ->selectField('name')
@@ -276,7 +350,8 @@ $builder = (new QueryBuilder('pokemon'))
             )
     );
 try {
-    $results = $client->runQuery($builder, true);
+    $name = readline('Enter pokemon name: ');
+    $results = $client->runQuery($builder, true, ['name' => $name]);
 }
 catch (QueryError $exception) {
     print_r($exception->getErrorDetails());
