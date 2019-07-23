@@ -6,6 +6,7 @@ use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\Query;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
+use GraphQL\Variable;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,6 +23,9 @@ class QueryBuilderTest extends TestCase
      */
     protected $queryBuilder;
 
+    /**
+     *
+     */
     public function setUp(): void
     {
         $this->queryBuilder = new QueryBuilder('Object');
@@ -54,6 +58,53 @@ field_one
     {
         $this->expectException(EmptySelectionSetException::class);
         $this->queryBuilder->getQuery();
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::setVariable
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::setVariable
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
+     */
+    public function testAddVariables()
+    {
+        $this->queryBuilder
+            ->setVariable('var', 'String')
+            ->setVariable('intVar', 'Int', false, 4)
+            ->selectField('fieldOne');
+        $this->assertEquals(
+            'query($var: String $intVar: Int=4) {
+Object {
+fieldOne
+}
+}',
+            (string) $this->queryBuilder->getQuery()
+        );
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
+     */
+    public function testAddVariablesToSecondLevelQueryDoesNothing()
+    {
+        $this->queryBuilder
+            ->setVariable('var', 'String')
+            ->selectField('fieldOne')
+            ->selectField(
+                (new QueryBuilder('Nested'))
+                    ->setVariable('var', 'String')
+                    ->selectField('fieldTwo')
+            );
+        $this->assertEquals(
+            'query($var: String) {
+Object {
+fieldOne
+Nested {
+fieldTwo
+}
+}
+}',
+            (string) $this->queryBuilder->getQuery()
+        );
     }
 
     /**
@@ -98,6 +149,10 @@ some_field
         );
     }
 
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     */
     public function testSelectNestedQueryBuilder()
     {
         $this->queryBuilder->selectField(

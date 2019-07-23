@@ -2,8 +2,10 @@
 
 namespace GraphQL;
 
+use Exception;
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
+use GraphQL\Exception\InvalidVariableException;
 use GraphQL\Util\StringLiteralFormatter;
 
 /**
@@ -28,11 +30,25 @@ class Query
     protected const OPERATION_TYPE = 'query';
 
     /**
+     * Stores the name of the operation to be run on the server
+     *
+     * @var string
+     */
+    private $operationName;
+
+    /**
      * Stores the object being queried for
      *
      * @var string
      */
-    private $object;
+    private $fieldName;
+
+    /**
+     * Stores the list of variables to be used in the query
+     *
+     * @var array|Variable[]
+     */
+    private $variables;
 
     /**
      * Stores the list of arguments used when querying data
@@ -58,14 +74,49 @@ class Query
     /**
      * GQLQueryBuilder constructor.
      *
-     * @param string $objectName
+     * @param string $fieldName
      */
-    public function __construct(string $objectName)
+    public function __construct(string $fieldName)
     {
-        $this->object       = $objectName;
-        $this->arguments    = [];
-        $this->selectionSet = [];
-        $this->isNested     = false;
+        $this->fieldName     = $fieldName;
+        $this->operationName = '';
+        $this->variables     = [];
+        $this->arguments     = [];
+        $this->selectionSet  = [];
+        $this->isNested      = false;
+    }
+
+    /**
+     * @param string $operationName
+     *
+     * @return Query
+     */
+    public function setOperationName(string $operationName)
+    {
+        if (!empty($operationName)) {
+            $this->operationName = " $operationName";
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param array $variables
+     *
+     * @return Query
+     */
+    public function setVariables(array $variables)
+    {
+        $nonVarElements = array_filter($variables, function($e) {
+            return !$e instanceof Variable;
+        });
+        if (count($nonVarElements) > 0) {
+            throw new InvalidVariableException('At least one of the elements of the variables array provided is not an instance of GraphQL\\Variable');
+        }
+
+        $this->variables = $variables;
+
+        return $this;
     }
 
     /**
@@ -114,6 +165,34 @@ class Query
         $this->selectionSet = $selectionSet;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    protected function constructVariables(): string
+    {
+        if (empty($this->variables)) {
+            return '';
+        }
+
+        $varsString = '(';
+        $first      = true;
+        foreach ($this->variables as $variable) {
+
+            // Append space at the beginning if it's not the first item on the list
+            if ($first) {
+                $first = false;
+            } else {
+                $varsString .= ' ';
+            }
+
+            // Append variable string value to the variables string
+            $varsString .= (string) $variable;
+        }
+        $varsString .= ')';
+
+        return $varsString;
     }
 
     /**
@@ -188,13 +267,23 @@ class Query
     public function __toString()
     {
         $queryFormat = static::QUERY_FORMAT;
-        if (!$this->isNested && $this->object !== static::OPERATION_TYPE) {
-            $queryFormat = static::OPERATION_TYPE . " {\n" . static::QUERY_FORMAT . "\n}";
+        if (!$this->isNested && $this->fieldName !== static::OPERATION_TYPE) {
+            $queryFormat = $this->generateSignature() . " {\n" . static::QUERY_FORMAT . "\n}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();
 
-        return sprintf($queryFormat, $this->object, $argumentsString, $selectionSetString);
+        return sprintf($queryFormat, $this->fieldName, $argumentsString, $selectionSetString);
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateSignature(): string
+    {
+        $signatureFormat = '%s%s%s';
+
+        return sprintf($signatureFormat, static::OPERATION_TYPE, $this->operationName, $this->constructVariables());
     }
 
     /**

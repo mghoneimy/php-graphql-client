@@ -66,7 +66,7 @@ class ClientTest extends TestCase
 
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
-        $this->assertEquals('{"query":"query_string"}', $firstRequest->getBody()->getContents());
+        $this->assertEquals('{"query":"query_string","variables":[]}', $firstRequest->getBody()->getContents());
 
         /** @var Request $secondRequest */
         $secondRequest = $container[1]['request'];
