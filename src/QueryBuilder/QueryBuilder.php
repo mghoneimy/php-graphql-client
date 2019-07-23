@@ -3,7 +3,6 @@
 namespace GraphQL\QueryBuilder;
 
 use GraphQL\Query;
-use GraphQL\Variable;
 
 /**
  * Class QueryBuilder

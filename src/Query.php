@@ -2,7 +2,6 @@
 
 namespace GraphQL;
 
-use Exception;
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
@@ -20,7 +19,7 @@ class Query
      *
      * @var string
      */
-    protected const QUERY_FORMAT = "%s%s {\n%s\n}";
+    protected const QUERY_FORMAT = "%s%s%s";
 
     /**
      * Stores the name of the type of the operation to be executed on the GraphQL server
@@ -34,42 +33,42 @@ class Query
      *
      * @var string
      */
-    private $operationName;
+    protected $operationName;
 
     /**
      * Stores the object being queried for
      *
      * @var string
      */
-    private $fieldName;
+    protected $fieldName;
 
     /**
      * Stores the list of variables to be used in the query
      *
      * @var array|Variable[]
      */
-    private $variables;
+    protected $variables;
 
     /**
      * Stores the list of arguments used when querying data
      *
      * @var array
      */
-    private $arguments;
+    protected $arguments;
 
     /**
      * Stores the selection set desired to get from the query, can include nested queries
      *
      * @var array
      */
-    private $selectionSet;
+    protected $selectionSet;
 
     /**
      * Private member that's not accessible from outside the class, used internally to deduce if query is nested or not
      *
      * @var bool
      */
-    private $isNested;
+    protected $isNested;
 
     /**
      * GQLQueryBuilder constructor.
@@ -238,7 +237,7 @@ class Query
      */
     protected function constructSelectionSet(): string
     {
-        $attributesString = '';
+        $attributesString = " {\n";
         $first            = true;
         foreach ($this->selectionSet as $attribute) {
 
@@ -257,6 +256,7 @@ class Query
             // Append attribute to returned attributes list
             $attributesString .= $attribute;
         }
+        $attributesString .= "\n}";
 
         return $attributesString;
     }
