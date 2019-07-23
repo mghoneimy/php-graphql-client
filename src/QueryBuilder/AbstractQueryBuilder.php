@@ -100,13 +100,16 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param Variable $variable
+     * @param string $name
+     * @param string $type
+     * @param bool   $isRequired
+     * @param null   $defaultValue
      *
      * @return $this
      */
-    protected function setVariable(Variable $variable)
+    protected function setVariable(string $name, string $type, bool $isRequired = false, $defaultValue = null)
     {
-        $this->variables[] = $variable;
+        $this->variables[] = new Variable($name, $type, $isRequired, $defaultValue);
 
         return $this;
     }

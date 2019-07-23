@@ -68,8 +68,8 @@ field_one
     public function testAddVariables()
     {
         $this->queryBuilder
-            ->setVariable(new Variable('var', 'String'))
-            ->setVariable(new Variable('intVar', 'Int', false, 4))
+            ->setVariable('var', 'String')
+            ->setVariable('intVar', 'Int', false, 4)
             ->selectField('fieldOne');
         $this->assertEquals(
             'query($var: String $intVar: Int=4) {
@@ -87,11 +87,11 @@ fieldOne
     public function testAddVariablesToSecondLevelQueryDoesNothing()
     {
         $this->queryBuilder
-            ->setVariable(new Variable('var', 'String'))
+            ->setVariable('var', 'String')
             ->selectField('fieldOne')
             ->selectField(
                 (new QueryBuilder('Nested'))
-                    ->setVariable(new Variable('var', 'String'))
+                    ->setVariable('var', 'String')
                     ->selectField('fieldTwo')
             );
         $this->assertEquals(

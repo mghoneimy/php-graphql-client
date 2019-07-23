@@ -111,6 +111,34 @@ The RawObject class being constructed is used for injecting the string into the 
 into the RawObject constructor will be put in the query as it is without any custom formatting normally done by the
 query class.
 
+## Query With Variables
+```
+$gql = (new Query('companies'))
+    ->setVariables(
+        [
+            new Variable('name', 'String', true),
+            new Variable('limit', 'Int', false, 5)
+        ]
+    )
+    ->setArguments(['name' => '$name', 'first' => '$limit'])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+This query shows how variables can be used in this package to allow for dynamic requests enabled by GraphQL standards.
+
+### The Variable Class
+The Variable class is an immutable class that represents a variable in GraphQL standards. Its constructor receives 4
+arguments:
+- name: Represents the variable name
+- type: Represents the variable type according to the GraphQL server schema
+- isRequired (Optional): Represents if the variable is required or not, it's false by default
+- defaultValue (Optional): Represents the default value to be assigned to the variable. The default value will only be
+considered if the isRequired argument is set to false.
+
 # The Query Builder
 The QueryBuilder class can be used to construct Query objects dynamically, which can be useful in some cases. It works
 very similarly to the Query class, but the Query building is divided into steps.
@@ -119,7 +147,8 @@ That's how the "Query With Input Object Argument" example can be created using t
 QueryBuilder:
 ```
 $builder = (new QueryBuilder('companies'))
-    ->setArgument('filter', new RawObject('{name_starts_with: "Face"}'))
+    ->setVariable('namePrefix', 'String', true)
+    ->setArgument('filter', new RawObject('{name_starts_with: $namePrefix}'))
     ->selectField('name')
     ->selectField('serialNumber');
 $gql = $builder->getQuery();
@@ -139,7 +168,7 @@ $client = new Client(
 ```
 
 # Running Queries
-
+## Result Formatting
 Running query with the GraphQL client and getting the results in object structure:
 ```
 $results = $client->runQuery($gql);
@@ -149,6 +178,28 @@ Or getting results in array structure:
 ```
 $results = $client->runQuery($gql, true);
 $results->getData()['Company'][1]['branches']['address']
+```
+
+## Passing Variables to Queries
+Running queries containing variables requires passing an associative array which maps variable names (keys) to variable
+values (values) to the `runQuery` method. Here's an example:
+```
+$gql = (new Query('companies'))
+    ->setVariables(
+        [
+            new Variable('name', 'String', true),
+            new Variable('limit', 'Int', false, 5)
+        ]
+    )
+    ->setArguments(['name' => '$name', 'first' => '$limit'])
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+$variablesArray = ['name' => 'Tech Co.', 'first' => 5];
+$results = $client->runQuery($gql, true, $variablesArray);
 ```
 
 # Mutations
