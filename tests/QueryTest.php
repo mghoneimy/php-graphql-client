@@ -4,8 +4,10 @@ namespace GraphQL\Tests;
 
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
+use GraphQL\Exception\InvalidVariableException;
 use GraphQL\Query;
 use GraphQL\RawObject;
+use GraphQL\Variable;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -69,6 +71,165 @@ Object {
 
 }
 }",
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::setOperationName
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithOperationName()
+    {
+        $query = (new Query('Object'))
+            ->setOperationName('retrieveObject');
+        $this->assertEquals(
+'query retrieveObject {
+Object {
+
+}
+}',
+            (string) $query
+        );
+    }
+
+//    public function testQueryWithOperationNameAndOperationType()
+//    {
+//        $query = (new Query('query'))
+//            ->setOperationName('retrieveObject')
+//            ->setSelectionSet([new Query('Object')]);
+//        $this->assertEquals(
+//            'query retrieveObject {
+//Object {
+//
+//}
+//}',
+//            (string) $query
+//        );
+//    }
+
+    /**
+     * @depends testQueryWithOperationName
+     *
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::setOperationName
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithOperationNameInSecondLevelDoesNothing()
+    {
+        $query = (new Query('Object'))
+            ->setOperationName('retrieveObject')
+            ->setSelectionSet([(new Query('Nested'))->setOperationName('opName')]);
+        $this->assertEquals(
+            'query retrieveObject {
+Object {
+Nested {
+
+}
+}
+}',
+            (string) $query
+        );
+    }
+
+    /**
+     * @covers \GraphQL\Query::setVariables
+     * @covers \GraphQL\Exception\InvalidVariableException
+     */
+    public function testSetVariablesWithoutVariableObjects()
+    {
+        $this->expectException(InvalidVariableException::class);
+        (new Query('Object'))->setVariables(['one', 'two']);
+    }
+
+    /**
+     * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::setVariables
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::constructVariables
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithOneVariable()
+    {
+        $query = (new Query('Object'))
+            ->setVariables([new Variable('var', 'String')]);
+        $this->assertEquals(
+            'query($var: String) {
+Object {
+
+}
+}',
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testQueryWithOneVariable
+     *
+     * @covers \GraphQL\Query::setVariables
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::constructVariables
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithMultipleVariables()
+    {
+        $query = (new Query('Object'))
+            ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)]);
+        $this->assertEquals(
+            'query($var: String $intVar: Int=4) {
+Object {
+
+}
+}',
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithVariablesInSecondLevelDoesNothing()
+    {
+        $query = (new Query('Object'))
+            ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)])
+            ->setSelectionSet([(new Query('Nested'))])
+            ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)]);
+        $this->assertEquals(
+            'query($var: String $intVar: Int=4) {
+Object {
+Nested {
+
+}
+}
+}',
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testQueryWithMultipleVariables
+     * @depends testQueryWithOperationName
+     *
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithOperationNameAndVariables()
+    {
+        $query = (new Query('Object'))
+            ->setOperationName('retrieveObject')
+            ->setVariables([new Variable('var', 'String')]);
+        $this->assertEquals(
+            'query retrieveObject($var: String) {
+Object {
+
+}
+}',
             (string) $query
         );
     }

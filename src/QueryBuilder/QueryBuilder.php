@@ -38,9 +38,11 @@ class QueryBuilder extends AbstractQueryBuilder
     }
 
     /**
+     * Changing method visibility to public
+     *
      * @param Variable $variable
      *
-     * @return AbstractQueryBuilder
+     * @return AbstractQueryBuilder|QueryBuilder
      */
     public function setVariable(Variable $variable)
     {

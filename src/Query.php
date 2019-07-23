@@ -2,6 +2,7 @@
 
 namespace GraphQL;
 
+use Exception;
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
@@ -110,7 +111,7 @@ class Query
             return !$e instanceof Variable;
         });
         if (count($nonVarElements) > 0) {
-            throw new InvalidVariableException('One or more of the elements of the variables array provided is not an instance of GraphQL\\Variable');
+            throw new InvalidVariableException('At least one of the elements of the variables array provided is not an instance of GraphQL\\Variable');
         }
 
         $this->variables = $variables;

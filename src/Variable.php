@@ -2,6 +2,8 @@
 
 namespace GraphQL;
 
+use GraphQL\Util\StringLiteralFormatter;
+
 /**
  * Class Variable
  *
@@ -48,45 +50,13 @@ class Variable
     /**
      * @return string
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRequired(): bool
-    {
-        return $this->required;
-    }
-
-    /**
-     * @return bool|float|int|string|null
-     */
-    public function getDefaultValue()
-    {
-        return $this->defaultValue;
-    }
-
-    /**
-     * @return string
-     */
     public function __toString(): string
     {
         $varString = "\$$this->name: $this->type";
         if ($this->required) {
             $varString .= '!';
         } elseif (!empty($this->defaultValue)) {
-            $varString .= "=$this->defaultValue";
+            $varString .= '=' . StringLiteralFormatter::formatValueForRHS($this->defaultValue);
         }
 
         return $varString;
