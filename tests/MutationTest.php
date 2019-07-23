@@ -16,27 +16,39 @@ class MutationTest extends TestCase
 
         $this->assertEquals(
             'mutation {
-createObject {
-
-}
+createObject
 }',
             (string) $mutation
         );
     }
 
+//    /**
+//     *
+//     */
+//    public function testMutationWithOperationType()
+//    {
+//        $mutation = new Mutation('mutation');
+//
+//        $this->assertEquals(
+//            'mutation {
+//
+//}',
+//            (string) $mutation
+//        );
+//    }
+
     /**
      *
      */
-    public function testMutationWithOperationType()
+    public function testMutationWithoutSelectedFields()
     {
-        $mutation = new Mutation('mutation');
-
+        $mutation = (new Mutation('createObject'))
+            ->setArguments(['name' => 'TestObject', 'type' => 'TestType']);
         $this->assertEquals(
             'mutation {
-
+createObject(name: "TestObject" type: "TestType")
 }',
-            (string) $mutation
-        );
+            (string) $mutation);
     }
 
     /**

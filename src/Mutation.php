@@ -15,4 +15,14 @@ class Mutation extends Query
      * @var string
      */
     protected const OPERATION_TYPE = 'mutation';
+
+    /**
+     * @return string
+     */
+    protected function constructSelectionSet(): string
+    {
+        if (empty($this->selectionSet)) return '';
+
+        return parent::constructSelectionSet();
+    }
 }
