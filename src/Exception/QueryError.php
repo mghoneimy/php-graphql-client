@@ -19,6 +19,11 @@ class QueryError extends RuntimeException
     protected $errorDetails;
 
     /**
+     * @var array
+     */
+    protected $data;
+
+    /**
      * QueryError constructor.
      *
      * @param array $errorDetails
@@ -26,14 +31,23 @@ class QueryError extends RuntimeException
     public function __construct($errorDetails)
     {
         $this->errorDetails = $errorDetails['errors'][0];
+        $this->data         = $errorDetails['data'];
         parent::__construct($this->errorDetails['message']);
     }
 
     /**
      * @return array
      */
-    public function getErrorDetails()
+    public function getErrorDetails(): array
     {
         return $this->errorDetails;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
     }
 }
