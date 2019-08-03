@@ -7,7 +7,7 @@ namespace GraphQL;
  *
  * @package GraphQL
  */
-class InlineFragment
+class InlineFragment extends NestableObject
 {
     use FieldTrait;
 
@@ -39,5 +39,15 @@ class InlineFragment
     public function __toString()
     {
         return sprintf(static::FORMAT, $this->typeName, $this->constructSelectionSet());
+    }
+
+    /**
+     * @codeCoverageIgnore
+     *
+     * @return mixed|void
+     */
+    protected function setAsNested()
+    {
+        // TODO: Remove this method, it's purely tech debt
     }
 }

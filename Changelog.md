@@ -3,7 +3,17 @@
 The change log describes what is "Added", "Removed", "Changed" or "Fixed"
 between each release.
 
-## 2019-07-24
+## Tech Debt
+
+- Refactor the query conversion to string to separate the process of constructing a query and adding a field
+
+## 1.3: 2019-08-03
+
+### Added
+
+- Support for inline fragments in the package
+
+## 1.2: 2019-07-24
 
 ### Added
 

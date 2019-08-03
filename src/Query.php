@@ -11,7 +11,7 @@ use GraphQL\Util\StringLiteralFormatter;
  *
  * @package GraphQL
  */
-class Query
+class Query extends NestableObject
 {
     use FieldTrait;
 
@@ -232,7 +232,7 @@ class Query
     /**
      *
      */
-    private function setAsNested()
+    protected function setAsNested()
     {
         $this->isNested = true;
     }
