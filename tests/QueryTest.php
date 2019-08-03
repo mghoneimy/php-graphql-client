@@ -5,6 +5,7 @@ namespace GraphQL\Tests;
 use GraphQL\Exception\ArgumentException;
 use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
+use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
@@ -480,7 +481,7 @@ Object(arg1: \"val1\" arg2: 2 arg3: true) {
      * @depends clone testEmptyQuery
      *
      * @covers \GraphQL\Query::setSelectionSet
-     * @covers \GraphQL\Query::constructSelectionSet
+     * @covers \GraphQL\FieldTrait::constructSelectionSet
      *
      * @param Query $query
      *
@@ -506,7 +507,7 @@ field1
      * @depends clone testEmptyQuery
      *
      * @covers \GraphQL\Query::setSelectionSet
-     * @covers \GraphQL\Query::constructSelectionSet
+     * @covers \GraphQL\FieldTrait::constructSelectionSet
      *
      * @param Query $query
      *
@@ -577,7 +578,7 @@ field2
     /**
      * @depends clone testOneLevelQuery
      *
-     * @covers \GraphQL\Query::constructSelectionSet
+     * @covers \GraphQL\FieldTrait::constructSelectionSet
      * @covers \GraphQL\Query::setAsNested
      *
      * @param Query $query
@@ -634,6 +635,43 @@ field3
 }",
             (string) $query,
             'Two level query not formatted correctly'
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testTwoLevelQueryDoesNotContainWordQuery
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testTwoLevelQueryWithInlineFragment(Query $query)
+    {
+        $query->setSelectionSet(
+            [
+                'field1',
+                (new InlineFragment('Object'))
+                    ->setSelectionSet(
+                        [
+                            'fragment_field1',
+                            'fragment_field2',
+                        ]
+                    ),
+            ]
+        );
+        $this->assertEquals(
+            'query {
+Object(arg1: "val1" arg2: "val2") {
+field1
+... on Object {
+fragment_field1
+fragment_field2
+}
+}
+}',
+            (string) $query
         );
 
         return $query;

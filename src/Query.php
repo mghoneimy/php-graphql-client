@@ -3,7 +3,6 @@
 namespace GraphQL;
 
 use GraphQL\Exception\ArgumentException;
-use GraphQL\Exception\InvalidSelectionException;
 use GraphQL\Exception\InvalidVariableException;
 use GraphQL\Util\StringLiteralFormatter;
 
@@ -14,6 +13,8 @@ use GraphQL\Util\StringLiteralFormatter;
  */
 class Query
 {
+    use FieldTrait;
+
     /**
      * Stores the GraphQL query format
      *
@@ -55,13 +56,6 @@ class Query
      * @var array
      */
     protected $arguments;
-
-    /**
-     * Stores the selection set desired to get from the query, can include nested queries
-     *
-     * @var array
-     */
-    protected $selectionSet;
 
     /**
      * Private member that's not accessible from outside the class, used internally to deduce if query is nested or not
@@ -145,28 +139,6 @@ class Query
     }
 
     /**
-     * @param array $selectionSet
-     *
-     * @return Query
-     * @throws InvalidSelectionException
-     */
-    public function setSelectionSet(array $selectionSet): Query
-    {
-        $nonStringsFields = array_filter($selectionSet, function($element) {
-            return !is_string($element) && !$element instanceof Query;
-        });
-        if (!empty($nonStringsFields)) {
-            throw new InvalidSelectionException(
-                'One or more of the selection fields provided is not of type string or Query'
-            );
-        }
-
-        $this->selectionSet = $selectionSet;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     protected function constructVariables(): string
@@ -230,35 +202,6 @@ class Query
         $constraintsString .= ')';
 
         return $constraintsString;
-    }
-
-    /**
-     * @return string
-     */
-    protected function constructSelectionSet(): string
-    {
-        $attributesString = " {\n";
-        $first            = true;
-        foreach ($this->selectionSet as $attribute) {
-
-            // Append empty line at the beginning if it's not the first item on the list
-            if ($first) {
-                $first = false;
-            } else {
-                $attributesString .= "\n";
-            }
-
-            // If query is included in attributes set as a nested query
-            if ($attribute instanceof Query) {
-                $attribute->setAsNested();
-            }
-
-            // Append attribute to returned attributes list
-            $attributesString .= $attribute;
-        }
-        $attributesString .= "\n}";
-
-        return $attributesString;
     }
 
     /**
