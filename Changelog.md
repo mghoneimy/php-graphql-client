@@ -1,6 +1,7 @@
 # Change Log
 
-The change log describes what is "Added", "Removed", "Changed" or "Fixed" between each release.
+The change log describes what is "Added", "Removed", "Changed" or "Fixed"
+between each release.
 
 ## 2019-07-24
 
@@ -26,7 +27,8 @@ The change log describes what is "Added", "Removed", "Changed" or "Fixed" betwee
 
 ### Changed
 
-- `Client::runQuery` method now accepts `QueryBuilderInterface` as well as `Query`
+- `Client::runQuery` method now accepts `QueryBuilderInterface` as well as
+`Query`
 
 
 ## 1.0: 2019-04-19
@@ -47,10 +49,13 @@ The change log describes what is "Added", "Removed", "Changed" or "Fixed" betwee
 
 ### Changed
 
-- Refactored schema class generation mechanism to traverse the API schema from the root queryType
+- Refactored schema class generation mechanism to traverse the API schema from
+the root queryType
 - Refactored QueryObject class to accommodate changes in the schema generation
-    - Removed arguments from QueryObject classes and moved them to ArgumentsObjects
-    - Modified how generation works to accommodate ArgumentsObjects nested within QueryObjects
+    - Removed arguments from QueryObject classes and moved them to
+    ArgumentsObjects
+    - Modified how generation works to accommodate ArgumentsObjects nested
+    within QueryObjects
     - Added ArgumentsObject argument to all field selector methods
 - Refactored Query class
     - Added the ability to set Query object name to 'query'
@@ -162,7 +167,7 @@ The change log describes what is "Added", "Removed", "Changed" or "Fixed" betwee
 
 - Typo in namespace declaration
 
-## 0.1.1: 2018-10-07 
+## 0.1.1: 2018-10-07
 
 
 ### Changed
