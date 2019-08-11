@@ -178,6 +178,30 @@ false by default
 variable. The default value will only be considered
 if the isRequired argument is set to false.
 
+## Using Interfaces: Query With Inline Fragments
+
+When querying a field that returns an interface type, you might need to use
+inline fragments to access data on the underlying concrete type.
+
+This example show how to generate inline fragments using this package:
+
+```
+$gql = new Query('companies');
+$gql->setSelectionSet(
+    [
+        'serialNumber',
+        'name',
+        (new InlineFragment('PrivateCompany'))
+            ->setSelectionSet(
+                [
+                    'boardMembers',
+                    'shareholders',
+                ]
+            ),
+    ]
+);
+```
+
 # The Query Builder
 
 The QueryBuilder class can be used to construct Query objects dynamically, which

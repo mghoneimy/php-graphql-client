@@ -3,6 +3,7 @@
 namespace GraphQL\QueryBuilder;
 
 use GraphQL\Exception\EmptySelectionSetException;
+use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
@@ -77,7 +78,12 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
      */
     protected function selectField($selectedField)
     {
-        if (is_string($selectedField) || $selectedField instanceof AbstractQueryBuilder || $selectedField instanceof Query) {
+        if (
+            is_string($selectedField)
+            || $selectedField instanceof AbstractQueryBuilder
+            || $selectedField instanceof Query
+            || $selectedField instanceof InlineFragment
+        ) {
             $this->selectionSet[] = $selectedField;
         }
 

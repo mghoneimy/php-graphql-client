@@ -5,13 +5,14 @@ between each release.
 
 ## Tech Debt
 
-- Refactor the query conversion to string to separate the process of constructing a query and adding a field
+- Refactor the query conversion to string to separate the process of
+constructing a new query and adding a nested subfield
 
 ## 1.3: 2019-08-03
 
 ### Added
 
-- Support for inline fragments in the package
+- Support for inline fragments
 
 ## 1.2: 2019-07-24
 

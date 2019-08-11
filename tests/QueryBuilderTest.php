@@ -3,6 +3,7 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Exception\EmptySelectionSetException;
+use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
@@ -164,6 +165,28 @@ some_field
 Object {
 Nested {
 some_field
+}
+}
+}',
+            (string) $this->queryBuilder->getQuery()
+        );
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     */
+    public function testSelectInlineFragment()
+    {
+        $this->queryBuilder->selectField(
+            (new InlineFragment('Type'))
+                ->setSelectionSet(['field'])
+        );
+        $this->assertEquals(
+            'query {
+Object {
+... on Type {
+field
 }
 }
 }',
