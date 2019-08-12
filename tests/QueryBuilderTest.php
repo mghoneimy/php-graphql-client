@@ -175,6 +175,7 @@ some_field
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::selectField
      */
     public function testSelectInlineFragment()
     {
