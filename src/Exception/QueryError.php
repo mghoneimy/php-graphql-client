@@ -32,7 +32,9 @@ class QueryError extends RuntimeException
     {
         $this->errorDetails = $errorDetails['errors'][0];
         if (\array_key_exists('data', $errorDetails)){
-            $this->data         = $errorDetails['data'];
+            $this->data = $errorDetails['data'];
+        } else {
+            $this->data = null;
         }
         parent::__construct($this->errorDetails['message']);
     }
