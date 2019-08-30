@@ -356,6 +356,31 @@ Object(arg1: true) {
     /**
      * @depends clone testEmptyArguments
      *
+     * @covers  \GraphQL\Query::setArguments
+     * @covers  \GraphQL\Query::constructArguments
+     *
+     * @param Query $query
+     *
+     * @return Query
+     */
+    public function testNullArgumentValue(Query $query)
+    {
+        $query->setArguments(['arg1' => null]);
+        $this->assertEquals(
+            "query {
+Object(arg1: null) {
+
+}
+}"
+            , (string) $query
+        );
+
+        return $query;
+    }
+
+    /**
+     * @depends clone testEmptyArguments
+     *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *

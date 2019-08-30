@@ -189,7 +189,7 @@ class Query extends NestableObject
             }
 
             // Convert argument values to graphql string literal equivalent
-            if (is_scalar($value)) {
+            if (is_scalar($value) || $value === null) {
                 // Convert scalar value to its literal in graphql
                 $value = StringLiteralFormatter::formatValueForRHS($value);
             } elseif (is_array($value)) {
