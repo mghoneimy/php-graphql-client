@@ -47,10 +47,10 @@ class Client
      * @param bool                        $resultsAsArray
      * @param array                       $variables
      *
-     * @return Results|null
+     * @return Results
      * @throws QueryError
      */
-    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): ?Results
+    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
     {
         if ($query instanceof QueryBuilderInterface) {
             $query = $query->getQuery();
@@ -68,10 +68,10 @@ class Client
      * @param bool   $resultsAsArray
      * @param array  $variables
      *
-     * @return Results|null
+     * @return Results
      * @throws QueryError
      */
-    public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): ?Results
+    public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
