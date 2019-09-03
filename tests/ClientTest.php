@@ -7,6 +7,7 @@ use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -58,6 +59,7 @@ class ClientTest extends TestCase
         $mockHandler->append(new Response(200));
         $mockHandler->append(new Response(200));
         $mockHandler->append(new Response(200));
+        $mockHandler->append(new Response(200));
 
         $client = new MockClient('', $handler);
         $client->runRawQuery('query_string');
@@ -68,13 +70,16 @@ class ClientTest extends TestCase
         $client = new MockClient('', $handler);
         $client->runRawQuery('query_string',  false, ['name' => 'val']);
 
+        $client = new MockClient('', $handler, [], ['headers' => [ 'Authorization' => 'Basic xyz', 'User-Agent' => 'test' ]]);
+        $client->runRawQuery('query_string');
+
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
         $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
 
         /** @var Request $thirdRequest */
         $thirdRequest = $container[1]['request'];
-        $this->assertNotNull($thirdRequest->getHeader('Authorization'));
+        $this->assertNotEmpty($thirdRequest->getHeader('Authorization'));
         $this->assertEquals(
             ['Basic xyz'],
             $thirdRequest->getHeader('Authorization')
@@ -83,6 +88,15 @@ class ClientTest extends TestCase
         /** @var Request $secondRequest */
         $secondRequest = $container[2]['request'];
         $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
+
+
+        /** @var Request $fourthRequest */
+        $fourthRequest = $container[3]['request'];
+        $this->assertNotNull($fourthRequest->getHeader('Authorization'));
+        $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
+        $this->assertEquals(['Basic xyz'], $fourthRequest->getHeader('Authorization'));
+        $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
+
     }
 
     /**
@@ -230,6 +244,16 @@ class ClientTest extends TestCase
         $this->mockHandler->append(new ServerException('', new Request('post', ''), new Response(500, [])));
 
         $this->expectException(ServerException::class);
+        $this->client->runRawQuery('');
+    }
+
+    /**
+     * @covers \GraphQL\Client::runRawQuery
+     */
+    public function testConnectTimeoutResponse()
+    {
+        $this->mockHandler->append(new ConnectException('Time Out', new Request('post', '')));
+        $this->expectException(ConnectException::class);
         $this->client->runRawQuery('');
     }
 }

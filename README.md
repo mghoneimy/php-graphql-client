@@ -223,7 +223,9 @@ $gql = $builder->getQuery();
 # Constructing The Client
 
 A Client object can easily be instantiated by providing the GraphQL endpoint
-URL. The Client constructor also receives an optional "authorizationHeaders"
+URL. 
+
+The Client constructor also receives an optional "authorizationHeaders"
 array, which can be used to add authorization headers to all requests being sent
 to the GraphQL server.
 
@@ -233,6 +235,33 @@ Example:
 $client = new Client(
     'http://api.graphql.com',
     ['Authorization' => 'Basic xyz']
+);
+```
+
+
+The Client constructor also receives an optional "httpOptions" array, which can be used to add custom [Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
+
+Example:
+
+```
+$client = new Client(
+    'http://api.graphql.com',
+    [],
+    [ 
+        'connect_timeout' => 5,
+        'timeout' => 5,
+        'headers' => [
+            'Authorization' => 'Basic xyz'
+            'User-Agent' => 'testing/1.0',
+        ],
+        'proxy' => [
+                'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
+                'https' => 'tcp://localhost:9124', // Use this proxy with "https",
+                'no' => ['.mit.edu', 'foo.com']    // Don't use a proxy with these
+        ],
+        'cert' => ['/path/server.pem', 'password']
+        ...
+    ]
 );
 ```
 
