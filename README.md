@@ -223,7 +223,7 @@ $gql = $builder->getQuery();
 # Constructing The Client
 
 A Client object can easily be instantiated by providing the GraphQL endpoint
-URL. The Client constructor also receives an optional "httpOptions"
+URL. The Client constructor also receives an optional "authorizationHeaders"
 array, which can be used to add authorization headers to all requests being sent
 to the GraphQL server.
 
@@ -232,9 +232,7 @@ Example:
 ```
 $client = new Client(
     'http://api.graphql.com',
-    [ 
-        'headers' => ['Authorization' => 'Basic xyz']
-    ]
+    ['Authorization' => 'Basic xyz']
 );
 ```
 
