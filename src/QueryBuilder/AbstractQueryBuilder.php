@@ -119,37 +119,4 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 
         return $this;
     }
-
-    /**
-     * @param array|null $args
-     * @return $this
-     */
-    public function addArguments(array $args = null) {
-
-        if (is_array($args) && count($this->selectionSet)) {
-
-            $params = '';
-            foreach ($args as $k => $v) {
-                $params.= " $k : \"$v\" ";
-            }
-
-            $this->selectionSet[count($this->selectionSet) - 1] = $this->selectionSet[count($this->selectionSet) - 1] . " ($params)";
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string|null $prefix
-     * @return $this
-     */
-    public function addPrefix(string $prefix = null) {
-
-        if ($prefix && count($this->selectionSet)) {
-
-            $this->selectionSet[count($this->selectionSet) - 1] = $prefix . ':' . $this->selectionSet[count($this->selectionSet) - 1];
-        }
-
-        return $this;
-    }
 }
