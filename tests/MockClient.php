@@ -16,11 +16,11 @@ class MockClient extends Client
      *
      * @param string $endpointUrl
      * @param object $handler
-     * @param array  $authorizationHeaders
+     * @param array $httpOptions
      */
-    public function __construct(string $endpointUrl, $handler, array $authorizationHeaders = [])
+    public function __construct(string $endpointUrl, $handler, array $httpOptions = [])
     {
-        parent::__construct($endpointUrl, $authorizationHeaders);
+        parent::__construct($endpointUrl, $httpOptions);
         $this->httpClient = new \GuzzleHttp\Client(['handler' => $handler]);
     }
 }

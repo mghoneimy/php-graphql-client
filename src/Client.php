@@ -20,25 +20,25 @@ class Client
     protected $endpointUrl;
 
     /**
-     * @var array
-     */
-    protected $authorizationHeaders;
-
-    /**
      * @var \GuzzleHttp\Client
      */
     protected $httpClient;
 
     /**
+     * @var array
+     */
+    protected $httpOptions;
+
+    /**
      * Client constructor.
      *
      * @param string $endpointUrl
-     * @param array  $authorizationHeaders
+     * @param array $httpOptions
      */
-    public function __construct(string $endpointUrl, array $authorizationHeaders = [])
+    public function __construct(string $endpointUrl, array $httpOptions = [])
     {
         $this->endpointUrl          = $endpointUrl;
-        $this->authorizationHeaders = $authorizationHeaders;
+        $this->httpOptions          = $httpOptions;
         $this->httpClient           = new \GuzzleHttp\Client();
     }
 
@@ -73,10 +73,9 @@ class Client
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
-        // Set request headers for authorization and content type
-        if (!empty($this->authorizationHeaders)) {
-            $options['headers'] = $this->authorizationHeaders;
-        }
+        // Set request options for \GuzzleHttp\Client
+        $options = (!empty($this->httpOptions)) ? $this->httpOptions : [];
+
         $options['headers']['Content-Type'] = 'application/json';
 
         // Convert empty variables array to empty json object

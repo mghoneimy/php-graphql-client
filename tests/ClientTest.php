@@ -7,6 +7,7 @@ use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -62,7 +63,7 @@ class ClientTest extends TestCase
         $client = new MockClient('', $handler);
         $client->runRawQuery('query_string');
 
-        $client = new MockClient('', $handler, ['Authorization' => 'Basic xyz']);
+        $client = new MockClient('', $handler, [ 'headers' => [ 'Authorization' => 'Basic xyz'] ]);
         $client->runRawQuery('query_string');
 
         $client = new MockClient('', $handler);
@@ -232,4 +233,16 @@ class ClientTest extends TestCase
         $this->expectException(ServerException::class);
         $this->client->runRawQuery('');
     }
+
+    /**
+     * @covers \GraphQL\Client::runRawQuery
+     */
+    public function testConnectTimeoutResponse()
+    {
+        $this->mockHandler->append(new ConnectException('Time Out', new Request('post', '')));
+
+        $this->expectException(ConnectException::class);
+        $this->client->runRawQuery('');
+    }
+
 }
