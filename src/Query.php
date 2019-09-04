@@ -211,7 +211,7 @@ class Query extends NestableObject
     {
         $queryFormat = static::QUERY_FORMAT;
         if (!$this->isNested && $this->fieldName !== static::OPERATION_TYPE) {
-            $queryFormat = $this->generateSignature() . " {\n" . static::QUERY_FORMAT . "\n}";
+            $queryFormat = $this->generateSignature() . " {" . PHP_EOL . static::QUERY_FORMAT . PHP_EOL. "}";
         }
         $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();

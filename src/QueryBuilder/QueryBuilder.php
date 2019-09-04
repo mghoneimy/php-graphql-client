@@ -16,11 +16,13 @@ class QueryBuilder extends AbstractQueryBuilder
      *
      * @param Query|QueryBuilder|string $selectedField
      *
+     * @param string|null $alias
+     * @param array $arguments
      * @return AbstractQueryBuilder|QueryBuilder
      */
-    public function selectField($selectedField)
+    public function selectField($selectedField, string $alias = null, array $arguments = [])
     {
-        return parent::selectField($selectedField);
+        return parent::selectField($selectedField, $alias, $arguments);
     }
 
     /**

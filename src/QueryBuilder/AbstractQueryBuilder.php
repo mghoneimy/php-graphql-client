@@ -74,9 +74,11 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     /**
      * @param string|QueryBuilder|Query $selectedField
      *
+     * @param string|null $alias
+     * @param array $arguments
      * @return $this
      */
-    protected function selectField($selectedField)
+    protected function selectField($selectedField, string $alias = null, array $arguments = [])
     {
         if (
             is_string($selectedField)
@@ -84,6 +86,21 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
             || $selectedField instanceof Query
             || $selectedField instanceof InlineFragment
         ) {
+
+            // Set an alias for selectedField
+            $selectedField = ($alias) ? $alias .':'. $selectedField : $selectedField;
+
+            // Add arguments for selectedField
+            if (is_array($arguments) && count($arguments)) {
+
+                $params = '';
+                foreach ($arguments as $k => $v) {
+                    $params.= " $k : \"$v\" ";
+                }
+                $selectedField .= " ($params)";
+            }
+
+
             $this->selectionSet[] = $selectedField;
         }
 

@@ -61,6 +61,75 @@ field_one
         $this->queryBuilder->getQuery();
     }
 
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     */
+    public function testSelectFieldAlias()
+    {
+        $builder = new QueryBuilder('Object');
+        $builder->selectField('field_one', 'fieldAlias');
+        $this->assertEquals(
+            'query {
+Object {
+fieldAlias:field_one
+}
+}',
+            (string) $builder->getQuery()
+        );
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     */
+    public function testSelectFieldAliasWithArguments()
+    {
+        $builder = new QueryBuilder('Object');
+        $builder->selectField('field_one', 'fieldAlias', ['param1' => 'val1', 'param2' => 'val2' ]);
+        $this->assertEquals(
+            'query {
+Object {
+fieldAlias:field_one ( param1 : "val1"  param2 : "val2" )
+}
+}',
+            (string) $builder->getQuery()
+        );
+
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     */
+    public function testSelectionSetAliasWithArguments()
+    {
+        $builder = new QueryBuilder('Object');
+
+        $builder->selectField(
+            (new Query('data'))->setArguments(['some_field' => 'params'])
+                ->setSelectionSet(
+                    [
+                        'aliasId:first_field' => ['param1' => 'val1', 'param2' => 'val2' ],
+                        'second_field' => ['param1' => 'val1', 'param2' => 'val2' ]
+                    ])
+        );
+
+        $this->assertEquals(
+            'query {
+Object {
+data(some_field: "params") {
+   aliasId:first_field ( param1 : "val1"  param2 : "val2" )
+   second_field ( param1 : "val1"  param2 : "val2" )
+}
+}
+}',
+            (string) $builder->getQuery()
+        );
+
+
+    }
     /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::setVariable
      * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::setVariable

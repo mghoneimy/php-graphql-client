@@ -22,12 +22,33 @@ trait FieldTrait
     public function setSelectionSet(array $selectionSet)
     {
         $nonStringsFields = array_filter($selectionSet, function($element) {
-            return !is_string($element) && !$element instanceof Query && !$element instanceof InlineFragment;
+            return !is_string($element) && !is_array($element) && !$element instanceof Query && !$element instanceof InlineFragment;
         });
+
         if (!empty($nonStringsFields)) {
             throw new InvalidSelectionException(
-                'One or more of the selection fields provided is not of type string or Query'
+                'One or more of the selection fields provided is not of type string, array or Query'
             );
+        }
+
+        // SelectionSet with arguments
+        foreach ($selectionSet as $element => $arguments) {
+
+            if (is_array($arguments) && count($arguments)) {
+
+                $params = '';
+                foreach ($arguments as $param => $val) {
+                    if (is_string($val)) {
+                        $params .= " $param : \"$val\" ";
+                    }
+                }
+
+                if (!empty($params)) {
+                    $selectedField = '   ' . $element . " ($params)";
+                    $selectionSet[] = $selectedField;
+                    unset($selectionSet[$element]);
+                }
+            }
         }
 
         $this->selectionSet = $selectionSet;
@@ -40,7 +61,7 @@ trait FieldTrait
      */
     protected function constructSelectionSet(): string
     {
-        $attributesString = " {\n";
+        $attributesString = " {" . PHP_EOL;
         $first            = true;
         foreach ($this->selectionSet as $attribute) {
 
@@ -48,7 +69,7 @@ trait FieldTrait
             if ($first) {
                 $first = false;
             } else {
-                $attributesString .= "\n";
+                $attributesString .= PHP_EOL;
             }
 
             // If query is included in attributes set as a nested query
@@ -59,7 +80,7 @@ trait FieldTrait
             // Append attribute to returned attributes list
             $attributesString .= $attribute;
         }
-        $attributesString .= "\n}";
+        $attributesString .= PHP_EOL . "}";
 
         return $attributesString;
     }
