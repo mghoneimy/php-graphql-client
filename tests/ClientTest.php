@@ -70,7 +70,7 @@ class ClientTest extends TestCase
         $client = new MockClient('', $handler);
         $client->runRawQuery('query_string',  false, ['name' => 'val']);
 
-        $client = new MockClient('', $handler, [], ['headers' => [ 'Authorization' => 'Basic xyz', 'User-Agent' => 'test' ]]);
+        $client = new MockClient('', $handler, ['Authorization' => 'Basic xyz'], ['headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
         $client->runRawQuery('query_string');
 
         /** @var Request $firstRequest */
@@ -94,7 +94,7 @@ class ClientTest extends TestCase
         $fourthRequest = $container[3]['request'];
         $this->assertNotNull($fourthRequest->getHeader('Authorization'));
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
-        $this->assertEquals(['Basic xyz'], $fourthRequest->getHeader('Authorization'));
+        $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
 
     }
