@@ -89,14 +89,12 @@ class ClientTest extends TestCase
         $secondRequest = $container[2]['request'];
         $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
 
-
         /** @var Request $fourthRequest */
         $fourthRequest = $container[3]['request'];
-        $this->assertNotNull($fourthRequest->getHeader('Authorization'));
+        $this->assertNotEmpty($fourthRequest->getHeader('Authorization'));
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
         $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
-
     }
 
     /**

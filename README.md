@@ -239,7 +239,7 @@ $client = new Client(
 ```
 
 
-The Client constructor also receives an optional "httpOptions" array, which can be used to add custom [Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
+The Client constructor also receives an optional "httpOptions" array, which **overrides** the "authorizationHeaders" and can be used to add custom [Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
 
 Example:
 
