@@ -30,16 +30,24 @@ class Client
     protected $httpClient;
 
     /**
+     * @var array
+     */
+    protected $httpOptions;
+
+
+    /**
      * Client constructor.
      *
      * @param string $endpointUrl
-     * @param array  $authorizationHeaders
+     * @param array $authorizationHeaders
+     * @param array $httpOptions
      */
-    public function __construct(string $endpointUrl, array $authorizationHeaders = [])
+    public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [])
     {
         $this->endpointUrl          = $endpointUrl;
         $this->authorizationHeaders = $authorizationHeaders;
         $this->httpClient           = new \GuzzleHttp\Client();
+        $this->httpOptions          = $httpOptions;
     }
 
     /**
@@ -77,6 +85,12 @@ class Client
         if (!empty($this->authorizationHeaders)) {
             $options['headers'] = $this->authorizationHeaders;
         }
+
+        // Set request options for \GuzzleHttp\Client
+        if (!empty($this->httpOptions)) {
+            $options = $this->httpOptions;
+        }
+
         $options['headers']['Content-Type'] = 'application/json';
 
         // Convert empty variables array to empty json object
