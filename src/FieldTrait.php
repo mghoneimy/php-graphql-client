@@ -40,7 +40,7 @@ trait FieldTrait
      */
     protected function constructSelectionSet(): string
     {
-        $attributesString = " {\n";
+        $attributesString = " {" . PHP_EOL;
         $first            = true;
         foreach ($this->selectionSet as $attribute) {
 
@@ -48,7 +48,7 @@ trait FieldTrait
             if ($first) {
                 $first = false;
             } else {
-                $attributesString .= "\n";
+                $attributesString .= PHP_EOL;
             }
 
             // If query is included in attributes set as a nested query
@@ -59,7 +59,7 @@ trait FieldTrait
             // Append attribute to returned attributes list
             $attributesString .= $attribute;
         }
-        $attributesString .= "\n}";
+        $attributesString .= PHP_EOL . "}";
 
         return $attributesString;
     }
