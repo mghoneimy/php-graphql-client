@@ -22,7 +22,11 @@ class StringLiteralFormatter
             // Do not treat value as a string if it starts with '$', which indicates that it's a variable name
             if (strpos($value, '$') !== 0) {
                 $value = str_replace('"', '\"', $value);
-                $value = "\"$value\"";
+                if (strpos($value, "\n") !== false) {
+                    $value = '"""' . $value . '"""';
+                } else {
+                    $value = "\"$value\"";
+                }
             }
         } elseif (is_bool($value)) {
             if ($value) {

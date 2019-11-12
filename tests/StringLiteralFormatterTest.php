@@ -37,6 +37,9 @@ class StringLiteralFormatterTest extends TestCase
         $formattedString = StringLiteralFormatter::formatValueForRHS('\'singleQuotes\'');
         $this->assertEquals('"\'singleQuotes\'"', $formattedString);
 
+        $formattedString = StringLiteralFormatter::formatValueForRHS("with \n newlines");
+        $this->assertEquals("\"\"\"with \n newlines\"\"\"", $formattedString);
+
         // Integer tests
         $integerString = StringLiteralFormatter::formatValueForRHS(25);
         $this->assertEquals('25', $integerString);
