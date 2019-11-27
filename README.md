@@ -47,7 +47,7 @@ https://github.com/mghoneimy/php-graphql-oqm)
 
 ## Simple Query
 
-```
+```php
 $gql = (new Query('companies'))
     ->setSelectionSet(
         [
@@ -61,7 +61,7 @@ This simple query will retrieve all companies displaying their names and serial
 numbers.
 
 ## Nested Queries
-```
+```php
 $gql = (new Query('companies'))
     ->setSelectionSet(
         [
@@ -87,7 +87,7 @@ displaying their dates.
 
 ## Query With Arguments
 
-```
+```php
 $gql = (new Query('companies'))
     ->setArguments(['name' => 'Tech Co.', 'first' => 3])
     ->setSelectionSet(
@@ -104,7 +104,7 @@ and serial numbers.
 
 ## Query With Array Argument
 
-```
+```php
 $gql = (new Query('companies'))
     ->setArguments(['serialNumbers' => [159, 260, 371]])
     ->setSelectionSet(
@@ -121,7 +121,7 @@ displaying the name and serial number.
 
 ## Query With Input Object Argument
 
-```
+```php
 $gql = (new Query('companies'))
     ->setArguments(['filter' => new RawObject('{name_starts_with: "Face"}')])
     ->setSelectionSet(
@@ -145,7 +145,7 @@ query class.
 
 ## Query With Variables
 
-```
+```php
 $gql = (new Query('companies'))
     ->setVariables(
         [
@@ -185,7 +185,7 @@ inline fragments to access data on the underlying concrete type.
 
 This example show how to generate inline fragments using this package:
 
-```
+```php
 $gql = new Query('companies');
 $gql->setSelectionSet(
     [
@@ -211,7 +211,7 @@ Query building is divided into steps.
 That's how the "Query With Input Object Argument" example can be created using
 the QueryBuilder:
 
-```
+```php
 $builder = (new QueryBuilder('companies'))
     ->setVariable('namePrefix', 'String', true)
     ->setArgument('filter', new RawObject('{name_starts_with: $namePrefix}'))
@@ -231,7 +231,7 @@ to the GraphQL server.
 
 Example:
 
-```
+```php
 $client = new Client(
     'http://api.graphql.com',
     ['Authorization' => 'Basic xyz']
@@ -243,7 +243,7 @@ The Client constructor also receives an optional "httpOptions" array, which **ov
 
 Example:
 
-```
+```php
 $client = new Client(
     'http://api.graphql.com',
     [],
@@ -272,13 +272,13 @@ $client = new Client(
 Running query with the GraphQL client and getting the results in object
 structure:
 
-```
+```php
 $results = $client->runQuery($gql);
 $results->getData()->Company[0]->branches;
 ```
 Or getting results in array structure:
 
-```
+```php
 $results = $client->runQuery($gql, true);
 $results->getData()['Company'][1]['branches']['address']
 ```
@@ -289,7 +289,7 @@ Running queries containing variables requires passing an associative array which
 maps variable names (keys) to variable values (values) to the `runQuery` method.
 Here's an example:
 
-```
+```php
 $gql = (new Query('companies'))
     ->setVariables(
         [
@@ -315,7 +315,7 @@ returned objects, receive arguments, and can have sub-fields.
 
 Here's a sample example on how to construct and run mutations:
 
-```
+```php
 $mutation = (new Mutation('createCompany'))
     ->setArguments(['companyObject' => new RawObject('{name: "Trial Company", employees: 200}')])
     ->setSelectionSet(
@@ -336,7 +336,7 @@ Mutations can utilize the variables in the same way Queries can. Here's an
 example on how to use the variables to pass input objects to the GraphQL server
 dynamically:
 
-```
+```php
 $mutation = (new Mutation('createCompany'))
     ->setVariables([new Variable('company', 'CompanyInputObject', true)])
     ->setArguments(['companyObject' => '$company']);
@@ -349,7 +349,7 @@ $client->runQuery(
 
 These are the resulting mutation and the variables passed with it:
 
-```
+```php
 mutation($company: CompanyInputObject!) {
   createCompany(companyObject: $company)
 }
@@ -368,7 +368,7 @@ API link: https://graphql-pokemon.now.sh/
 
 This query retrieves any pokemon's evolutions and their attacks:
 
-```
+```php
 query($name: String!) {
   pokemon(name: $name) {
     id
@@ -398,7 +398,7 @@ query($name: String!) {
 That's how this query can be written using the query class and run using the
 client:
 
-```
+```php
 $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
@@ -447,7 +447,7 @@ print_r($results->getData()['pokemon']);
 Or alternatively, That's how this query can be generated using the QueryBuilder
 class:
 
-```
+```php
 $client = new Client(
     'https://graphql-pokemon.now.sh/'
 );
@@ -489,7 +489,7 @@ Although not the primary goal of this package, but it supports running raw
 string queries, just like any other client using the `runRawQuery` method in the
 `Client` class. Here's an example on how to use it:
 
-```
+```php
 $gql = <<<QUERY
 query {
     pokemon(name: "Pikachu") {
