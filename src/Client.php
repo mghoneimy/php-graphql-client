@@ -81,14 +81,12 @@ class Client
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
+        // Set request options for \GuzzleHttp\Client
+        $options = $this->httpOptions ?? [];
+
         // Set request headers for authorization and content type
         if (!empty($this->authorizationHeaders)) {
             $options['headers'] = $this->authorizationHeaders;
-        }
-
-        // Set request options for \GuzzleHttp\Client
-        if (!empty($this->httpOptions)) {
-            $options = $this->httpOptions;
         }
 
         $options['headers']['Content-Type'] = 'application/json';
