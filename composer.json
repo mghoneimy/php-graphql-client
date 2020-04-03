@@ -31,7 +31,6 @@
     "require": {
         "php": "^7.1",
         "ext-json": "*",
-        "ext-readline": "*",
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
