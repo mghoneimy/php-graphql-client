@@ -507,5 +507,5 @@ query {
 }
 QUERY;
 
-$results = $client->runQuery($gql);
+$results = $client->runRawQuery($gql);
 ```
