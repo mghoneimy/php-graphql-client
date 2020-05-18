@@ -49,9 +49,9 @@ class QueryTest extends TestCase
     /**
      * @covers \GraphQL\Query::__toString
      */
-    public function testQueryWithOperationType()
+    public function testQueryWithoutFieldName()
     {
-        $query = new Query('query');
+        $query = new Query();
 
         $this->assertEquals(
             "query {
@@ -62,14 +62,20 @@ class QueryTest extends TestCase
 
         $query->setSelectionSet(
             [
-                new Query('Object')
+                (new Query('Object'))
+                    ->setSelectionSet(['one']),
+                (new Query('Another'))
+                    ->setSelectionSet(['two'])
             ]
         );
 
         $this->assertEquals(
             "query {
 Object {
-
+one
+}
+Another {
+two
 }
 }",
             (string) $query
@@ -97,20 +103,28 @@ Object {
         );
     }
 
-//    public function testQueryWithOperationNameAndOperationType()
-//    {
-//        $query = (new Query('query'))
-//            ->setOperationName('retrieveObject')
-//            ->setSelectionSet([new Query('Object')]);
-//        $this->assertEquals(
-//            'query retrieveObject {
-//Object {
-//
-//}
-//}',
-//            (string) $query
-//        );
-//    }
+    /**
+     * @depends testQueryWithoutFieldName
+     * @depends testQueryWithOperationName
+     *
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::setOperationName
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithOperationNameAndOperationType()
+    {
+        $query = (new Query())
+            ->setOperationName('retrieveObject')
+            ->setSelectionSet([new Query('Object')]);
+        $this->assertEquals(
+            'query retrieveObject {
+Object {
+
+}
+}',
+            (string) $query
+        );
+    }
 
     /**
      * @depends testQueryWithOperationName

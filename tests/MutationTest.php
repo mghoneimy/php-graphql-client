@@ -22,20 +22,27 @@ createObject
         );
     }
 
-//    /**
-//     *
-//     */
-//    public function testMutationWithOperationType()
-//    {
-//        $mutation = new Mutation('mutation');
-//
-//        $this->assertEquals(
-//            'mutation {
-//
-//}',
-//            (string) $mutation
-//        );
-//    }
+    /**
+     *
+     */
+    public function testMutationWithOperationType()
+    {
+        $mutation = new Mutation();
+        $mutation
+            ->setSelectionSet(
+                [
+                    (new Mutation('createObject'))
+                        ->setArguments(['name' => 'TestObject'])
+                ]
+            );
+
+        $this->assertEquals(
+            'mutation {
+createObject(name: "TestObject")
+}',
+            (string) $mutation
+        );
+    }
 
     /**
      *

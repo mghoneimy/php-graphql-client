@@ -173,6 +173,34 @@ some_field
     }
 
     /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
+     */
+    public function testQueryBuilderWithoutFieldName()
+    {
+        $builder = (new QueryBuilder())
+            ->selectField(
+            (new QueryBuilder('Object'))
+                ->selectField('one')
+        )
+            ->selectField(
+                (new QueryBuilder('Another'))
+                    ->selectField('two')
+            );
+
+        $this->assertEquals('query {
+Object {
+one
+}
+Another {
+two
+}
+}',
+            (string) $builder->getQuery());
+    }
+
+    /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      * @covers \GraphQL\QueryBuilder\QueryBuilder::selectField
      * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::selectField

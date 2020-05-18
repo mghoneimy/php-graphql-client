@@ -60,6 +60,65 @@ $gql = (new Query('companies'))
 This simple query will retrieve all companies displaying their names and serial
 numbers.
 
+### The Full Form
+
+The query provided in the previous example is represented in the
+"shorthand form". The shorthand form involves writing a reduced number of code
+lines which speeds up the process of wriing querries. Below is an example of
+the full form for the exact same query written in the previous example.
+
+```php
+$gql = (new Query())
+    ->setSelectionSet(
+        [
+            (new Query('companies'))
+                ->setSelectionSet(
+                    [
+                        'name',
+                        'serialNumber'
+                    ]
+                )
+        ]
+    );
+```
+
+As seen in the example, the shorthand form is simpler to read and write, it's
+generally preferred to use compared to the full form.
+
+The full form shouldn't be used unless the query can't be represented in the
+shorthand form, which has only one case, when we want to run multiple queries
+in the same object.
+
+## Multiple Queries
+```php
+$gql = (new Query())
+    ->setSelectionSet(
+        [
+            (new Query('companies'))
+            ->setSelectionSet(
+                [
+                    'name',
+                    'serialNumber'
+                ]
+            ),
+            (new Query('countries'))
+            ->setSelectionSet(
+                [
+                    'name',
+                    'code',
+                ]
+            )
+        ]
+    );
+```
+
+This query retrieves all companies and countries displaying some data fields
+for each. It basically runs two (or more if needed) independent queries in
+one query object envelop.
+
+Writing multiple queries requires writing the query object in the full form
+to represent each query as a subfield under the parent query object.
+
 ## Nested Queries
 ```php
 $gql = (new Query('companies'))
@@ -220,6 +279,33 @@ $builder = (new QueryBuilder('companies'))
 $gql = $builder->getQuery();
 ```
 
+### The Full Form
+
+Just like the Query class, the QueryBuilder class can be written in full form to
+enable writing multiple queries under one query builder object. Below is an
+example for how the full form can be used with the QueryBuilder:
+
+```php
+$builder = (new QueryBuilder())
+    ->setVariable('namePrefix', 'String', true)
+    ->selectField(
+        (new QueryBuilder('companies'))
+            ->setArgument('filter', new RawObject('{name_starts_with: $namePrefix}'))
+            ->selectField('name')
+            ->selectField('serialNumber')
+    )
+    ->selectField(
+        (new QueryBuilder('company'))
+            ->setArgument('serialNumber', 123)
+            ->selectField('name')
+    );
+$gql = $builder->getQuery();
+```
+
+This query is an extension to the query in the previous example. It returns all
+companies starting with a name prefix and returns the company with the
+`serialNumber` of value 123, both in the same response.
+
 # Constructing The Client
 
 A Client object can easily be instantiated by providing the GraphQL endpoint
@@ -239,7 +325,9 @@ $client = new Client(
 ```
 
 
-The Client constructor also receives an optional "httpOptions" array, which **overrides** the "authorizationHeaders" and can be used to add custom [Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
+The Client constructor also receives an optional "httpOptions" array, which
+**overrides** the "authorizationHeaders" and can be used to add custom
+[Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
 
 Example:
 
@@ -274,13 +362,13 @@ structure:
 
 ```php
 $results = $client->runQuery($gql);
-$results->getData()->Company[0]->branches;
+$results->getData()->companies[0]->branches;
 ```
 Or getting results in array structure:
 
 ```php
 $results = $client->runQuery($gql, true);
-$results->getData()['Company'][1]['branches']['address']
+$results->getData()['companies'][1]['branches']['address'];
 ```
 
 ## Passing Variables to Queries

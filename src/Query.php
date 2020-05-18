@@ -18,6 +18,10 @@ class Query extends NestableObject
     /**
      * Stores the GraphQL query format
      *
+     * First string is object name
+     * Second string is arguments
+     * Third string is selection set
+     *
      * @var string
      */
     protected const QUERY_FORMAT = "%s%s%s";
@@ -67,9 +71,9 @@ class Query extends NestableObject
     /**
      * GQLQueryBuilder constructor.
      *
-     * @param string $fieldName
+     * @param string $fieldName if no value is provided for the field name an empty query object is assumed
      */
-    public function __construct(string $fieldName)
+    public function __construct(string $fieldName = '')
     {
         $this->fieldName     = $fieldName;
         $this->operationName = '';
@@ -210,11 +214,18 @@ class Query extends NestableObject
     public function __toString()
     {
         $queryFormat = static::QUERY_FORMAT;
-        if (!$this->isNested && $this->fieldName !== static::OPERATION_TYPE) {
-            $queryFormat = $this->generateSignature() . " {" . PHP_EOL . static::QUERY_FORMAT . PHP_EOL . "}";
-        }
-        $argumentsString    = $this->constructArguments();
         $selectionSetString = $this->constructSelectionSet();
+
+        if (!$this->isNested) {
+            $queryFormat = $this->generateSignature();
+            if ($this->fieldName === '') {
+
+                return $queryFormat . $selectionSetString;
+            } else {
+                $queryFormat = $this->generateSignature() . " {" . PHP_EOL . static::QUERY_FORMAT . PHP_EOL . "}";
+            }
+        }
+        $argumentsString = $this->constructArguments();
 
         return sprintf($queryFormat, $this->fieldName, $argumentsString, $selectionSetString);
     }

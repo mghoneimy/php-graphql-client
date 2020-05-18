@@ -8,6 +8,23 @@ between each release.
 - Refactor the query conversion to string to separate the process of
 constructing a new query and adding a nested subfield
 
+## 1.5:
+
+### Added
+
+- Ability to create multiple queries in one object using Query class
+- Ability to create multiple queries in one object using QueryBuilder class
+
+## 1.4:
+
+### Added
+
+- Support for passing guzzle httpOptions that overrides the authorizationHeaders
+
+### Changed
+
+- Replaced all new line characters "\n" with PHP_EOL
+
 ## 1.3: 2019-08-03
 
 ### Added
