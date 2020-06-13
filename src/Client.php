@@ -9,7 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
-use function GuzzleHttp\Psr7\stream_for;
+use function GuzzleHttp\Psr7;
 
 /**
  * Class Client
@@ -97,7 +97,7 @@ class Client
         if (empty($variables)) $variables = (object) null;
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
-        $request = $request->withBody(stream_for(json_encode($bodyArray)));
+        $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
 
         // Send api request and get response
         try {
