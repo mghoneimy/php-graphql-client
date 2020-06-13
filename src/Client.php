@@ -4,8 +4,12 @@ namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
+use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Request;
+use Psr\Http\Client\ClientInterface;
 use TypeError;
+use function GuzzleHttp\Psr7\stream_for;
 
 /**
  * Class Client
@@ -25,15 +29,14 @@ class Client
     protected $authorizationHeaders;
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var ClientInterface
      */
     protected $httpClient;
 
     /**
      * @var array
      */
-    protected $httpOptions;
-
+    protected $httpHeaders;
 
     /**
      * Client constructor.
@@ -41,13 +44,14 @@ class Client
      * @param string $endpointUrl
      * @param array $authorizationHeaders
      * @param array $httpOptions
+     * @param ClientInterface $httpClient
      */
-    public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [])
+    public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [], ClientInterface $httpClient = null)
     {
         $this->endpointUrl          = $endpointUrl;
         $this->authorizationHeaders = $authorizationHeaders;
-        $this->httpClient           = new \GuzzleHttp\Client();
-        $this->httpOptions          = $httpOptions;
+        $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
+        $this->httpHeaders          = $httpOptions['headers'] ?? [];
     }
 
     /**
@@ -75,33 +79,29 @@ class Client
      * @param string $queryString
      * @param bool   $resultsAsArray
      * @param array  $variables
+     * @param
      *
      * @return Results
      * @throws QueryError
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
-        // Set request headers for authorization and content type
-        if (!empty($this->authorizationHeaders)) {
-            $options['headers'] = $this->authorizationHeaders;
-        }
+        $request = new Request('POST', $this->endpointUrl);
+        $headers = array_merge($this->authorizationHeaders, $this->httpHeaders, ['Content-Type' => 'application/json']);
 
-        // Set request options for \GuzzleHttp\Client
-        if (!empty($this->httpOptions)) {
-            $options = $this->httpOptions;
+        foreach($headers as $header => $value) {
+            $request = $request->withHeader($header, $value);
         }
-
-        $options['headers']['Content-Type'] = 'application/json';
 
         // Convert empty variables array to empty json object
         if (empty($variables)) $variables = (object) null;
         // Set query in the request body
-        $bodyArray       = ['query' => (string) $queryString, 'variables' => $variables];
-        $options['body'] = json_encode($bodyArray);
+        $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
+        $request = $request->withBody(stream_for(json_encode($bodyArray)));
 
         // Send api request and get response
         try {
-            $response = $this->httpClient->post($this->endpointUrl, $options);
+            $response = $this->httpClient->sendRequest($request);
         }
         catch (ClientException $exception) {
             $response = $exception->getResponse();
@@ -114,8 +114,6 @@ class Client
         }
 
         // Parse response to extract results
-        $results = new Results($response, $resultsAsArray);
-
-        return $results;
+        return new Results($response, $resultsAsArray);
     }
 }
