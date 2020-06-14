@@ -353,6 +353,20 @@ $client = new Client(
 );
 ```
 
+
+It is possible to use your own preconfigured HTTP client that implements the [PSR-18 interface](https://www.php-fig.org/psr/psr-18/).
+
+Example:
+
+```php
+$client = new Client(
+    'http://api.graphql.com',
+    [],
+    [],
+    $myHttpClient
+);
+```
+
 # Running Queries
 
 ## Result Formatting

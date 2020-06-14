@@ -6,6 +6,7 @@ use GraphQL\Client;
 use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
+use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
@@ -41,7 +42,7 @@ class ClientTest extends TestCase
     {
         $this->mockHandler = new MockHandler();
         $handler = HandlerStack::create($this->mockHandler);
-        $this->client      = new MockClient('', $handler);
+        $this->client      = new Client('', [], ['handler' => $handler]);
     }
 
     /**
@@ -61,16 +62,16 @@ class ClientTest extends TestCase
         $mockHandler->append(new Response(200));
         $mockHandler->append(new Response(200));
 
-        $client = new MockClient('', $handler);
+        $client = new Client('', [], ['handler' => $handler]);
         $client->runRawQuery('query_string');
 
-        $client = new MockClient('', $handler, ['Authorization' => 'Basic xyz']);
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler]);
         $client->runRawQuery('query_string');
 
-        $client = new MockClient('', $handler);
+        $client = new Client('', [], ['handler' => $handler]);
         $client->runRawQuery('query_string',  false, ['name' => 'val']);
 
-        $client = new MockClient('', $handler, ['Authorization' => 'Basic xyz'], ['headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
         $client->runRawQuery('query_string');
 
         /** @var Request $firstRequest */
