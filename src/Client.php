@@ -49,6 +49,11 @@ class Client
             ['Content-Type' => 'application/json']
         );
 
+        /**
+         * All headers will be set on the request objects explicitly,
+         * Guzzle doesn't have to care about them at this point, so to avoid any conflicts
+         * we are removing the headers from the options
+         */
         unset($httpOptions['headers']);
 
         $this->endpointUrl          = $endpointUrl;
