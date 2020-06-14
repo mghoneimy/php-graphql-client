@@ -9,7 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
-use function GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7;
 
 /**
  * Class Client
@@ -22,11 +22,6 @@ class Client
      * @var string
      */
     protected $endpointUrl;
-
-    /**
-     * @var array
-     */
-    protected $authorizationHeaders;
 
     /**
      * @var ClientInterface
@@ -48,10 +43,17 @@ class Client
      */
     public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [], ClientInterface $httpClient = null)
     {
+        $headers = array_merge(
+            $authorizationHeaders,
+            $httpOptions['headers'] ?? [],
+            ['Content-Type' => 'application/json']
+        );
+
+        unset($httpOptions['headers']);
+
         $this->endpointUrl          = $endpointUrl;
-        $this->authorizationHeaders = $authorizationHeaders;
         $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
-        $this->httpHeaders          = $httpOptions['headers'] ?? [];
+        $this->httpHeaders          = $headers;
     }
 
     /**
@@ -87,9 +89,8 @@ class Client
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
         $request = new Request('POST', $this->endpointUrl);
-        $headers = array_merge($this->authorizationHeaders, $this->httpHeaders, ['Content-Type' => 'application/json']);
 
-        foreach($headers as $header => $value) {
+        foreach($this->httpHeaders as $header => $value) {
             $request = $request->withHeader($header, $value);
         }
 
