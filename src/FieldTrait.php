@@ -40,6 +40,10 @@ trait FieldTrait
      */
     protected function constructSelectionSet(): string
     {
+        if (empty($this->selectionSet)) {
+            return '';
+	}
+
         $attributesString = " {" . PHP_EOL;
         $first            = true;
         foreach ($this->selectionSet as $attribute) {
@@ -64,3 +68,4 @@ trait FieldTrait
         return $attributesString;
     }
 }
+

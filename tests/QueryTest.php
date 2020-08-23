@@ -54,9 +54,7 @@ class QueryTest extends TestCase
         $query = new Query();
 
         $this->assertEquals(
-            "query {
-
-}",
+            "query",
             (string) $query
         );
 
@@ -95,9 +93,7 @@ two
             ->setOperationName('retrieveObject');
         $this->assertEquals(
 'query retrieveObject {
-Object {
-
-}
+Object
 }',
             (string) $query
         );
@@ -118,9 +114,7 @@ Object {
             ->setSelectionSet([new Query('Object')]);
         $this->assertEquals(
             'query retrieveObject {
-Object {
-
-}
+Object
 }',
             (string) $query
         );
@@ -141,9 +135,7 @@ Object {
         $this->assertEquals(
             'query retrieveObject {
 Object {
-Nested {
-
-}
+Nested
 }
 }',
             (string) $query
@@ -174,9 +166,7 @@ Nested {
             ->setVariables([new Variable('var', 'String')]);
         $this->assertEquals(
             'query($var: String) {
-Object {
-
-}
+Object
 }',
             (string) $query
         );
@@ -196,9 +186,7 @@ Object {
             ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)]);
         $this->assertEquals(
             'query($var: String $intVar: Int=4) {
-Object {
-
-}
+Object
 }',
             (string) $query
         );
@@ -218,9 +206,7 @@ Object {
         $this->assertEquals(
             'query($var: String $intVar: Int=4) {
 Object {
-Nested {
-
-}
+Nested
 }
 }',
             (string) $query
@@ -241,9 +227,7 @@ Nested {
             ->setVariables([new Variable('var', 'String')]);
         $this->assertEquals(
             'query retrieveObject($var: String) {
-Object {
-
-}
+Object
 }',
             (string) $query
         );
@@ -262,9 +246,7 @@ Object {
     {
         $this->assertEquals(
             "query {
-Object {
-
-}
+Object
 }",
             (string) $query,
             'Incorrect empty query string'
@@ -306,9 +288,7 @@ Object {
         $query->setArguments(['arg1' => 'value']);
         $this->assertEquals(
             "query {
-Object(arg1: \"value\") {
-
-}
+Object(arg1: \"value\")
 }",
             (string) $query,
             'Query has improperly formatted parameter list'
@@ -332,9 +312,7 @@ Object(arg1: \"value\") {
         $query->setArguments(['arg1' => 23]);
         $this->assertEquals(
             "query {
-Object(arg1: 23) {
-
-}
+Object(arg1: 23)
 }",
             (string) $query
         );
@@ -357,9 +335,7 @@ Object(arg1: 23) {
         $query->setArguments(['arg1' => true]);
         $this->assertEquals(
             "query {
-Object(arg1: true) {
-
-}
+Object(arg1: true)
 }",
             (string) $query
         );
@@ -382,9 +358,7 @@ Object(arg1: true) {
         $query->setArguments(['arg1' => null]);
         $this->assertEquals(
             "query {
-Object(arg1: null) {
-
-}
+Object(arg1: null)
 }"
             , (string) $query
         );
@@ -407,9 +381,7 @@ Object(arg1: null) {
         $query->setArguments(['arg1' => [1, 2, 3]]);
         $this->assertEquals(
             "query {
-Object(arg1: [1, 2, 3]) {
-
-}
+Object(arg1: [1, 2, 3])
 }",
             (string) $query
         );
@@ -433,9 +405,7 @@ Object(arg1: [1, 2, 3]) {
         $query->setArguments(['obj' => new RawObject('{json_string_array: ["json value"]}')]);
         $this->assertEquals(
             "query {
-Object(obj: {json_string_array: [\"json value\"]}) {
-
-}
+Object(obj: {json_string_array: [\"json value\"]})
 }"
             , (string) $query
         );
@@ -458,9 +428,7 @@ Object(obj: {json_string_array: [\"json value\"]}) {
         $query->setArguments(['arg1' => ['one', 'two', 'three']]);
         $this->assertEquals(
             "query {
-Object(arg1: [\"one\", \"two\", \"three\"]) {
-
-}
+Object(arg1: [\"one\", \"two\", \"three\"])
 }",
             (string) $query
         );
@@ -485,9 +453,7 @@ Object(arg1: [\"one\", \"two\", \"three\"]) {
         $query->setArguments(['arg1' => 'val1', 'arg2' => 2, 'arg3' => true]);
         $this->assertEquals(
             "query {
-Object(arg1: \"val1\" arg2: 2 arg3: true) {
-
-}
+Object(arg1: \"val1\" arg2: 2 arg3: true)
 }",
             (string) $query,
             'Query has improperly formatted parameter list'
