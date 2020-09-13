@@ -9,7 +9,6 @@ use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class QueryTest

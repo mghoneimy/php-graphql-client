@@ -29,15 +29,21 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "psr/http-client": "^1.0",
-        "guzzlehttp/guzzle": "^6.3"
+        "psr/http-factory": "^1.0",
+        "php-http/discovery": "^1.6",
+        "psr/http-client-implementation": "^1.0",
+        "psr/http-factory-implementation": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5|^8.0",
-        "codacy/coverage": "^1.4"
+        "codacy/coverage": "^1.4",
+        "guzzlehttp/psr7": "^1.0",
+        "http-interop/http-factory-guzzle": "^1.0",
+        "php-http/mock-client": "dev-upgrade-version-2"
     },
     "suggest": {
         "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"

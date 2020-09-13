@@ -8,6 +8,15 @@ between each release.
 - Refactor the query conversion to string to separate the process of
 constructing a new query and adding a nested subfield
 
+## 2.0
+
+### Changed
+
+- Changed hard Guzzle dependency any PSR-18 implementation.
+- Added dependency on a PSR-7 implementation. If you are using Guzzle it requires guzzlehttp/psr7 which will fill this dependency.
+- Exceptions returned from Client are now in the `GraphQL\Exception\Client` namespace instead of Guzzle.
+- The only httpOptions that are accepted are `headers` and `version`.
+
 ## 1.5:
 
 ### Added

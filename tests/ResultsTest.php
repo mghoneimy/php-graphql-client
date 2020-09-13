@@ -4,10 +4,6 @@ namespace GraphQL\Tests;
 
 use GraphQL\Exception\QueryError;
 use GraphQL\Results;
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
@@ -17,25 +13,6 @@ use stdClass;
  */
 class ResultsTest extends TestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
-     * @var MockHandler
-     */
-    protected $mockHandler;
-
-    /**
-     *
-     */
-    protected function setUp(): void
-    {
-        $this->mockHandler = new MockHandler();
-        $this->client      = new Client(['handler' => $this->mockHandler]);
-    }
-
     /**
      * @covers \GraphQL\Results::__construct
      * @covers \GraphQL\Results::getResponseObject
@@ -57,10 +34,10 @@ class ResultsTest extends TestCase
                 ]
             ]
         ]);
-        $response = new Response(200, [], $body);
-        $this->mockHandler->append($response);
 
-        $response = $this->client->post('', []);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->client->sendRequest($mockRequest->getRequest());
         $results  = new Results($response);
 
         $this->assertEquals($response, $results->getResponseObject());
@@ -73,10 +50,12 @@ class ResultsTest extends TestCase
         $object->data->someField[] = new stdClass();
         $object->data->someField[0]->data = 'value';
         $object->data->someField[1]->data = 'value';
+
         $this->assertEquals(
             $object,
             $results->getResults()
         );
+
         $this->assertEquals(
             $object->data,
             $results->getData()
@@ -104,13 +83,13 @@ class ResultsTest extends TestCase
                 ]
             ]
         ]);
-        $originalResponse = new Response(200, [], $body);
-        $this->mockHandler->append($originalResponse);
 
-        $response = $this->client->post('', []);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->client->sendRequest($mockRequest->getRequest());
         $results  = new Results($response, true);
 
-        $this->assertEquals($originalResponse, $results->getResponseObject());
+        $this->assertEquals($mockRequest->getResponse(), $results->getResponseObject());
         $this->assertEquals($body, $results->getResponseBody());
         $this->assertEquals(
             [
@@ -127,6 +106,7 @@ class ResultsTest extends TestCase
             ],
             $results->getResults()
         );
+
         $this->assertEquals(
             [
                 'someField' => [
@@ -160,10 +140,10 @@ class ResultsTest extends TestCase
                 ]
             ]
         ]);
-        $originalResponse = new Response(200, [], $body);
-        $this->mockHandler->append($originalResponse);
 
-        $response = $this->client->post('', []);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->client->sendRequest($mockRequest->getRequest());
         $this->expectException(QueryError::class);
         new Results($response);
     }
@@ -190,10 +170,11 @@ class ResultsTest extends TestCase
                 ]
             ]
         ]);
-        $originalResponse = new Response(200, [], $body);
-        $this->mockHandler->append($originalResponse);
 
-        $response = $this->client->post('', []);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->client->sendRequest($mockRequest->getRequest());
+
         $results  = new Results($response);
         $results->reformatResults(true);
 
@@ -212,6 +193,7 @@ class ResultsTest extends TestCase
             ],
             $results->getResults()
         );
+
         $this->assertEquals(
             [
                 'someField' => [
@@ -249,10 +231,11 @@ class ResultsTest extends TestCase
                 ]
             ]
         ]);
-        $originalResponse = new Response(200, [], $body);
-        $this->mockHandler->append($originalResponse);
 
-        $response = $this->client->post('', []);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->client->sendRequest($mockRequest->getRequest());
+
         $results  = new Results($response, true);
         $results->reformatResults(false);
 

@@ -37,6 +37,13 @@ Run the following command to install the package using composer:
 $ composer require gmostafa/php-graphql-client
 ```
 
+You also need to install a PSR-17 (HTTP Factory) and PSR-18 (HTTP Client)
+implementation. You can find packages that implement PSR-17 [here](
+https://packagist.org/providers/psr/http-factory-implementation) and PSR-18
+[here](https://packagist.org/providers/psr/http-client-implementation). Note
+that installing some packages, such as guzzlehttp/guzzle (version 7), will
+provide both.
+
 # Object-to-Query-Mapper Extension
 
 To avoid the hassle of having to write _any_ queries and just interact with PHP
@@ -326,8 +333,7 @@ $client = new Client(
 
 
 The Client constructor also receives an optional "httpOptions" array, which
-**overrides** the "authorizationHeaders" and can be used to add custom
-[Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
+**overrides** the "authorizationHeaders". The only two options for this are `version` and `headers`.
 
 Example:
 
@@ -336,19 +342,11 @@ $client = new Client(
     'http://api.graphql.com',
     [],
     [ 
-        'connect_timeout' => 5,
-        'timeout' => 5,
         'headers' => [
-            'Authorization' => 'Basic xyz'
+            'Authorization' => 'Basic xyz',
             'User-Agent' => 'testing/1.0',
         ],
-        'proxy' => [
-                'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
-                'https' => 'tcp://localhost:9124', // Use this proxy with "https",
-                'no' => ['.mit.edu', 'foo.com']    // Don't use a proxy with these
-        ],
-        'cert' => ['/path/server.pem', 'password']
-        ...
+        'version' => 5
     ]
 );
 ```

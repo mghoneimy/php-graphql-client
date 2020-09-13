@@ -2,14 +2,22 @@
 
 namespace GraphQL;
 
+use GraphQL\Exception\InvalidArgumentException;
 use GraphQL\Exception\QueryError;
+use GraphQL\Exception\Client\ConnectException;
+use GraphQL\Exception\Client\RequestException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
-use GraphQL\Util\GuzzleAdapter;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Request;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use InvalidArgumentException as BaseInvalidArgumentException;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Client\NetworkExceptionInterface;
+use Psr\Http\Client\RequestExceptionInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use TypeError;
-use GuzzleHttp\Psr7;
 
 /**
  * Class Client
@@ -29,42 +37,60 @@ class Client
     protected $httpClient;
 
     /**
+     * @var StreamFactoryInterface
+     */
+    protected $streamFactory;
+
+    /**
+     * @var RequestFactoryInterface
+     */
+    protected $requestFactory;
+
+    /**
      * @var array
      */
     protected $httpHeaders;
 
     /**
-     * Client constructor.
-     *
-     * @param string $endpointUrl
-     * @param array $authorizationHeaders
-     * @param array $httpOptions
-     * @param ClientInterface $httpClient
+     * @var array
      */
-    public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [], ClientInterface $httpClient = null)
-    {
+    protected $httpOptions;
+
+    /**
+     * Client constructor.
+     * @param string                       $endpointUrl
+     * @param array                        $authorizationHeaders
+     * @param array                        $httpOptions
+     * @param ClientInterface|null         $httpClient
+     * @param StreamFactoryInterface|null  $streamFactory
+     * @param RequestFactoryInterface|null $requestFactory
+     */
+    public function __construct(
+        string $endpointUrl,
+        array $authorizationHeaders = [],
+        array $httpOptions = [],
+        ClientInterface $httpClient = null,
+        StreamFactoryInterface $streamFactory = null,
+        RequestFactoryInterface $requestFactory = null
+    ) {
         $headers = array_merge(
             $authorizationHeaders,
             $httpOptions['headers'] ?? [],
             ['Content-Type' => 'application/json']
         );
 
-        /**
-         * All headers will be set on the request objects explicitly,
-         * Guzzle doesn't have to care about them at this point, so to avoid any conflicts
-         * we are removing the headers from the options
-         */
-        unset($httpOptions['headers']);
-
         $this->endpointUrl          = $endpointUrl;
-        $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
+        $this->httpOptions          = $httpOptions;
+        $this->httpClient           = $httpClient ?? Psr18ClientDiscovery::find();
+        $this->streamFactory        = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
+        $this->requestFactory       = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->httpHeaders          = $headers;
     }
 
     /**
-     * @param Query|QueryBuilderInterface $query
-     * @param bool                        $resultsAsArray
-     * @param array                       $variables
+     * @param Query|QueryBuilderInterface|RawObject $query
+     * @param bool                                  $resultsAsArray
+     * @param array                                 $variables
      *
      * @return Results
      * @throws QueryError
@@ -93,33 +119,64 @@ class Client
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
-        $request = new Request('POST', $this->endpointUrl);
-
-        foreach($this->httpHeaders as $header => $value) {
-            $request = $request->withHeader($header, $value);
-        }
+        $request = $this->requestFactory->createRequest('POST', $this->endpointUrl);
 
         // Convert empty variables array to empty json object
         if (empty($variables)) $variables = (object) null;
+
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
-        $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
 
-        // Send api request and get response
+        $stream = $this->streamFactory->createStream(json_encode($bodyArray));
+
+        $request = (new RequestDecorator())->decorate($request, $stream, $this->httpOptions, $this->httpHeaders);
+
         try {
+            $request = $request->withBody($stream);
+
+            foreach($this->httpHeaders as $header => $value) {
+                $request = $request->withHeader($header, $value);
+            }
+
+            // Send api request and get response
             $response = $this->httpClient->sendRequest($request);
         }
-        catch (ClientException $exception) {
-            $response = $exception->getResponse();
+        catch (BaseInvalidArgumentException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        }
+        catch (RequestExceptionInterface $e) {
+            throw RequestException::create($e->getRequest(), null, $e);
+        }
+        catch (NetworkExceptionInterface $e) {
+            throw ConnectException::create($e->getRequest(), null, $e);
+        }
+        catch (ClientExceptionInterface $e) {
+            throw RequestException::create($request, null, $e);
+        }
 
-            // If exception thrown by client is "400 Bad Request ", then it can be treated as a successful API request
-            // with a syntax error in the query, otherwise the exceptions will be propagated
-            if ($response->getStatusCode() !== 400) {
-                throw $exception;
-            }
+        if ($this->shouldThrowException($response)) {
+            throw RequestException::create($request, $response);
         }
 
         // Parse response to extract results
         return new Results($response, $resultsAsArray);
+    }
+
+    /**
+     * @param ResponseInterface|null $response
+     * @return bool
+     */
+    private function shouldThrowException(?ResponseInterface $response): bool
+    {
+        if (!$response) {
+            return true;
+        }
+
+        $statusCode = $response->getStatusCode();
+
+        // If exception thrown by client is "400 Bad Request ", then it can be treated as a successful API request
+        // with a syntax error in the query, otherwise the exceptions will be propagated
+        return $statusCode !== 400
+            && (int) floor($statusCode / 100) !== 2;
     }
 }
