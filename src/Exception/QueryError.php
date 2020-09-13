@@ -11,7 +11,7 @@ use RuntimeException;
  *
  * @package GraphQl\Exception
  */
-class QueryError extends RuntimeException
+class QueryError extends RuntimeException implements Exception
 {
     /**
      * @var array

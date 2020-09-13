@@ -456,6 +456,114 @@ mutation($company: CompanyInputObject!) {
 {"company":{"name":"Tech Company","type":"Testing","size":"Medium"}}
 ```
 
+## Error Handling
+
+All exceptions thrown by this library implement `\GraphQL\Exception\Exception`.
+
+### Exceptions
+The following exceptions are defined within the GraphQL Client.
+
+#### InvalidArgumentException
+`\GraphQL\Exception\InvalidArgumentException`
+
+An argument is not of the expected type.
+
+#### ArgumentException
+`\GraphQL\Exception\ArgumentException`
+
+One or more of the arguments provided when creating a Query object did not
+ have a
+key, which represents argument name.
+
+#### InvalidSelectionException
+`\GraphQL\Exception\InvalidSelectionException`
+
+One or more of the selection fields provided to a QueryBuilder or an
+InlineFragment was not of type string or Query.
+
+#### InvalidVariableException
+`\GraphQL\Exception\InvalidVariableException`
+
+At least one of the elements of the variables array provided to a Query object
+was not an instance of `\GraphQL\Variable`.
+
+#### TransferException
+`\GraphQL\Exception\Client\TransferException`
+
+There was an error attempting to make the request to the GraphQL endpoint.
+All HTTP client related errors will extend this.
+
+Implements `\Psr\Http\Client\ClientExceptionInterface`
+
+#### RequestException
+`\GraphQL\Exception\Client\RequestException`
+
+There was an error with the request that was made to the GraphQL endpoint.
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### BadResponseException
+`\GraphQL\Exception\Client\BadResponseException`
+
+The server returned an error (non-2xx status code).
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### ClientException
+`\GraphQL\Exception\Client\ClientException`
+
+The server returned a client error (4xx status code)
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### ServerException
+`\GraphQL\Exception\Client\ServerException`
+
+The server returned a server error (5xx status code)
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### Client\ConnectException
+`\GraphQL\Exception\Client\ConnectException`
+
+The request could be sent due to a network failure of any kind, including a
+timeout.
+
+Implements `\Psr\Http\Client\NetworkExceptionInterface`
+
+#### QueryError
+`\GraphQL\Exception\QueryError`
+
+The GraphQL endpoint returns an error in the provided query. This exception
+has a method named `getErrorDetails()` which will return the message of the
+first error returned by the GraphQL endpoint.
+
+#### EmptySelectionSetException
+`\GraphQL\Exception\EmptySelectionSetException`
+
+A Query object has an empty selection set.
+
+### Excpeption Tree
+
+The following tree describes how all the exceptions thrown in this
+package extend on each other. These exceptions are relative to the 
+`\GraphQL\Exception` namespace.
+
+```
+. InvalidArgumentException
+   └── ArgumentException
+   └── InvalidSelectionException
+   └── InvalidVariableException
+. Client\TransferException
+   └── Client\RequestException
+      └── Client\BadResponseException
+      │  └── Client\ClientException
+      │  └── Client\ServerException
+      └── Client\ConnectException
+. QueryError
+. EmptySelectionSetException
+```
+
 # Live API Example
 
 GraphQL Pokemon is a very cool public GraphQL API available to retrieve Pokemon

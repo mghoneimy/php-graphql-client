@@ -9,7 +9,7 @@ use UnderflowException;
  *
  * @package GraphQL\Exception
  */
-class EmptySelectionSetException extends UnderflowException
+class EmptySelectionSetException extends UnderflowException implements Exception
 {
     public function __construct($objectName)
     {
