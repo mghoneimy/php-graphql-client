@@ -6,7 +6,6 @@ use GraphQL\Client;
 use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
-use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\ServerException;
@@ -61,6 +60,7 @@ class ClientTest extends TestCase
         $mockHandler->append(new Response(200));
         $mockHandler->append(new Response(200));
         $mockHandler->append(new Response(200));
+        $mockHandler->append(new Response(200));
 
         $client = new Client('', [], ['handler' => $handler]);
         $client->runRawQuery('query_string');
@@ -74,9 +74,13 @@ class ClientTest extends TestCase
         $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
         $client->runRawQuery('query_string');
 
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]], null, 'GET');
+        $client->runRawQuery('query_string');
+
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
         $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
+        $this->assertSame('POST', $firstRequest->getMethod());
 
         /** @var Request $thirdRequest */
         $thirdRequest = $container[1]['request'];
@@ -96,6 +100,10 @@ class ClientTest extends TestCase
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
         $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
+
+        /** @var Request $fifthRequest */
+        $fifthRequest = $container[4]['request'];
+        $this->assertSame('GET', $fifthRequest->getMethod());
     }
 
     /**
