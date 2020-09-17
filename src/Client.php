@@ -6,10 +6,10 @@ use GraphQL\Exception\QueryError;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
 use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
-use GuzzleHttp\Psr7;
 
 /**
  * Class Client
@@ -34,15 +34,26 @@ class Client
     protected $httpHeaders;
 
     /**
+     * @var string
+     */
+    protected $requestMethod;
+
+    /**
      * Client constructor.
      *
      * @param string $endpointUrl
      * @param array $authorizationHeaders
      * @param array $httpOptions
      * @param ClientInterface $httpClient
+     * @param string $requestMethod
      */
-    public function __construct(string $endpointUrl, array $authorizationHeaders = [], array $httpOptions = [], ClientInterface $httpClient = null)
-    {
+    public function __construct(
+        string $endpointUrl,
+        array $authorizationHeaders = [],
+        array $httpOptions = [],
+        ClientInterface $httpClient = null,
+        string $requestMethod = 'POST'
+    ) {
         $headers = array_merge(
             $authorizationHeaders,
             $httpOptions['headers'] ?? [],
@@ -59,6 +70,7 @@ class Client
         $this->endpointUrl          = $endpointUrl;
         $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
         $this->httpHeaders          = $headers;
+        $this->requestMethod        = $requestMethod;
     }
 
     /**
@@ -93,7 +105,7 @@ class Client
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
-        $request = new Request('POST', $this->endpointUrl);
+        $request = new Request($this->requestMethod, $this->endpointUrl);
 
         foreach($this->httpHeaders as $header => $value) {
             $request = $request->withHeader($header, $value);
