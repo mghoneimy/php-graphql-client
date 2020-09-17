@@ -6,7 +6,7 @@ use GraphQL\Client;
 use GraphQL\Exception\Client\ClientException;
 use GraphQL\Exception\Client\ConnectException;
 use GraphQL\Exception\Client\ServerException;
-use GraphQL\Exception\QueryError;
+use GraphQL\Exception\QueryError;;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
 use Psr\Http\Message\RequestInterface;
@@ -39,8 +39,9 @@ class ClientTest extends TestCase
      */
     public function testConstructClient()
     {
-        for ($i = 0; $i < 4; $i++) {
-            $response = $this->helper->createMockResponse();
+        $response = $this->helper->createMockResponse();
+
+        for ($i = 0; $i < 5; $i++) {
             $this->client->addResponse($response);
         }
 
@@ -56,11 +57,15 @@ class ClientTest extends TestCase
         $client = new Client('', ['Authorization' => 'Basic xyz'], ['headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]], $this->client);
         $client->runRawQuery('query_string');
 
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]], $this->client, 'GET');
+        $client->runRawQuery('query_string');
+
         $requests = $this->client->getRequests();
 
         /** @var RequestInterface $firstRequest */
         $firstRequest = $requests[0];
         $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
+        $this->assertSame('POST', $firstRequest->getMethod());
 
         /** @var RequestInterface $thirdRequest */
         $thirdRequest = $requests[1];
@@ -80,6 +85,10 @@ class ClientTest extends TestCase
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
         $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
+
+        /** @var RequestInterface $fifthRequest */
+        $fifthRequest = $requests[4];
+        $this->assertSame('GET', $fifthRequest->getMethod());
     }
 
     /**

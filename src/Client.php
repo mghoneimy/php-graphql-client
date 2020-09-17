@@ -57,6 +57,11 @@ class Client
     protected $httpOptions;
 
     /**
+     * @var string
+     */
+    protected $requestMethod;
+
+    /**
      * Client constructor.
      * @param string                       $endpointUrl
      * @param array                        $authorizationHeaders
@@ -64,12 +69,14 @@ class Client
      * @param ClientInterface|null         $httpClient
      * @param StreamFactoryInterface|null  $streamFactory
      * @param RequestFactoryInterface|null $requestFactory
+     * @param string                       $requestMethod
      */
     public function __construct(
         string $endpointUrl,
         array $authorizationHeaders = [],
         array $httpOptions = [],
         ClientInterface $httpClient = null,
+        string $requestMethod = 'POST',
         StreamFactoryInterface $streamFactory = null,
         RequestFactoryInterface $requestFactory = null
     ) {
@@ -85,6 +92,7 @@ class Client
         $this->streamFactory        = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->requestFactory       = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->httpHeaders          = $headers;
+        $this->requestMethod        = $requestMethod;
     }
 
     /**
@@ -95,7 +103,11 @@ class Client
      * @return Results
      * @throws QueryError
      */
-    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
+    public function runQuery(
+        $query,
+        bool $resultsAsArray = false,
+        array $variables = []
+    ): Results
     {
         if ($query instanceof QueryBuilderInterface) {
             $query = $query->getQuery();
@@ -119,7 +131,7 @@ class Client
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
-        $request = $this->requestFactory->createRequest('POST', $this->endpointUrl);
+        $request = $this->requestFactory->createRequest($this->requestMethod, $this->endpointUrl);
 
         // Convert empty variables array to empty json object
         if (empty($variables)) $variables = (object) null;
