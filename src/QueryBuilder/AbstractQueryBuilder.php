@@ -50,6 +50,18 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     /**
+     * @param string $alias
+     *
+     * @return $this
+     */
+    public function setAlias(string $alias)
+    {
+        $this->query->setAlias($alias);
+
+        return $this;
+    }
+
+    /**
      * @return Query
      */
     public function getQuery(): Query
