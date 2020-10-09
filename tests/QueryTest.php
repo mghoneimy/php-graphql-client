@@ -84,6 +84,54 @@ two
      * @depends testConvertsToString
      *
      * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithAlias()
+    {
+        $query = (new Query('Object', 'ObjectAlias'))
+            ->setSelectionSet([
+                'one'
+            ]);
+
+        $this->assertEquals(
+            "query {
+ObjectAlias: Object {
+one
+}
+}",
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::setAlias
+     * @covers \GraphQL\Query::generateSignature
+     * @covers \GraphQL\Query::__toString
+     */
+    public function testQueryWithSetAlias()
+    {
+        $query = (new Query('Object'))
+            ->setAlias('ObjectAlias')
+            ->setSelectionSet([
+                'one'
+            ]);
+
+        $this->assertEquals(
+            "query {
+ObjectAlias: Object {
+one
+}
+}",
+            (string) $query
+        );
+    }
+
+    /**
+     * @depends testConvertsToString
+     *
+     * @covers \GraphQL\Query::generateSignature
      * @covers \GraphQL\Query::setOperationName
      * @covers \GraphQL\Query::__toString
      */
