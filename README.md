@@ -89,6 +89,7 @@ The full form shouldn't be used unless the query can't be represented in the
 shorthand form, which has only one case, when we want to run multiple queries
 in the same object.
 
+
 ## Multiple Queries
 ```php
 $gql = (new Query())
@@ -237,6 +238,46 @@ false by default
 variable. The default value will only be considered
 if the isRequired argument is set to false.
 
+## Using an alias
+```php
+$gql = (new Query())
+    ->setSelectionSet(
+        [
+            (new Query('companies', 'TechCo'))
+                ->setArguments(['name' => 'Tech Co.'])
+                ->setSelectionSet(
+                    [
+                        'name',
+                        'serialNumber'
+                    ]
+                ),
+            (new Query('companies', 'AnotherTechCo'))
+                ->setArguments(['name' => 'A.N. Other Tech Co.'])
+                ->setSelectionSet(
+                    [
+                        'name',
+                        'serialNumber'
+                    ]
+                )
+        ]
+    );
+```
+
+An alias can be set in the second argument of the Query constructor for occasions when the same object needs to be retrieved multiple times with different arguments.
+
+```php
+$gql = (new Query('companies'))
+    ->setAlias('CompanyAlias')
+    ->setSelectionSet(
+        [
+            'name',
+            'serialNumber'
+        ]
+    );
+```
+
+The alias can also be set via the setter method.
+
 ## Using Interfaces: Query With Inline Fragments
 
 When querying a field that returns an interface type, you might need to use
@@ -276,6 +317,27 @@ $builder = (new QueryBuilder('companies'))
     ->setArgument('filter', new RawObject('{name_starts_with: $namePrefix}'))
     ->selectField('name')
     ->selectField('serialNumber');
+$gql = $builder->getQuery();
+```
+
+As with the Query class, an alias can be set using the second constructor argument.
+
+```php
+$builder = (new QueryBuilder('companies', 'CompanyAlias'))
+    ->selectField('name')
+    ->selectField('serialNumber');
+
+$gql = $builder->getQuery();
+```
+
+Or via the setter method
+
+```php
+$builder = (new QueryBuilder('companies'))
+    ->setAlias('CompanyAlias')
+    ->selectField('name')
+    ->selectField('serialNumber');
+
 $gql = $builder->getQuery();
 ```
 
