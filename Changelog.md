@@ -8,6 +8,13 @@ between each release.
 - Refactor the query conversion to string to separate the process of
 constructing a new query and adding a nested subfield
 
+## Unreleased
+
+### Changed
+
+- Updated Query class to allow for an alias
+- Updated QueryBuilder class to allow for an alias
+
 ## 1.7:
 
 ### Added
