@@ -38,11 +38,11 @@ class QueryBuilderTest extends TestCase
      */
     public function testConstruct()
     {
-        $builder = new QueryBuilder('Object');
+        $builder = new QueryBuilder('Object', 'ObjectAlias');
         $builder->selectField('field_one');
         $this->assertEquals(
             'query {
-Object {
+ObjectAlias: Object {
 field_one
 }
 }',
