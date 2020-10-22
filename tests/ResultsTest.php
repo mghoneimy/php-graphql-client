@@ -221,12 +221,7 @@ class ResultsTest extends TestCase
             $results = new Results($response, true);
         } catch (\Exception $e) {
             $exceptionThrown = true;
-        }* Removed HTTP Exceptions and stop throwing QueryError.
-* Add methods to check for errors, status code, on Results
-    * Moved HTTP Method argument to the method making the request
-    * Remove httpOptions in the constructor
-
-
+        }
 
         $this->assertFalse($exceptionThrown);
         $this->assertTrue($results->hasError());
