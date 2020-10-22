@@ -127,25 +127,20 @@ class ResultsTest extends TestCase
      */
     public function testGetQueryInvalidSyntaxError()
     {
+        $errors = $this->helper->syntaxError();
         $body = json_encode([
-            'errors' => [
-                [
-                    'message' => 'some syntax error',
-                    'location' => [
-                        [
-                            'line' => 1,
-                            'column' => 3,
-                        ]
-                    ],
-                ]
-            ]
+            'errors' => $errors
         ]);
 
         $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
         $this->client->addResponse($mockRequest->getResponse());
         $response = $this->client->sendRequest($mockRequest->getRequest());
-        $this->expectException(QueryError::class);
-        new Results($response);
+        $results = new Results($response, true);
+        $this->assertTrue($results->hasErrors());
+        $this->assertSame('QueryError', $results->getErrorType());
+        $this->assertSame($errors, $results->getErrors());
+        $this->assertSame($errors[0], $results->getError());
+        $this->assertSame($errors[0], $results->getError());
     }
 
     /**
@@ -207,6 +202,37 @@ class ResultsTest extends TestCase
             ],
             $results->getData()
         );
+    }
+
+    /**
+     * @covers Results::getErrors
+     */
+    public function testMultipleQueryErrorsAreSavedWhenGiven()
+    {
+        $exceptionThrown = false;
+        $errors = $this->helper->syntaxError(random_int(3,6));
+        $body = json_encode(['errors' => $errors]);
+        $mockRequest = $this->helper->mockRequest('', 'POST', $body, 200);
+
+        $this->client->addResponse($mockRequest->getResponse());
+
+        try {
+            $response = $this->client->sendRequest($mockRequest->getRequest(), true);
+            $results = new Results($response, true);
+        } catch (\Exception $e) {
+            $exceptionThrown = true;
+        }* Removed HTTP Exceptions and stop throwing QueryError.
+* Add methods to check for errors, status code, on Results
+    * Moved HTTP Method argument to the method making the request
+    * Remove httpOptions in the constructor
+
+
+
+        $this->assertFalse($exceptionThrown);
+        $this->assertTrue($results->hasError());
+        $this->assertTrue($results->hasErrors());
+        $this->assertSame(200, $results->getResponseStatusCode());
+        $this->assertSame($errors, $results->getErrors());
     }
 
     /**

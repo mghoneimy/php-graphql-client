@@ -4,11 +4,12 @@ namespace GraphQL\Tests\Helper;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\NetworkExceptionInterface;
 use Psr\Http\Client\RequestExceptionInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -17,6 +18,48 @@ use Psr\Http\Message\StreamInterface;
  */
 class TestHelper extends TestCase
 {
+    /**
+     * @var RequestFactoryInterface
+     */
+    private $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
+
+    /**
+     * @return MockObject|RequestFactoryInterface
+     */
+    public function getRequestFactory(): RequestFactoryInterface
+    {
+        if (isset($this->requestFactory)) {
+            return $this->requestFactory;
+        }
+
+        $requestFactory = $this->createMock(RequestFactoryInterface::class);
+        $requestFactory->method('createRequest')->willReturnCallback([$this, 'createMockRequest']);
+        return $this->requestFactory = $requestFactory;
+    }
+
+    /**
+     * @return StreamFactoryInterface
+     */
+    public function getStreamFactory(): StreamFactoryInterface
+    {
+        if (isset($this->streamFactory)) {
+            return $this->streamFactory;
+        }
+
+        $streamFactory = $this->createMock(StreamFactoryInterface::class);
+
+        $streamFactory->method('createStream')->willReturnCallback([$this, 'createMockStreamFromFactoryFromString']);
+        $streamFactory->method('createStreamFromFile')->willReturnCallback([$this, 'createMockStreamFromFactoryFromFile']);
+        $streamFactory->method('createStreamFromResource')->willReturnCallback([$this, 'createMockStreamFromFactoryFromResource']);
+
+        return $this->streamFactory = $streamFactory;
+    }
+
     /**
      * @param string $uri
      * @param string $method
@@ -77,18 +120,11 @@ class TestHelper extends TestCase
     {
         $request = $this->createMock(RequestInterface::class);
         $request->method('withBody')->willReturnSelf();
+        $request->method('withHeader')->willReturnSelf();
         $request->method('getMethod')->willReturn($method);
         $request->method('getUri')->willReturn($uri);
 
         return $request;
-    }
-
-    /**
-     * @return MockObject|ClientExceptionInterface
-     */
-    public function createMockClientException(): ClientExceptionInterface
-    {
-        return $this->createMock(ClientExceptionInterface::class);
     }
 
     /**
@@ -113,5 +149,71 @@ class TestHelper extends TestCase
         $exception->method('getRequest')->willReturn($request ?? $this->createMockRequest());
 
         return $exception;
+    }
+
+    /**
+     * @return RequestInterface
+     */
+    public function createMockRequestFromFactory(): RequestInterface
+    {
+        return $this->createMockRequest(...func_get_args());
+    }
+
+    /**
+     * @return StreamInterface
+     */
+    public function createMockStreamFromFactoryFromString(): StreamInterface
+    {
+        [$body] = func_get_args();
+
+        return $this->createMockStream($body);
+    }
+
+    /**
+     * @var string $filename
+     * @var string $mode
+     *
+     * @return StreamInterface
+     */
+    public function createMockStreamFromFactoryFromFile(): StreamInterface
+    {
+        [$filename, $mode] = func_get_args();
+
+        $resource = fopen($filename, $mode);
+
+        return $this->createMockStreamFromFactoryFromResource($resource);
+    }
+
+    /**
+     * @return StreamInterface
+     */
+    public function createMockStreamFromFactoryFromResource(): StreamInterface
+    {
+        [$resource] = func_get_args();
+
+        return $this->createMockStreamFromFactoryFromString(stream_get_contents($resource));
+    }
+
+    /**
+     * @param int $count
+     * @return array
+     */
+    public function syntaxError(int $count = 1): array
+    {
+        $errors = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $errors[] = [
+                'message' => 'some syntax error' . random_int(1000,10000),
+                'location' => [
+                    [
+                        'line' => random_int(1,100),
+                        'column' => random_int(1,60),
+                    ]
+                ],
+            ];
+        }
+
+        return $errors;
     }
 }

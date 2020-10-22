@@ -28,18 +28,6 @@ class RequestDecoratorTest extends TestCase
     /**
      * @covers \GraphQL\RequestDecorator::decorate
      */
-    public function testDecorateWithVersionHttpOption()
-    {
-        $stream = $this->helper->createMockStream();
-        $request = $this->createStub(RequestInterface::class);
-        $request->expects($this->once())->method('withProtocolVersion')->with(2)->willReturnSelf();
-        $request->method('withBody')->willReturnSelf();
-        $this->decorator->decorate($request, $stream, ['version' => 2]);
-    }
-
-    /**
-     * @covers \GraphQL\RequestDecorator::decorate
-     */
     public function testDecorateWithBody()
     {
         $stream = $this->helper->createMockStream();
@@ -71,6 +59,6 @@ class RequestDecoratorTest extends TestCase
             ->willReturnSelf();
 
         $request->method('withBody')->willReturnSelf();
-        $this->decorator->decorate($request, $stream, [], $headers);
+        $this->decorator->decorate($request, $stream, $headers);
     }
 }
