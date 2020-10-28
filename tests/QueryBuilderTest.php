@@ -38,6 +38,24 @@ class QueryBuilderTest extends TestCase
      */
     public function testConstruct()
     {
+        $builder = new QueryBuilder('Object');
+        $builder->selectField('field_one');
+        $this->assertEquals(
+            'query {
+Object {
+field_one
+}
+}',
+            (string) $builder->getQuery()
+        );
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     */
+    public function testConstructWithAlias()
+    {
         $builder = new QueryBuilder('Object', 'ObjectAlias');
         $builder->selectField('field_one');
         $this->assertEquals(
