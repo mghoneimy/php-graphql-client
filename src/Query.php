@@ -48,6 +48,13 @@ class Query extends NestableObject
     protected $fieldName;
 
     /**
+     * Stores the object alias
+     *
+     * @var string
+     */
+    protected $alias;
+
+    /**
      * Stores the list of variables to be used in the query
      *
      * @var array|Variable[]
@@ -72,15 +79,29 @@ class Query extends NestableObject
      * GQLQueryBuilder constructor.
      *
      * @param string $fieldName if no value is provided for the field name an empty query object is assumed
+     * @param string $alias the alias to use for the query if required
      */
-    public function __construct(string $fieldName = '')
+    public function __construct(string $fieldName = '', string $alias = '')
     {
         $this->fieldName     = $fieldName;
+        $this->alias         = $alias;
         $this->operationName = '';
         $this->variables     = [];
         $this->arguments     = [];
         $this->selectionSet  = [];
         $this->isNested      = false;
+    }
+
+    /**
+     * @param string $alias
+     *
+     * @return Query
+     */
+    public function setAlias(string $alias)
+    {
+        $this->alias = $alias;
+
+        return $this;
     }
 
     /**
@@ -227,7 +248,15 @@ class Query extends NestableObject
         }
         $argumentsString = $this->constructArguments();
 
-        return sprintf($queryFormat, $this->fieldName, $argumentsString, $selectionSetString);
+        return sprintf($queryFormat, $this->generateFieldName(), $argumentsString, $selectionSetString);
+    }
+
+    /**
+     * @return string
+     */
+    protected function generateFieldName(): string
+    {
+        return empty($this->alias) ? $this->fieldName : sprintf('%s: %s', $this->alias, $this->fieldName);
     }
 
     /**

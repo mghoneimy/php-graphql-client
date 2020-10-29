@@ -51,6 +51,44 @@ field_one
     }
 
     /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     */
+    public function testConstructWithAlias()
+    {
+        $builder = new QueryBuilder('Object', 'ObjectAlias');
+        $builder->selectField('field_one');
+        $this->assertEquals(
+            'query {
+ObjectAlias: Object {
+field_one
+}
+}',
+            (string) $builder->getQuery()
+        );
+    }
+
+    /**
+     * @covers \GraphQL\QueryBuilder\QueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::__construct
+     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::setAlias
+     */
+    public function testSetAlias()
+    {
+        $builder = (new QueryBuilder('Object'))
+            ->setAlias('ObjectAlias');;
+        $builder->selectField('field_one');
+        $this->assertEquals(
+            'query {
+ObjectAlias: Object {
+field_one
+}
+}',
+            (string) $builder->getQuery()
+        );
+    }
+
+    /**
      * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
      * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
      * @covers \GraphQL\Exception\EmptySelectionSetException
