@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Client;
@@ -18,9 +26,9 @@ use PHPUnit\Framework\TestCase;
 use TypeError;
 
 /**
- * Class ClientTest
+ * Class ClientTest.
  *
- * @package GraphQL\Tests
+ * @coversNothing
  */
 class ClientTest extends TestCase
 {
@@ -34,14 +42,11 @@ class ClientTest extends TestCase
      */
     protected $mockHandler;
 
-    /**
-     *
-     */
     protected function setUp(): void
     {
         $this->mockHandler = new MockHandler();
         $handler = HandlerStack::create($this->mockHandler);
-        $this->client      = new Client('', [], ['handler' => $handler]);
+        $this->client = new Client('', [], ['handler' => $handler]);
     }
 
     /**
@@ -51,9 +56,9 @@ class ClientTest extends TestCase
     public function testConstructClient()
     {
         $mockHandler = new MockHandler();
-        $handler     = HandlerStack::create($mockHandler);
-        $container   = [];
-        $history     = Middleware::history($container);
+        $handler = HandlerStack::create($mockHandler);
+        $container = [];
+        $history = Middleware::history($container);
         $handler->push($history);
 
         $mockHandler->append(new Response(200));
@@ -69,37 +74,37 @@ class ClientTest extends TestCase
         $client->runRawQuery('query_string');
 
         $client = new Client('', [], ['handler' => $handler]);
-        $client->runRawQuery('query_string',  false, ['name' => 'val']);
+        $client->runRawQuery('query_string', false, ['name' => 'val']);
 
-        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => ['Authorization' => 'Basic zyx', 'User-Agent' => 'test']]);
         $client->runRawQuery('query_string');
 
-        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]], null, 'GET');
+        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => ['Authorization' => 'Basic zyx', 'User-Agent' => 'test']], null, 'GET');
         $client->runRawQuery('query_string');
 
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
-        $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
+        $this->assertSame('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
         $this->assertSame('POST', $firstRequest->getMethod());
 
         /** @var Request $thirdRequest */
         $thirdRequest = $container[1]['request'];
         $this->assertNotEmpty($thirdRequest->getHeader('Authorization'));
-        $this->assertEquals(
+        $this->assertSame(
             ['Basic xyz'],
             $thirdRequest->getHeader('Authorization')
         );
 
         /** @var Request $secondRequest */
         $secondRequest = $container[2]['request'];
-        $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
+        $this->assertSame('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
 
         /** @var Request $fourthRequest */
         $fourthRequest = $container[3]['request'];
         $this->assertNotEmpty($fourthRequest->getHeader('Authorization'));
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
-        $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
-        $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
+        $this->assertSame(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
+        $this->assertSame(['test'], $fourthRequest->getHeader('User-Agent'));
 
         /** @var Request $fifthRequest */
         $fifthRequest = $container[4]['request'];
@@ -113,8 +118,8 @@ class ClientTest extends TestCase
     {
         $this->mockHandler->append(new Response(200, [], json_encode([
             'data' => [
-                'someData'
-            ]
+                'someData',
+            ],
         ])));
 
         $response = $this->client->runQuery((new QueryBuilder('obj'))->selectField('field'));
@@ -142,9 +147,9 @@ class ClientTest extends TestCase
                         'data' => 'value',
                     ], [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])));
 
         $objectResults = $this->client->runRawQuery('');
@@ -163,9 +168,9 @@ class ClientTest extends TestCase
                         'data' => 'value',
                     ], [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ])));
 
         $arrayResults = $this->client->runRawQuery('', true);
@@ -185,10 +190,10 @@ class ClientTest extends TestCase
                         [
                             'line' => 1,
                             'column' => 3,
-                        ]
+                        ],
                     ],
-                ]
-            ]
+                ],
+            ],
         ])));
 
         $this->expectException(QueryError::class);
@@ -200,8 +205,10 @@ class ClientTest extends TestCase
      */
     public function testInvalidQueryResponseWith400()
     {
-        $this->mockHandler->append(new ClientException('', new Request('post', ''),
-                new Response(400, [], json_encode([
+        $this->mockHandler->append(new ClientException(
+            '',
+            new Request('post', ''),
+            new Response(400, [], json_encode([
                 'errors' => [
                     [
                         'message' => 'some syntax error',
@@ -209,11 +216,12 @@ class ClientTest extends TestCase
                             [
                                 'line' => 1,
                                 'column' => 3,
-                            ]
+                            ],
                         ],
-                    ]
-                ]
-        ]))));
+                    ],
+                ],
+        ]))
+        ));
 
         $this->expectException(QueryError::class);
         $this->client->runRawQuery('');
@@ -224,8 +232,10 @@ class ClientTest extends TestCase
      */
     public function testUnauthorizedResponse()
     {
-        $this->mockHandler->append(new ClientException('', new Request('post', ''),
-                new Response(401, [], json_encode('Unauthorized'))
+        $this->mockHandler->append(new ClientException(
+            '',
+            new Request('post', ''),
+            new Response(401, [], json_encode('Unauthorized'))
         ));
 
         $this->expectException(ClientException::class);

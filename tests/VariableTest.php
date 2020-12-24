@@ -1,14 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Variable;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class VariableTest
+ * Class VariableTest.
  *
- * @package GraphQL\Tests
+ * @coversNothing
  */
 class VariableTest extends TestCase
 {
@@ -19,7 +27,7 @@ class VariableTest extends TestCase
     public function testCreateVariable()
     {
         $variable = new Variable('var', 'String');
-        $this->assertEquals('$var: String', (string) $variable);
+        $this->assertSame('$var: String', (string) $variable);
     }
 
     /**
@@ -31,7 +39,7 @@ class VariableTest extends TestCase
     public function testCreateRequiredVariable()
     {
         $variable = new Variable('var', 'String', true);
-        $this->assertEquals('$var: String!', (string) $variable);
+        $this->assertSame('$var: String!', (string) $variable);
     }
 
     /**
@@ -43,7 +51,7 @@ class VariableTest extends TestCase
     public function testRequiredVariableWithDefaultValueDoesNothing()
     {
         $variable = new Variable('var', 'String', true, 'def');
-        $this->assertEquals('$var: String!', (string) $variable);
+        $this->assertSame('$var: String!', (string) $variable);
     }
 
     /**
@@ -55,15 +63,15 @@ class VariableTest extends TestCase
     public function testOptionalVariableWithDefaultValue()
     {
         $variable = new Variable('var', 'String', false, 'def');
-        $this->assertEquals('$var: String="def"', (string) $variable);
+        $this->assertSame('$var: String="def"', (string) $variable);
 
         $variable = new Variable('var', 'String', false, '4');
-        $this->assertEquals('$var: String="4"', (string) $variable);
+        $this->assertSame('$var: String="4"', (string) $variable);
 
         $variable = new Variable('var', 'Int', false, 4);
-        $this->assertEquals('$var: Int=4', (string) $variable);
+        $this->assertSame('$var: Int=4', (string) $variable);
 
         $variable = new Variable('var', 'Boolean', false, true);
-        $this->assertEquals('$var: Boolean=true', (string) $variable);
+        $this->assertSame('$var: Boolean=true', (string) $variable);
     }
 }

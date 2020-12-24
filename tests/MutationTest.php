@@ -1,20 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Mutation;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversNothing
+ */
 class MutationTest extends TestCase
 {
-    /**
-     *
-     */
     public function testMutationWithoutOperationType()
     {
         $mutation = new Mutation('createObject');
 
-        $this->assertEquals(
+        $this->assertSame(
             'mutation {
 createObject
 }',
@@ -22,9 +30,6 @@ createObject
         );
     }
 
-    /**
-     *
-     */
     public function testMutationWithOperationType()
     {
         $mutation = new Mutation();
@@ -32,11 +37,11 @@ createObject
             ->setSelectionSet(
                 [
                     (new Mutation('createObject'))
-                        ->setArguments(['name' => 'TestObject'])
+                        ->setArguments(['name' => 'TestObject']),
                 ]
             );
 
-        $this->assertEquals(
+        $this->assertSame(
             'mutation {
 createObject(name: "TestObject")
 }',
@@ -44,23 +49,18 @@ createObject(name: "TestObject")
         );
     }
 
-    /**
-     *
-     */
     public function testMutationWithoutSelectedFields()
     {
         $mutation = (new Mutation('createObject'))
             ->setArguments(['name' => 'TestObject', 'type' => 'TestType']);
-        $this->assertEquals(
+        $this->assertSame(
             'mutation {
 createObject(name: "TestObject" type: "TestType")
 }',
-            (string) $mutation);
+            (string) $mutation
+        );
     }
 
-    /**
-     * 
-     */
     public function testMutationWithFields()
     {
         $mutation = (new Mutation('createObject'))
@@ -71,7 +71,7 @@ createObject(name: "TestObject" type: "TestType")
                 ]
             );
 
-        $this->assertEquals(
+        $this->assertSame(
             'mutation {
 createObject {
 fieldOne
@@ -82,9 +82,6 @@ fieldTwo
         );
     }
 
-    /**
-     *
-     */
     public function testMutationWithArgumentsAndFields()
     {
         $mutation = (new Mutation('createObject'))
@@ -96,11 +93,11 @@ fieldTwo
             )->setArguments(
                 [
                     'argOne' => 1,
-                    'argTwo' => 'val'
+                    'argTwo' => 'val',
                 ]
             );
 
-        $this->assertEquals(
+        $this->assertSame(
             'mutation {
 createObject(argOne: 1 argTwo: "val") {
 fieldOne

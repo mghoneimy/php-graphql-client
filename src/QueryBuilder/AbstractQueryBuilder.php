@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\QueryBuilder;
 
 use GraphQL\Exception\EmptySelectionSetException;
@@ -9,9 +17,7 @@ use GraphQL\RawObject;
 use GraphQL\Variable;
 
 /**
- * Class AbstractQueryBuilder
- *
- * @package GraphQL
+ * Class AbstractQueryBuilder.
  */
 abstract class AbstractQueryBuilder implements QueryBuilderInterface
 {
@@ -37,21 +43,16 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 
     /**
      * QueryBuilder constructor.
-     *
-     * @param string $queryObject
-     * @param string $alias
      */
     public function __construct(string $queryObject = '', string $alias = '')
     {
-        $this->query         = new Query($queryObject, $alias);
-        $this->variables     = [];
-        $this->selectionSet  = [];
+        $this->query = new Query($queryObject, $alias);
+        $this->variables = [];
+        $this->selectionSet = [];
         $this->argumentsList = [];
     }
 
     /**
-     * @param string $alias
-     *
      * @return $this
      */
     public function setAlias(string $alias)
@@ -61,9 +62,6 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    /**
-     * @return Query
-     */
     public function getQuery(): Query
     {
         if (empty($this->selectionSet)) {
@@ -72,7 +70,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 
         // Convert nested query builders to query objects
         foreach ($this->selectionSet as $key => $field) {
-            if ($field instanceof AbstractQueryBuilder) {
+            if ($field instanceof self) {
                 $this->selectionSet[$key] = $field->getQuery();
             }
         }
@@ -85,15 +83,15 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param string|QueryBuilder|Query $selectedField
+     * @param Query|QueryBuilder|string $selectedField
      *
      * @return $this
      */
     protected function selectField($selectedField)
     {
         if (
-            is_string($selectedField)
-            || $selectedField instanceof AbstractQueryBuilder
+            \is_string($selectedField)
+            || $selectedField instanceof self
             || $selectedField instanceof Query
             || $selectedField instanceof InlineFragment
         ) {
@@ -111,7 +109,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
      */
     protected function setArgument(string $argumentName, $argumentValue)
     {
-        if (is_scalar($argumentValue) || is_array($argumentValue) || $argumentValue instanceof RawObject) {
+        if (is_scalar($argumentValue) || \is_array($argumentValue) || $argumentValue instanceof RawObject) {
             $this->argumentsList[$argumentName] = $argumentValue;
         }
 
@@ -119,10 +117,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param string $name
-     * @param string $type
-     * @param bool   $isRequired
-     * @param null   $defaultValue
+     * @param null $defaultValue
      *
      * @return $this
      */

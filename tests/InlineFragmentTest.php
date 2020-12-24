@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\InlineFragment;
@@ -7,9 +15,9 @@ use GraphQL\Query;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class InlineFragmentTest
+ * Class InlineFragmentTest.
  *
- * @package GraphQL\Tests
+ * @coversNothing
  */
 class InlineFragmentTest extends TestCase
 {
@@ -29,7 +37,7 @@ class InlineFragmentTest extends TestCase
             ]
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '... on Test {
 field1
 field2
@@ -37,6 +45,7 @@ field2
             (string) $fragment
         );
     }
+
     /**
      * @covers \GraphQL\InlineFragment::__construct
      * @covers \GraphQL\InlineFragment::setSelectionSet
@@ -53,7 +62,7 @@ field2
                 (new Query('sub_field'))
                     ->setArguments(
                         [
-                            'first' => 5
+                            'first' => 5,
                         ]
                     )
                     ->setSelectionSet(
@@ -62,15 +71,15 @@ field2
                             (new InlineFragment('Nested'))
                                 ->setSelectionSet(
                                     [
-                                        'another_field'
+                                        'another_field',
                                     ]
                                 ),
                         ]
-                    )
+                    ),
             ]
         );
 
-        $this->assertEquals(
+        $this->assertSame(
             '... on Test {
 field1
 field2
