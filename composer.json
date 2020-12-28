@@ -29,7 +29,7 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": "^7.1 || ^8.0",
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "psr/http-client": "^1.0",
@@ -38,6 +38,9 @@
     "require-dev": {
         "phpunit/phpunit": "^7.5|^8.0",
         "codacy/coverage": "^1.4"
+    },
+    "scripts": {
+        "test": "phpunit tests/ --whitelist src/ --coverage-clover build/coverage/xml"
     },
     "suggest": {
         "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"
