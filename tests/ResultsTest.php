@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Exception\QueryError;
@@ -11,9 +19,9 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 /**
- * Class ResultsTest
+ * Class ResultsTest.
  *
- * @package GraphQL\Tests
+ * @coversNothing
  */
 class ResultsTest extends TestCase
 {
@@ -27,13 +35,10 @@ class ResultsTest extends TestCase
      */
     protected $mockHandler;
 
-    /**
-     *
-     */
     protected function setUp(): void
     {
         $this->mockHandler = new MockHandler();
-        $this->client      = new Client(['handler' => $this->mockHandler]);
+        $this->client = new Client(['handler' => $this->mockHandler]);
     }
 
     /**
@@ -53,18 +58,18 @@ class ResultsTest extends TestCase
                     ],
                     [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
         $response = new Response(200, [], $body);
         $this->mockHandler->append($response);
 
         $response = $this->client->post('', []);
-        $results  = new Results($response);
+        $results = new Results($response);
 
-        $this->assertEquals($response, $results->getResponseObject());
-        $this->assertEquals($body, $results->getResponseBody());
+        $this->assertSame($response, $results->getResponseObject());
+        $this->assertSame($body, $results->getResponseBody());
 
         $object = new stdClass();
         $object->data = new stdClass();
@@ -73,11 +78,11 @@ class ResultsTest extends TestCase
         $object->data->someField[] = new stdClass();
         $object->data->someField[0]->data = 'value';
         $object->data->someField[1]->data = 'value';
-        $this->assertEquals(
+        $this->assertSame(
             $object,
             $results->getResults()
         );
-        $this->assertEquals(
+        $this->assertSame(
             $object->data,
             $results->getData()
         );
@@ -100,19 +105,19 @@ class ResultsTest extends TestCase
                     ],
                     [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
         $response = $this->client->post('', []);
-        $results  = new Results($response, true);
+        $results = new Results($response, true);
 
-        $this->assertEquals($originalResponse, $results->getResponseObject());
-        $this->assertEquals($body, $results->getResponseBody());
-        $this->assertEquals(
+        $this->assertSame($originalResponse, $results->getResponseObject());
+        $this->assertSame($body, $results->getResponseBody());
+        $this->assertSame(
             [
                 'data' => [
                     'someField' => [
@@ -121,13 +126,13 @@ class ResultsTest extends TestCase
                         ],
                         [
                             'data' => 'value',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             $results->getResults()
         );
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'someField' => [
                         [
@@ -135,8 +140,8 @@ class ResultsTest extends TestCase
                         ],
                         [
                             'data' => 'value',
-                        ]
-                    ]
+                        ],
+                    ],
             ],
             $results->getData()
         );
@@ -155,10 +160,10 @@ class ResultsTest extends TestCase
                         [
                             'line' => 1,
                             'column' => 3,
-                        ]
+                        ],
                     ],
-                ]
-            ]
+                ],
+            ],
         ]);
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
@@ -186,18 +191,18 @@ class ResultsTest extends TestCase
                     ],
                     [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
         $response = $this->client->post('', []);
-        $results  = new Results($response);
+        $results = new Results($response);
         $results->reformatResults(true);
 
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'data' => [
                     'someField' => [
@@ -206,13 +211,13 @@ class ResultsTest extends TestCase
                         ],
                         [
                             'data' => 'value',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             $results->getResults()
         );
-        $this->assertEquals(
+        $this->assertSame(
             [
                 'someField' => [
                     [
@@ -220,8 +225,8 @@ class ResultsTest extends TestCase
                     ],
                     [
                         'data' => 'value',
-                    ]
-                ]
+                    ],
+                ],
             ],
             $results->getData()
         );
@@ -245,15 +250,15 @@ class ResultsTest extends TestCase
                     ],
                     [
                         'data' => 'value',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
         $response = $this->client->post('', []);
-        $results  = new Results($response, true);
+        $results = new Results($response, true);
         $results->reformatResults(false);
 
         $object = new stdClass();
@@ -263,11 +268,11 @@ class ResultsTest extends TestCase
         $object->data->someField[] = new stdClass();
         $object->data->someField[0]->data = 'value';
         $object->data->someField[1]->data = 'value';
-        $this->assertEquals(
+        $this->assertSame(
             $object,
             $results->getResults()
         );
-        $this->assertEquals(
+        $this->assertSame(
             $object->data,
             $results->getData()
         );

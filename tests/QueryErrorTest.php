@@ -1,14 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Exception\QueryError;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class QueryErrorTest
+ * Class QueryErrorTest.
  *
- * @package GraphQL\Tests
+ * @coversNothing
  */
 class QueryErrorTest extends TestCase
 {
@@ -27,23 +35,23 @@ class QueryErrorTest extends TestCase
                         [
                             'line' => 1,
                             'column' => 3,
-                        ]
+                        ],
                     ],
-                ]
-            ]
+                ],
+            ],
         ];
 
         $queryError = new QueryError($errorData);
-        $this->assertEquals($exceptionMessage, $queryError->getMessage());
-        $this->assertEquals(
+        $this->assertSame($exceptionMessage, $queryError->getMessage());
+        $this->assertSame(
             [
                 'message' => 'some syntax error',
                 'location' => [
                     [
                         'line' => 1,
                         'column' => 3,
-                    ]
-                ]
+                    ],
+                ],
             ],
             $queryError->getErrorDetails()
         );

@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL;
 
 use GraphQL\Exception\ArgumentException;
@@ -7,16 +15,14 @@ use GraphQL\Exception\InvalidVariableException;
 use GraphQL\Util\StringLiteralFormatter;
 
 /**
- * Class Query
- *
- * @package GraphQL
+ * Class Query.
  */
 class Query extends NestableObject
 {
     use FieldTrait;
 
     /**
-     * Stores the GraphQL query format
+     * Stores the GraphQL query format.
      *
      * First string is object name
      * Second string is arguments
@@ -24,52 +30,52 @@ class Query extends NestableObject
      *
      * @var string
      */
-    protected const QUERY_FORMAT = "%s%s%s";
+    protected const QUERY_FORMAT = '%s%s%s';
 
     /**
-     * Stores the name of the type of the operation to be executed on the GraphQL server
+     * Stores the name of the type of the operation to be executed on the GraphQL server.
      *
      * @var string
      */
     protected const OPERATION_TYPE = 'query';
 
     /**
-     * Stores the name of the operation to be run on the server
+     * Stores the name of the operation to be run on the server.
      *
      * @var string
      */
     protected $operationName;
 
     /**
-     * Stores the object being queried for
+     * Stores the object being queried for.
      *
      * @var string
      */
     protected $fieldName;
 
     /**
-     * Stores the object alias
+     * Stores the object alias.
      *
      * @var string
      */
     protected $alias;
 
     /**
-     * Stores the list of variables to be used in the query
+     * Stores the list of variables to be used in the query.
      *
      * @var array|Variable[]
      */
     protected $variables;
 
     /**
-     * Stores the list of arguments used when querying data
+     * Stores the list of arguments used when querying data.
      *
      * @var array
      */
     protected $arguments;
 
     /**
-     * Private member that's not accessible from outside the class, used internally to deduce if query is nested or not
+     * Private member that's not accessible from outside the class, used internally to deduce if query is nested or not.
      *
      * @var bool
      */
@@ -79,22 +85,40 @@ class Query extends NestableObject
      * GQLQueryBuilder constructor.
      *
      * @param string $fieldName if no value is provided for the field name an empty query object is assumed
-     * @param string $alias the alias to use for the query if required
+     * @param string $alias     the alias to use for the query if required
      */
     public function __construct(string $fieldName = '', string $alias = '')
     {
-        $this->fieldName     = $fieldName;
-        $this->alias         = $alias;
+        $this->fieldName = $fieldName;
+        $this->alias = $alias;
         $this->operationName = '';
-        $this->variables     = [];
-        $this->arguments     = [];
-        $this->selectionSet  = [];
-        $this->isNested      = false;
+        $this->variables = [];
+        $this->arguments = [];
+        $this->selectionSet = [];
+        $this->isNested = false;
     }
 
     /**
-     * @param string $alias
-     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $queryFormat = static::QUERY_FORMAT;
+        $selectionSetString = $this->constructSelectionSet();
+
+        if (!$this->isNested) {
+            $queryFormat = $this->generateSignature();
+            if ('' === $this->fieldName) {
+                return $queryFormat.$selectionSetString;
+            }
+            $queryFormat = $this->generateSignature().' {'.PHP_EOL.static::QUERY_FORMAT.PHP_EOL.'}';
+        }
+        $argumentsString = $this->constructArguments();
+
+        return sprintf($queryFormat, $this->generateFieldName(), $argumentsString, $selectionSetString);
+    }
+
+    /**
      * @return Query
      */
     public function setAlias(string $alias)
@@ -105,30 +129,26 @@ class Query extends NestableObject
     }
 
     /**
-     * @param string $operationName
-     *
      * @return Query
      */
     public function setOperationName(string $operationName)
     {
         if (!empty($operationName)) {
-            $this->operationName = " $operationName";
+            $this->operationName = " ${operationName}";
         }
 
         return $this;
     }
 
     /**
-     * @param array $variables
-     *
      * @return Query
      */
     public function setVariables(array $variables)
     {
-        $nonVarElements = array_filter($variables, function($e) {
+        $nonVarElements = array_filter($variables, function ($e) {
             return !$e instanceof Variable;
         });
-        if (count($nonVarElements) > 0) {
+        if (\count($nonVarElements) > 0) {
             throw new InvalidVariableException('At least one of the elements of the variables array provided is not an instance of GraphQL\\Variable');
         }
 
@@ -139,23 +159,18 @@ class Query extends NestableObject
 
     /**
      * Throwing exception when setting the arguments if they are incorrect because we can't throw an exception during
-     * the execution of __ToString(), it's a fatal error in PHP
+     * the execution of __ToString(), it's a fatal error in PHP.
      *
-     * @param array $arguments
-     *
-     * @return Query
      * @throws ArgumentException
      */
-    public function setArguments(array $arguments): Query
+    public function setArguments(array $arguments): self
     {
         // If one of the arguments does not have a name provided, throw an exception
-        $nonStringArgs = array_filter(array_keys($arguments), function($element) {
-            return !is_string($element);
+        $nonStringArgs = array_filter(array_keys($arguments), function ($element) {
+            return !\is_string($element);
         });
         if (!empty($nonStringArgs)) {
-            throw new ArgumentException(
-                'One or more of the arguments provided for creating the query does not have a key, which represents argument name'
-            );
+            throw new ArgumentException('One or more of the arguments provided for creating the query does not have a key, which represents argument name');
         }
 
         $this->arguments = $arguments;
@@ -163,9 +178,6 @@ class Query extends NestableObject
         return $this;
     }
 
-    /**
-     * @return string
-     */
     protected function constructVariables(): string
     {
         if (empty($this->variables)) {
@@ -173,9 +185,8 @@ class Query extends NestableObject
         }
 
         $varsString = '(';
-        $first      = true;
+        $first = true;
         foreach ($this->variables as $variable) {
-
             // Append space at the beginning if it's not the first item on the list
             if ($first) {
                 $first = false;
@@ -191,9 +202,6 @@ class Query extends NestableObject
         return $varsString;
     }
 
-    /**
-     * @return string
-     */
     protected function constructArguments(): string
     {
         // Return empty string if list is empty
@@ -203,9 +211,8 @@ class Query extends NestableObject
 
         // Construct arguments string if list not empty
         $constraintsString = '(';
-        $first             = true;
+        $first = true;
         foreach ($this->arguments as $name => $value) {
-
             // Append space at the beginning if it's not the first item on the list
             if ($first) {
                 $first = false;
@@ -214,54 +221,26 @@ class Query extends NestableObject
             }
 
             // Convert argument values to graphql string literal equivalent
-            if (is_scalar($value) || $value === null) {
+            if (is_scalar($value) || null === $value) {
                 // Convert scalar value to its literal in graphql
                 $value = StringLiteralFormatter::formatValueForRHS($value);
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 // Convert PHP array to its array representation in graphql arguments
                 $value = StringLiteralFormatter::formatArrayForGQLQuery($value);
             }
             // TODO: Handle cases where a non-string-convertible object is added to the arguments
-            $constraintsString .= $name . ': ' . $value;
+            $constraintsString .= $name.': '.$value;
         }
         $constraintsString .= ')';
 
         return $constraintsString;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        $queryFormat = static::QUERY_FORMAT;
-        $selectionSetString = $this->constructSelectionSet();
-
-        if (!$this->isNested) {
-            $queryFormat = $this->generateSignature();
-            if ($this->fieldName === '') {
-
-                return $queryFormat . $selectionSetString;
-            } else {
-                $queryFormat = $this->generateSignature() . " {" . PHP_EOL . static::QUERY_FORMAT . PHP_EOL . "}";
-            }
-        }
-        $argumentsString = $this->constructArguments();
-
-        return sprintf($queryFormat, $this->generateFieldName(), $argumentsString, $selectionSetString);
-    }
-
-    /**
-     * @return string
-     */
     protected function generateFieldName(): string
     {
         return empty($this->alias) ? $this->fieldName : sprintf('%s: %s', $this->alias, $this->fieldName);
     }
 
-    /**
-     * @return string
-     */
     protected function generateSignature(): string
     {
         $signatureFormat = '%s%s%s';
@@ -269,9 +248,6 @@ class Query extends NestableObject
         return sprintf($signatureFormat, static::OPERATION_TYPE, $this->operationName, $this->constructVariables());
     }
 
-    /**
-     *
-     */
     protected function setAsNested()
     {
         $this->isNested = true;

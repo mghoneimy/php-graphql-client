@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
@@ -12,9 +20,7 @@ use Psr\Http\Client\ClientInterface;
 use TypeError;
 
 /**
- * Class Client
- *
- * @package GraphQL
+ * Class Client.
  */
 class Client
 {
@@ -41,11 +47,7 @@ class Client
     /**
      * Client constructor.
      *
-     * @param string $endpointUrl
-     * @param array $authorizationHeaders
-     * @param array $httpOptions
      * @param ClientInterface $httpClient
-     * @param string $requestMethod
      */
     public function __construct(
         string $endpointUrl,
@@ -60,25 +62,22 @@ class Client
             ['Content-Type' => 'application/json']
         );
 
-        /**
+        /*
          * All headers will be set on the request objects explicitly,
          * Guzzle doesn't have to care about them at this point, so to avoid any conflicts
          * we are removing the headers from the options
          */
         unset($httpOptions['headers']);
 
-        $this->endpointUrl          = $endpointUrl;
-        $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
-        $this->httpHeaders          = $headers;
-        $this->requestMethod        = $requestMethod;
+        $this->endpointUrl = $endpointUrl;
+        $this->httpClient = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
+        $this->httpHeaders = $headers;
+        $this->requestMethod = $requestMethod;
     }
 
     /**
      * @param Query|QueryBuilderInterface $query
-     * @param bool                        $resultsAsArray
-     * @param array                       $variables
      *
-     * @return Results
      * @throws QueryError
      */
     public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
@@ -95,24 +94,23 @@ class Client
     }
 
     /**
-     * @param string $queryString
-     * @param bool   $resultsAsArray
-     * @param array  $variables
+     * @param bool $resultsAsArray
      * @param
      *
-     * @return Results
      * @throws QueryError
      */
     public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
     {
         $request = new Request($this->requestMethod, $this->endpointUrl);
 
-        foreach($this->httpHeaders as $header => $value) {
+        foreach ($this->httpHeaders as $header => $value) {
             $request = $request->withHeader($header, $value);
         }
 
         // Convert empty variables array to empty json object
-        if (empty($variables)) $variables = (object) null;
+        if (empty($variables)) {
+            $variables = (object) null;
+        }
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
         $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
@@ -120,13 +118,12 @@ class Client
         // Send api request and get response
         try {
             $response = $this->httpClient->sendRequest($request);
-        }
-        catch (ClientException $exception) {
+        } catch (ClientException $exception) {
             $response = $exception->getResponse();
 
             // If exception thrown by client is "400 Bad Request ", then it can be treated as a successful API request
             // with a syntax error in the query, otherwise the exceptions will be propagated
-            if ($response->getStatusCode() !== 400) {
+            if (400 !== $response->getStatusCode()) {
                 throw $exception;
             }
         }

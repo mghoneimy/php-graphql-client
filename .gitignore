@@ -4,3 +4,4 @@ local_*/
 .phpunit.result.cache
 /build/
 composer.lock
+.*.cache

@@ -1,0 +1,11 @@
+<?php 
+
+use Gpupo\CommonDevExtra\CsConfigurator;
+
+$packageInfo = [
+    'project' => 'gmostafa/php-graphql-client',
+    'author' => 'Mostafa Ghoneimy<emostafagh@gmail.com>',
+    'url' => 'https://packagist.org/packages/gmostafa/php-graphql-client',
+];
+
+return (new CsConfigurator(__DIR__))->getConfig($packageInfo);

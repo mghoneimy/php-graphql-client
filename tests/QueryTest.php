@@ -1,5 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * This file is part of gmostafa/php-graphql-client created by Mostafa Ghoneimy<emostafagh@gmail.com>
+ * For the information of copyright and license you should read the file LICENSE which is
+ * distributed with this source code. For more information, see <https://packagist.org/packages/gmostafa/php-graphql-client>
+ */
+
 namespace GraphQL\Tests;
 
 use GraphQL\Exception\ArgumentException;
@@ -12,7 +20,9 @@ use GraphQL\Variable;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class QueryTest
+ * Class QueryTest.
+ *
+ * @coversNothing
  */
 class QueryTest extends TestCase
 {
@@ -35,13 +45,11 @@ class QueryTest extends TestCase
      *
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testEmptyArguments(Query $query)
     {
-        $this->assertStringNotContainsString("()", (string) $query, 'Query has empty arguments list');
+        $this->assertStringNotContainsString('()', (string) $query, 'Query has empty arguments list');
 
         return $query;
     }
@@ -53,8 +61,8 @@ class QueryTest extends TestCase
     {
         $query = new Query();
 
-        $this->assertEquals(
-            "query",
+        $this->assertSame(
+            'query',
             (string) $query
         );
 
@@ -63,19 +71,19 @@ class QueryTest extends TestCase
                 (new Query('Object'))
                     ->setSelectionSet(['one']),
                 (new Query('Another'))
-                    ->setSelectionSet(['two'])
+                    ->setSelectionSet(['two']),
             ]
         );
 
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object {
 one
 }
 Another {
 two
 }
-}",
+}',
             (string) $query
         );
     }
@@ -90,15 +98,15 @@ two
     {
         $query = (new Query('Object', 'ObjectAlias'))
             ->setSelectionSet([
-                'one'
+                'one',
             ]);
 
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 ObjectAlias: Object {
 one
 }
-}",
+}',
             (string) $query
         );
     }
@@ -115,15 +123,15 @@ one
         $query = (new Query('Object'))
             ->setAlias('ObjectAlias')
             ->setSelectionSet([
-                'one'
+                'one',
             ]);
 
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 ObjectAlias: Object {
 one
 }
-}",
+}',
             (string) $query
         );
     }
@@ -139,8 +147,8 @@ one
     {
         $query = (new Query('Object'))
             ->setOperationName('retrieveObject');
-        $this->assertEquals(
-'query retrieveObject {
+        $this->assertSame(
+            'query retrieveObject {
 Object
 }',
             (string) $query
@@ -160,7 +168,7 @@ Object
         $query = (new Query())
             ->setOperationName('retrieveObject')
             ->setSelectionSet([new Query('Object')]);
-        $this->assertEquals(
+        $this->assertSame(
             'query retrieveObject {
 Object
 }',
@@ -180,7 +188,7 @@ Object
         $query = (new Query('Object'))
             ->setOperationName('retrieveObject')
             ->setSelectionSet([(new Query('Nested'))->setOperationName('opName')]);
-        $this->assertEquals(
+        $this->assertSame(
             'query retrieveObject {
 Object {
 Nested
@@ -212,7 +220,7 @@ Nested
     {
         $query = (new Query('Object'))
             ->setVariables([new Variable('var', 'String')]);
-        $this->assertEquals(
+        $this->assertSame(
             'query($var: String) {
 Object
 }',
@@ -232,7 +240,7 @@ Object
     {
         $query = (new Query('Object'))
             ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)]);
-        $this->assertEquals(
+        $this->assertSame(
             'query($var: String $intVar: Int=4) {
 Object
 }',
@@ -251,7 +259,7 @@ Object
             ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)])
             ->setSelectionSet([(new Query('Nested'))])
             ->setVariables([new Variable('var', 'String'), new Variable('intVar', 'Int', false, 4)]);
-        $this->assertEquals(
+        $this->assertSame(
             'query($var: String $intVar: Int=4) {
 Object {
 Nested
@@ -273,7 +281,7 @@ Nested
         $query = (new Query('Object'))
             ->setOperationName('retrieveObject')
             ->setVariables([new Variable('var', 'String')]);
-        $this->assertEquals(
+        $this->assertSame(
             'query retrieveObject($var: String) {
 Object
 }',
@@ -286,16 +294,14 @@ Object
      *
      * @covers \GraphQL\Query::__toString
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testEmptyQuery(Query $query)
     {
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object
-}",
+}',
             (string) $query,
             'Incorrect empty query string'
         );
@@ -308,8 +314,6 @@ Object
      *
      * @covers \GraphQL\Exception\ArgumentException
      * @covers \GraphQL\Query::setArguments
-     *
-     * @param Query $query
      *
      * @return Query
      */
@@ -327,17 +331,15 @@ Object
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testStringArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => 'value']);
-        $this->assertEquals(
-            "query {
-Object(arg1: \"value\")
-}",
+        $this->assertSame(
+            'query {
+Object(arg1: "value")
+}',
             (string) $query,
             'Query has improperly formatted parameter list'
         );
@@ -351,17 +353,15 @@ Object(arg1: \"value\")
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testIntegerArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => 23]);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object(arg1: 23)
-}",
+}',
             (string) $query
         );
 
@@ -370,21 +370,19 @@ Object(arg1: 23)
 
     /**
      * @depends clone testEmptyArguments
-
+     *
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
-     *
-     * @param Query $query
      *
      * @return Query
      */
     public function testBooleanArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => true]);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object(arg1: true)
-}",
+}',
             (string) $query
         );
 
@@ -397,18 +395,16 @@ Object(arg1: true)
      * @covers  \GraphQL\Query::setArguments
      * @covers  \GraphQL\Query::constructArguments
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testNullArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => null]);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object(arg1: null)
-}"
-            , (string) $query
+}',
+            (string) $query
         );
 
         return $query;
@@ -420,17 +416,15 @@ Object(arg1: null)
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param  Query $query
-     *
      * @return Query
      */
     public function testArrayIntegerArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => [1, 2, 3]]);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object(arg1: [1, 2, 3])
-}",
+}',
             (string) $query
         );
 
@@ -444,18 +438,16 @@ Object(arg1: [1, 2, 3])
      * @covers  \GraphQL\Query::constructArguments
      * @covers  \GraphQL\RawObject::__toString
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testJsonObjectArgumentValue(Query $query)
     {
         $query->setArguments(['obj' => new RawObject('{json_string_array: ["json value"]}')]);
-        $this->assertEquals(
-            "query {
-Object(obj: {json_string_array: [\"json value\"]})
-}"
-            , (string) $query
+        $this->assertSame(
+            'query {
+Object(obj: {json_string_array: ["json value"]})
+}',
+            (string) $query
         );
 
         return $query;
@@ -467,17 +459,15 @@ Object(obj: {json_string_array: [\"json value\"]})
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param  Query $query
-     *
      * @return Query
      */
     public function testArrayStringArgumentValue(Query $query)
     {
         $query->setArguments(['arg1' => ['one', 'two', 'three']]);
-        $this->assertEquals(
-            "query {
-Object(arg1: [\"one\", \"two\", \"three\"])
-}",
+        $this->assertSame(
+            'query {
+Object(arg1: ["one", "two", "three"])
+}',
             (string) $query
         );
 
@@ -492,17 +482,15 @@ Object(arg1: [\"one\", \"two\", \"three\"])
      * @covers \GraphQL\Query::setArguments
      * @covers \GraphQL\Query::constructArguments
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testTwoOrMoreArguments(Query $query)
     {
         $query->setArguments(['arg1' => 'val1', 'arg2' => 2, 'arg3' => true]);
-        $this->assertEquals(
-            "query {
-Object(arg1: \"val1\" arg2: 2 arg3: true)
-}",
+        $this->assertSame(
+            'query {
+Object(arg1: "val1" arg2: 2 arg3: true)
+}',
             (string) $query,
             'Query has improperly formatted parameter list'
         );
@@ -527,7 +515,7 @@ Object(arg1: \"val1\" arg2: 2 arg3: true)
         $queryNotWrapped = new Query('Object');
         $queryNotWrapped->setArguments(['arg1' => 'val']);
 
-        $this->assertEquals((string) $queryWrapped, (string) $queryWrapped);
+        $this->assertSame((string) $queryWrapped, (string) $queryWrapped);
     }
 
     /**
@@ -536,19 +524,17 @@ Object(arg1: \"val1\" arg2: 2 arg3: true)
      * @covers \GraphQL\Query::setSelectionSet
      * @covers \GraphQL\FieldTrait::constructSelectionSet
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testSingleSelectionField(Query $query)
     {
         $query->setSelectionSet(['field1']);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object {
 field1
 }
-}",
+}',
             (string) $query,
             'Query has improperly formatted selection set'
         );
@@ -562,20 +548,18 @@ field1
      * @covers \GraphQL\Query::setSelectionSet
      * @covers \GraphQL\FieldTrait::constructSelectionSet
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testTwoOrMoreSelectionFields(Query $query)
     {
         $query->setSelectionSet(['field1', 'field2']);
-        $this->assertEquals(
-            "query {
+        $this->assertSame(
+            'query {
 Object {
 field1
 field2
 }
-}",
+}',
             (string) $query,
             'Query has improperly formatted selection set'
         );
@@ -588,8 +572,6 @@ field2
      *
      * @covers \GraphQL\Exception\InvalidSelectionException
      * @covers \GraphQL\Query::setSelectionSet
-     *
-     * @param Query $query
      *
      * @return Query
      */
@@ -606,21 +588,19 @@ field2
      *
      * @coversNothing
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testOneLevelQuery(Query $query)
     {
         $query->setSelectionSet(['field1', 'field2']);
         $query->setArguments(['arg1' => 'val1', 'arg2' => 'val2']);
-        $this->assertEquals(
-            "query {
-Object(arg1: \"val1\" arg2: \"val2\") {
+        $this->assertSame(
+            'query {
+Object(arg1: "val1" arg2: "val2") {
 field1
 field2
 }
-}",
+}',
             (string) $query,
             'One level query not formatted correctly'
         );
@@ -634,8 +614,6 @@ field2
      * @covers \GraphQL\FieldTrait::constructSelectionSet
      * @covers \GraphQL\Query::setAsNested
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testTwoLevelQueryDoesNotContainWordQuery(Query $query)
@@ -645,7 +623,7 @@ field2
                 'field1',
                 'field2',
                 (new Query('Object2'))
-                    ->setSelectionSet(['field3'])
+                    ->setSelectionSet(['field3']),
             ]
         );
         $this->assertStringNotContainsString(
@@ -662,8 +640,6 @@ field2
      *
      * @covers \GraphQL\Query::setAsNested
      *
-     * @param Query $query
-     *
      * @return Query
      */
     public function testTwoLevelQuery(Query $query)
@@ -673,19 +649,19 @@ field2
                 'field1',
                 'field2',
                 (new Query('Object2'))
-                    ->setSelectionSet(['field3'])
+                    ->setSelectionSet(['field3']),
             ]
         );
-        $this->assertEquals(
-            "query {
-Object(arg1: \"val1\" arg2: \"val2\") {
+        $this->assertSame(
+            'query {
+Object(arg1: "val1" arg2: "val2") {
 field1
 field2
 Object2 {
 field3
 }
 }
-}",
+}',
             (string) $query,
             'Two level query not formatted correctly'
         );
@@ -695,8 +671,6 @@ field3
 
     /**
      * @depends clone testTwoLevelQueryDoesNotContainWordQuery
-     *
-     * @param Query $query
      *
      * @return Query
      */
@@ -714,7 +688,7 @@ field3
                     ),
             ]
         );
-        $this->assertEquals(
+        $this->assertSame(
             'query {
 Object(arg1: "val1" arg2: "val2") {
 field1
