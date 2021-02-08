@@ -19,8 +19,7 @@ class StringLiteralFormatter
     public static function formatValueForRHS($value): string
     {
         if (is_string($value)) {
-            // Do not treat value as a string if it starts with '$', which indicates that it's a variable name
-            if (strpos($value, '$') !== 0) {
+            if (!static::isVariable($value)) {
                 $value = str_replace('"', '\"', $value);
                 if (strpos($value, "\n") !== false) {
                     $value = '"""' . $value . '"""';
@@ -41,6 +40,17 @@ class StringLiteralFormatter
         }
 
         return $value;
+    }
+
+    /**
+     * Treat string value as variable if it matches variable regex
+     *
+     * @param string $value
+     *
+     * @return bool
+     */
+    private static function isVariable(string $value): bool {
+        return preg_match('/^\$[_A-Za-z][_0-9A-Za-z]*$/', $value);
     }
 
     /**

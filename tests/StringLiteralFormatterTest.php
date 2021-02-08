@@ -40,6 +40,12 @@ class StringLiteralFormatterTest extends TestCase
         $formattedString = StringLiteralFormatter::formatValueForRHS("with \n newlines");
         $this->assertEquals("\"\"\"with \n newlines\"\"\"", $formattedString);
 
+	$formattedString = StringLiteralFormatter::formatValueForRHS('$var');
+	$this->assertEquals('$var', $formattedString);
+
+	$formattedString = StringLiteralFormatter::formatValueForRHS('$400');
+	$this->assertEquals('"$400"', $formattedString);
+
         // Integer tests
         $integerString = StringLiteralFormatter::formatValueForRHS(25);
         $this->assertEquals('25', $integerString);
