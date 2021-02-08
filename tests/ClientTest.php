@@ -4,6 +4,7 @@ namespace GraphQL\Tests;
 
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
+use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
 use GuzzleHttp\Exception\ClientException;
@@ -47,6 +48,8 @@ class ClientTest extends TestCase
     /**
      * @covers \GraphQL\Client::__construct
      * @covers \GraphQL\Client::runRawQuery
+     * @covers \GraphQL\Util\GuzzleAdapter::__construct
+     * @covers \GraphQL\Util\GuzzleAdapter::sendRequest
      */
     public function testConstructClient()
     {
@@ -74,9 +77,6 @@ class ClientTest extends TestCase
         $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
         $client->runRawQuery('query_string');
 
-        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]], null, 'GET');
-        $client->runRawQuery('query_string');
-
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
         $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
@@ -100,10 +100,16 @@ class ClientTest extends TestCase
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
         $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
+    }
 
-        /** @var Request $fifthRequest */
-        $fifthRequest = $container[4]['request'];
-        $this->assertSame('GET', $fifthRequest->getMethod());
+    /**
+     * @covers \GraphQL\Client::__construct
+     * @covers \GraphQL\Exception\MethodNotSupportedException
+     */
+    public function testConstructClientWithGetRequestMethod()
+    {
+        $this->expectException(MethodNotSupportedException::class);
+        $client = new Client('', [], [], null, 'GET');
     }
 
     /**

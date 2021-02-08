@@ -3,6 +3,7 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
+use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
 use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
@@ -70,6 +71,9 @@ class Client
         $this->endpointUrl          = $endpointUrl;
         $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
         $this->httpHeaders          = $headers;
+        if ($requestMethod !== 'POST') {
+            throw new MethodNotSupportedException($requestMethod);
+        }
         $this->requestMethod        = $requestMethod;
     }
 

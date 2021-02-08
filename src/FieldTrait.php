@@ -42,7 +42,7 @@ trait FieldTrait
     {
         if (empty($this->selectionSet)) {
             return '';
-	}
+	    }
 
         $attributesString = " {" . PHP_EOL;
         $first            = true;
