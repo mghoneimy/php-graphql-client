@@ -6,6 +6,7 @@ use GraphQL\Exception\QueryError;
 use GraphQL\Results;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use stdClass;
@@ -60,8 +61,9 @@ class ResultsTest extends TestCase
         $response = new Response(200, [], $body);
         $this->mockHandler->append($response);
 
+        $request = new Request('POST', '');
         $response = $this->client->post('', []);
-        $results  = new Results($response);
+        $results  = new Results($request, $response);
 
         $this->assertEquals($response, $results->getResponseObject());
         $this->assertEquals($body, $results->getResponseBody());
@@ -107,8 +109,9 @@ class ResultsTest extends TestCase
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
+        $request = new Request('POST', '');
         $response = $this->client->post('', []);
-        $results  = new Results($response, true);
+        $results  = new Results($request, $response, true);
 
         $this->assertEquals($originalResponse, $results->getResponseObject());
         $this->assertEquals($body, $results->getResponseBody());
@@ -163,9 +166,10 @@ class ResultsTest extends TestCase
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
+        $request = new Request('POST', '');
         $response = $this->client->post('', []);
         $this->expectException(QueryError::class);
-        new Results($response);
+        new Results($request, $response);
     }
 
     /**
@@ -193,8 +197,9 @@ class ResultsTest extends TestCase
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
+        $request = new Request('POST', '');
         $response = $this->client->post('', []);
-        $results  = new Results($response);
+        $results  = new Results($request, $response);
         $results->reformatResults(true);
 
         $this->assertEquals(
@@ -252,8 +257,9 @@ class ResultsTest extends TestCase
         $originalResponse = new Response(200, [], $body);
         $this->mockHandler->append($originalResponse);
 
+        $request = new Request('POST', '');
         $response = $this->client->post('', []);
-        $results  = new Results($response, true);
+        $results  = new Results($request, $response, true);
         $results->reformatResults(false);
 
         $object = new stdClass();

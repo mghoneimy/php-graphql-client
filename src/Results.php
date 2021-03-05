@@ -3,6 +3,7 @@
 namespace GraphQL;
 
 use GraphQL\Exception\QueryError;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -16,6 +17,11 @@ class Results
      * @var string
      */
     protected $responseBody;
+
+    /**
+     * @var RequestInterface
+     */
+    protected $requestObject;
 
     /**
      * @var ResponseInterface
@@ -32,13 +38,15 @@ class Results
      *
      * Receives json response from GraphQL api response and parses it as associative array or nested object accordingly
      *
+     * @param RequestInterface  $request
      * @param ResponseInterface $response
      * @param bool              $asArray
      *
      * @throws QueryError
      */
-    public function __construct(ResponseInterface $response, $asArray = false)
+    public function __construct(RequestInterface $request, ResponseInterface $response, $asArray = false)
     {
+        $this->requestObject  = $request;
         $this->responseObject = $response;
         $this->responseBody   = $this->responseObject->getBody()->getContents();
         $this->results        = json_decode($this->responseBody, $asArray);
@@ -51,7 +59,7 @@ class Results
 
             // Reformat results to an array and use it to initialize exception object
             $this->reformatResults(true);
-            throw new QueryError($this->results);
+            throw new QueryError($this->results, $request, $response);
         }
     }
 
@@ -101,5 +109,21 @@ class Results
     public function getResponseObject()
     {
         return $this->responseObject;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestBody()
+    {
+        return $this->requestObject->getBody()->__toString();
+    }
+
+    /**
+     * @return RequestInterface
+     */
+    public function getRequestObject()
+    {
+        return $this->requestObject;
     }
 }
