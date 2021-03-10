@@ -81,11 +81,13 @@ class Client
      * @param Query|QueryBuilderInterface $query
      * @param bool                        $resultsAsArray
      * @param array                       $variables
+     * @param array                       $variables
+     * @param array                       $files
      *
      * @return Results
      * @throws QueryError
      */
-    public function runQuery($query, bool $resultsAsArray = false, array $variables = []): Results
+    public function runQuery($query, bool $resultsAsArray = false, array $variables = [], array $files = []): Results
     {
         if ($query instanceof QueryBuilderInterface) {
             $query = $query->getQuery();
@@ -95,31 +97,65 @@ class Client
             throw new TypeError('Client::runQuery accepts the first argument of type Query or QueryBuilderInterface');
         }
 
-        return $this->runRawQuery((string) $query, $resultsAsArray, $variables);
+        return $this->runRawQuery((string) $query, $resultsAsArray, $variables, $files);
     }
 
     /**
      * @param string $queryString
      * @param bool   $resultsAsArray
      * @param array  $variables
+     * @param array  $files
      * @param
      *
      * @return Results
      * @throws QueryError
      */
-    public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = []): Results
+    public function runRawQuery(string $queryString, $resultsAsArray = false, array $variables = [], array $files = []): Results
     {
         $request = new Request($this->requestMethod, $this->endpointUrl);
-
-        foreach($this->httpHeaders as $header => $value) {
-            $request = $request->withHeader($header, $value);
-        }
 
         // Convert empty variables array to empty json object
         if (empty($variables)) $variables = (object) null;
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
-        $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
+
+        if (!$files) {
+            $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
+        } else {
+            unset($this->httpHeaders['Content-Type']);
+
+            $postDataFields = [];
+            $map = new \StdClass();
+
+            foreach ($files as $key => $content) {
+                $map->{$key} = [
+                    $content['path']
+                ];
+
+                $postDataFields[$key] = [
+                    'name' => $key,
+                    'contents' => fopen($content['file'], 'r'),
+                ];
+            }
+
+            array_unshift($postDataFields, [
+                'name' => 'map',
+                'contents' => json_encode($map),
+            ]);
+
+            array_unshift($postDataFields, [
+                'name' => 'operations',
+                'contents' => json_encode($bodyArray),
+            ]);
+
+            $request = $request->withBody(new Psr7\MultipartStream(
+                    $postDataFields
+            ));
+        }
+
+        foreach($this->httpHeaders as $header => $value) {
+            $request = $request->withHeader($header, $value);
+        }
 
         // Send api request and get response
         try {
