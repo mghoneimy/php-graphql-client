@@ -72,7 +72,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
 
         // Convert nested query builders to query objects
         foreach ($this->selectionSet as $key => $field) {
-            if ($field instanceof AbstractQueryBuilder) {
+            if ($field instanceof QueryBuilderInterface) {
                 $this->selectionSet[$key] = $field->getQuery();
             }
         }
@@ -85,7 +85,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * @param string|QueryBuilder|Query $selectedField
+     * @param string|QueryBuilderInterface|InlineFragment|Query $selectedField
      *
      * @return $this
      */
@@ -93,7 +93,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     {
         if (
             is_string($selectedField)
-            || $selectedField instanceof AbstractQueryBuilder
+            || $selectedField instanceof QueryBuilderInterface
             || $selectedField instanceof Query
             || $selectedField instanceof InlineFragment
         ) {
