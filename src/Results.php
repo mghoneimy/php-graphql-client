@@ -15,6 +15,31 @@ class Results
     /**
      * @var string
      */
+    private const CLIENT_ERROR = 'ClientError';
+
+    /**
+     * @var string
+     */
+    private const SERVER_ERROR = 'ServerError';
+
+    /**
+     * @var string
+     */
+    private const QUERY_ERROR = 'QueryError';
+
+    /**
+     * @var string
+     */
+    private const INVALID_RESPONSE_ERROR = 'InvalidResponseError';
+
+    /**
+     * @var string
+     */
+    private const GRAPHQL_ERRORS_KEY = 'errors';
+
+    /**
+     * @var string
+     */
     protected $responseBody;
 
     /**
@@ -28,6 +53,26 @@ class Results
     protected $results;
 
     /**
+     * @var bool
+     */
+    protected $asArray;
+
+    /**
+     * @var int
+     */
+    protected $responseStatusCode;
+
+    /**
+     * @var string|null
+     */
+    protected $errorType;
+
+    /**
+     * @var array
+     */
+    protected $errors;
+
+    /**
      * Result constructor.
      *
      * Receives json response from GraphQL api response and parses it as associative array or nested object accordingly
@@ -39,20 +84,13 @@ class Results
      */
     public function __construct(ResponseInterface $response, $asArray = false)
     {
-        $this->responseObject = $response;
-        $this->responseBody   = $this->responseObject->getBody()->getContents();
-        $this->results        = json_decode($this->responseBody, $asArray);
-
-        // Check if any errors exist, and throw exception if they do
-        if ($asArray) $containsErrors = array_key_exists('errors', $this->results);
-        else $containsErrors = isset($this->results->errors);
-
-        if ($containsErrors) {
-
-            // Reformat results to an array and use it to initialize exception object
-            $this->reformatResults(true);
-            throw new QueryError($this->results);
-        }
+        $this->responseObject     = $response;
+        $this->responseBody       = $this->responseObject->getBody()->getContents();
+        $this->asArray            = $asArray;
+        $this->results            = json_decode($this->responseBody, $this->asArray);
+        $this->responseStatusCode = $this->responseObject->getStatusCode();
+        $this->errorType          = $this->extractErrorType();
+        $this->errors             = $this->extractErrors();
     }
 
     /**
@@ -60,7 +98,7 @@ class Results
      */
     public function reformatResults(bool $asArray): void
     {
-        $this->results = json_decode($this->responseBody, (bool) $asArray);
+        $this->results = json_decode($this->responseBody, $asArray);
     }
 
     /**
@@ -90,7 +128,7 @@ class Results
     /**
      * @return string
      */
-    public function getResponseBody()
+    public function getResponseBody(): string
     {
         return $this->responseBody;
     }
@@ -98,8 +136,130 @@ class Results
     /**
      * @return ResponseInterface
      */
-    public function getResponseObject()
+    public function getResponseObject(): ResponseInterface
     {
         return $this->responseObject;
+    }
+
+    /**
+     * @return int
+     */
+    public function getResponseStatusCode(): int
+    {
+        return $this->responseStatusCode;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasError(): bool
+    {
+        return !empty($this->errors);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasErrors(): bool
+    {
+        return !empty($this->errors);
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getErrorType(): ?string
+    {
+        return $this->errorType;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return array
+     */
+    public function getError(): array
+    {
+        $errors = $this->getErrors();
+
+        return array_shift($errors);
+    }
+
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
+    private function getErrorsFromResults(string $key)
+    {
+        $value = $this->results;
+
+        foreach (explode(".", $key) as $keyPart) {
+            $value = $this->asArray
+                ? ($value[$keyPart] ?? null)
+                : ($value->$keyPart ?? null);
+
+            if ($value === null) {
+                break;
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return string|null
+     */
+    private function extractErrorType(): ?string
+    {
+        $level = (int) floor($this->responseStatusCode / 100);
+
+        if ($level === 4) {
+            return self::CLIENT_ERROR;
+        }
+
+        if ($level === 5) {
+            return self::SERVER_ERROR;
+        }
+
+        if ($this->getErrorsFromResults(self::GRAPHQL_ERRORS_KEY)) {
+            return self::QUERY_ERROR;
+        }
+
+        if (empty($this->results)) {
+            return self::INVALID_RESPONSE_ERROR;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array
+     */
+    private function extractErrors(): array
+    {
+        switch ($this->errorType) {
+            case self::QUERY_ERROR:
+                return (array) $this->getErrorsFromResults(self::GRAPHQL_ERRORS_KEY);
+            case self::SERVER_ERROR:
+            case self::CLIENT_ERROR:
+            case self::INVALID_RESPONSE_ERROR:
+                if (!is_null($this->results)) {
+                    return [$this->results];
+                }
+
+                $error = ['response' => $this->responseBody];
+                $error = $this->asArray ? $error : (object) $error;
+
+                return [$error];
+        }
+
+        return [];
     }
 }

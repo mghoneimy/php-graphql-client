@@ -6,7 +6,6 @@ use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
-use PHPUnit\Framework\TestCase;
 
 /**
  * This test case is responsible for testing the QueryBuilder and AbstractQueryBuilder classes

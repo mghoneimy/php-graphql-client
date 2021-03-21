@@ -4,7 +4,6 @@ namespace GraphQL\Tests;
 
 use GraphQL\InlineFragment;
 use GraphQL\Query;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class InlineFragmentTest

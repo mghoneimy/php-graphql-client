@@ -3,7 +3,6 @@
 namespace GraphQL\Tests;
 
 use GraphQL\RawObject;
-use PHPUnit\Framework\TestCase;
 
 class RawObjectTest extends TestCase
 {

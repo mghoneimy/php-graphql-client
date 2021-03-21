@@ -2,8 +2,6 @@
 
 namespace GraphQL\Exception;
 
-use InvalidArgumentException;
-
 /**
  * Class InvalidVariableException
  *

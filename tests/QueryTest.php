@@ -9,7 +9,6 @@ use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
 use GraphQL\Variable;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class QueryTest
@@ -48,7 +47,7 @@ class QueryTest extends TestCase
 
     /**
      * @covers \GraphQL\Query::__toString
-     * @covers FieldTrait::constructSelectionSet
+     * @covers \GraphQL\FieldTrait::constructSelectionSet
      */
     public function testQueryWithoutFieldName()
     {

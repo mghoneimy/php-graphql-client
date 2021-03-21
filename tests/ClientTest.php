@@ -3,19 +3,9 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Client;
-use GraphQL\Exception\QueryError;
-use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
 use TypeError;
 
 /**
@@ -28,88 +18,80 @@ class ClientTest extends TestCase
     /**
      * @var Client
      */
-    protected $client;
+    protected $graphQLClient;
 
     /**
-     * @var MockHandler
+     * @return void
      */
-    protected $mockHandler;
-
-    /**
-     *
-     */
-    protected function setUp(): void
+    public function setUp(): void
     {
-        $this->mockHandler = new MockHandler();
-        $handler = HandlerStack::create($this->mockHandler);
-        $this->client      = new Client('', [], ['handler' => $handler]);
+        parent::setUp();
+
+        $this->graphQLClient = new Client(
+            '',
+            [],
+            $this->client,
+            $this->helper->getStreamFactory(),
+            $this->helper->getRequestFactory()
+        );
     }
 
     /**
      * @covers \GraphQL\Client::__construct
      * @covers \GraphQL\Client::runRawQuery
-     * @covers \GraphQL\Util\GuzzleAdapter::__construct
-     * @covers \GraphQL\Util\GuzzleAdapter::sendRequest
      */
     public function testConstructClient()
     {
-        $mockHandler = new MockHandler();
-        $handler     = HandlerStack::create($mockHandler);
-        $container   = [];
-        $history     = Middleware::history($container);
-        $handler->push($history);
+        $response = $this->helper->createMockResponse();
 
-        $mockHandler->append(new Response(200));
-        $mockHandler->append(new Response(200));
-        $mockHandler->append(new Response(200));
-        $mockHandler->append(new Response(200));
-        $mockHandler->append(new Response(200));
+        for ($i = 0; $i < 5; $i++) {
+            $this->client->addResponse($response);
+        }
 
-        $client = new Client('', [], ['handler' => $handler]);
+        $client = new Client('', [], $this->client);
         $client->runRawQuery('query_string');
 
-        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler]);
+        $client = new Client('', ['Authorization' => 'Basic xyz'],  $this->client);
         $client->runRawQuery('query_string');
 
-        $client = new Client('', [], ['handler' => $handler]);
+        $client = new Client('', [], $this->client);
         $client->runRawQuery('query_string',  false, ['name' => 'val']);
 
-        $client = new Client('', ['Authorization' => 'Basic xyz'], ['handler' => $handler, 'headers' => [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ]]);
+        $client = new Client('', [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ], $this->client);
         $client->runRawQuery('query_string');
 
-        /** @var Request $firstRequest */
-        $firstRequest = $container[0]['request'];
+        $client = new Client('', [ 'Authorization' => 'Basic zyx', 'User-Agent' => 'test' ], $this->client);
+        $client->runRawQuery('query_string', false, [], 'GET');
+
+        $requests = $this->client->getRequests();
+
+        /** @var RequestInterface $firstRequest */
+        $firstRequest = $requests[0];
         $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
         $this->assertSame('POST', $firstRequest->getMethod());
 
-        /** @var Request $thirdRequest */
-        $thirdRequest = $container[1]['request'];
+        /** @var RequestInterface $thirdRequest */
+        $thirdRequest = $requests[1];
         $this->assertNotEmpty($thirdRequest->getHeader('Authorization'));
         $this->assertEquals(
             ['Basic xyz'],
             $thirdRequest->getHeader('Authorization')
         );
 
-        /** @var Request $secondRequest */
-        $secondRequest = $container[2]['request'];
+        /** @var RequestInterface $secondRequest */
+        $secondRequest = $requests[2];
         $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
 
-        /** @var Request $fourthRequest */
-        $fourthRequest = $container[3]['request'];
+        /** @var RequestInterface $fourthRequest */
+        $fourthRequest = $requests[3];
         $this->assertNotEmpty($fourthRequest->getHeader('Authorization'));
         $this->assertNotEmpty($fourthRequest->getHeader('User-Agent'));
         $this->assertEquals(['Basic zyx'], $fourthRequest->getHeader('Authorization'));
         $this->assertEquals(['test'], $fourthRequest->getHeader('User-Agent'));
-    }
 
-    /**
-     * @covers \GraphQL\Client::__construct
-     * @covers \GraphQL\Exception\MethodNotSupportedException
-     */
-    public function testConstructClientWithGetRequestMethod()
-    {
-        $this->expectException(MethodNotSupportedException::class);
-        $client = new Client('', [], [], null, 'GET');
+        /** @var RequestInterface $fifthRequest */
+        $fifthRequest = $requests[4];
+        $this->assertSame('GET', $fifthRequest->getMethod());
     }
 
     /**
@@ -117,13 +99,13 @@ class ClientTest extends TestCase
      */
     public function testRunQueryBuilder()
     {
-        $this->mockHandler->append(new Response(200, [], json_encode([
+        $this->client->addResponse($this->helper->createMockResponse(json_encode([
             'data' => [
                 'someData'
             ]
         ])));
 
-        $response = $this->client->runQuery((new QueryBuilder('obj'))->selectField('field'));
+        $response = $this->graphQLClient->runQuery((new QueryBuilder('obj'))->selectField('field'));
         $this->assertNotNull($response->getData());
     }
 
@@ -133,7 +115,7 @@ class ClientTest extends TestCase
     public function testRunInvalidQueryClass()
     {
         $this->expectException(TypeError::class);
-        $this->client->runQuery(new RawObject('obj'));
+        $this->graphQLClient->runQuery(new RawObject('obj'));
     }
 
     /**
@@ -141,7 +123,7 @@ class ClientTest extends TestCase
      */
     public function testValidQueryResponse()
     {
-        $this->mockHandler->append(new Response(200, [], json_encode([
+        $this->client->addResponse($this->helper->createMockResponse(json_encode([
             'data' => [
                 'someField' => [
                     [
@@ -153,7 +135,7 @@ class ClientTest extends TestCase
             ]
         ])));
 
-        $objectResults = $this->client->runRawQuery('');
+        $objectResults = $this->graphQLClient->runRawQuery('');
         $this->assertIsObject($objectResults->getResults());
     }
 
@@ -162,7 +144,7 @@ class ClientTest extends TestCase
      */
     public function testValidQueryResponseToArray()
     {
-        $this->mockHandler->append(new Response(200, [], json_encode([
+        $this->client->addResponse($this->helper->createMockResponse(json_encode([
             'data' => [
                 'someField' => [
                     [
@@ -174,31 +156,31 @@ class ClientTest extends TestCase
             ]
         ])));
 
-        $arrayResults = $this->client->runRawQuery('', true);
+        $arrayResults = $this->graphQLClient->runRawQuery('', true);
         $this->assertIsArray($arrayResults->getResults());
     }
 
     /**
      * @covers \GraphQL\Client::runRawQuery
      */
-    public function testInvalidQueryResponseWith200()
+    public function testInvalidQueryResponseWith200DoesNotThrowException()
     {
-        $this->mockHandler->append(new Response(200, [], json_encode([
-            'errors' => [
-                [
-                    'message' => 'some syntax error',
-                    'location' => [
-                        [
-                            'line' => 1,
-                            'column' => 3,
-                        ]
-                    ],
-                ]
-            ]
-        ])));
+        $exceptionThrown = false;
+        $errors = $this->helper->syntaxError();
 
-        $this->expectException(QueryError::class);
-        $this->client->runRawQuery('');
+        $this->client->addResponse($this->helper->createMockResponse(json_encode(['errors' => $errors]), 200));
+
+        try {
+            $results = $this->graphQLClient->runRawQuery('', true);
+        } catch (\Exception $e) {
+            $exceptionThrown = true;
+        }
+
+        $this->assertFalse($exceptionThrown);
+        $this->assertTrue($results->hasError());
+        $this->assertTrue($results->hasErrors());
+        $this->assertSame(200, $results->getResponseStatusCode());
+        $this->assertSame($errors, $results->getErrors());
     }
 
     /**
@@ -206,23 +188,32 @@ class ClientTest extends TestCase
      */
     public function testInvalidQueryResponseWith400()
     {
-        $this->mockHandler->append(new ClientException('', new Request('post', ''),
-                new Response(400, [], json_encode([
-                'errors' => [
-                    [
-                        'message' => 'some syntax error',
-                        'location' => [
-                            [
-                                'line' => 1,
-                                'column' => 3,
-                            ]
-                        ],
-                    ]
-                ]
-        ]))));
+        $exceptionThrown = false;
 
-        $this->expectException(QueryError::class);
-        $this->client->runRawQuery('');
+        $errors = $this->helper->syntaxError();
+
+        $mockRequest = $this->helper->mockRequest(
+            '',
+            'POST',
+            json_encode(
+                [
+                    'errors' => $errors
+                ]
+            ),
+            '400'
+        );
+        $this->client->addResponse($mockRequest->getResponse());
+
+        try {
+            $results = $this->graphQLClient->runRawQuery('');
+        } catch (\Exception $e) {
+            $exceptionThrown = true;
+        }
+
+        $this->assertFalse($exceptionThrown);
+        $this->assertTrue($results->hasError());
+        $this->assertSame('ClientError', $results->getErrorType());
+        $this->assertSame(400, $results->getResponseStatusCode());
     }
 
     /**
@@ -230,12 +221,10 @@ class ClientTest extends TestCase
      */
     public function testUnauthorizedResponse()
     {
-        $this->mockHandler->append(new ClientException('', new Request('post', ''),
-                new Response(401, [], json_encode('Unauthorized'))
-        ));
-
-        $this->expectException(ClientException::class);
-        $this->client->runRawQuery('');
+        $mockRequest = $this->helper->mockRequest('', 'POST', json_encode('Unauthorized'), 401);
+        $this->client->addResponse($mockRequest->getResponse());
+        $response = $this->graphQLClient->runRawQuery('');
+        $this->assertTrue($response->hasError());
     }
 
     /**
@@ -243,30 +232,40 @@ class ClientTest extends TestCase
      */
     public function testNotFoundResponse()
     {
-        $this->mockHandler->append(new ClientException('', new Request('post', ''), new Response(404, [])));
+        $exceptionThrown = false;
+        $mockRequest = $this->helper->mockRequest('', 'POST', json_encode('Not Found'), 404);
+        $this->client->addResponse($mockRequest->getResponse());
 
-        $this->expectException(ClientException::class);
-        $this->client->runRawQuery('');
+        try {
+            $results = $this->graphQLClient->runRawQuery('');
+        } catch (\Exception $e) {
+            $exceptionThrown = true;
+        }
+
+        $this->assertFalse($exceptionThrown);
+        $this->assertTrue($results->hasError());
+        $this->assertSame('ClientError', $results->getErrorType());
+        $this->assertSame(404, $results->getResponseStatusCode());
     }
 
     /**
      * @covers \GraphQL\Client::runRawQuery
      */
-    public function testInternalServerErrorResponse()
+    public function testNoInternalServerErrorResponseOn500Response()
     {
-        $this->mockHandler->append(new ServerException('', new Request('post', ''), new Response(500, [])));
+        $exceptionThrown = false;
 
-        $this->expectException(ServerException::class);
-        $this->client->runRawQuery('');
-    }
+        try {
+            $mockRequest = $this->helper->mockRequest('', 'POST', json_encode('Internal Error'), 500);
+            $this->client->addResponse($mockRequest->getResponse());
+            $results = $this->graphQLClient->runRawQuery('');
+        } catch (\Exception $e) {
+            $exceptionThrown = true;
+        }
 
-    /**
-     * @covers \GraphQL\Client::runRawQuery
-     */
-    public function testConnectTimeoutResponse()
-    {
-        $this->mockHandler->append(new ConnectException('Time Out', new Request('post', '')));
-        $this->expectException(ConnectException::class);
-        $this->client->runRawQuery('');
+        $this->assertFalse($exceptionThrown);
+        $this->assertTrue($results->hasError());
+        $this->assertSame('ServerError', $results->getErrorType());
+        $this->assertSame(500, $results->getResponseStatusCode());
     }
 }

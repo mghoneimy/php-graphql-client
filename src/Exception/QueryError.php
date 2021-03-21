@@ -11,7 +11,7 @@ use RuntimeException;
  *
  * @package GraphQl\Exception
  */
-class QueryError extends RuntimeException
+class QueryError extends RuntimeException implements Exception
 {
     /**
      * @var array
@@ -23,7 +23,7 @@ class QueryError extends RuntimeException
      *
      * @param array $errorDetails
      */
-    public function __construct($errorDetails)
+    public function __construct(array $errorDetails)
     {
         $this->errorDetails = $errorDetails['errors'][0];
         parent::__construct($this->errorDetails['message']);

@@ -3,7 +3,6 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Util\StringLiteralFormatter;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class StringLiteralFormatterTest

@@ -37,6 +37,13 @@ Run the following command to install the package using composer:
 $ composer require gmostafa/php-graphql-client
 ```
 
+You also need to install a PSR-17 (HTTP Factory) and PSR-18 (HTTP Client)
+implementation. You can find packages that implement PSR-17 [here](
+https://packagist.org/providers/psr/http-factory-implementation) and PSR-18
+[here](https://packagist.org/providers/psr/http-client-implementation). Note
+that installing some packages, such as guzzlehttp/guzzle (version 7), will
+provide both.
+
 # Object-to-Query-Mapper Extension
 
 To avoid the hassle of having to write _any_ queries and just interact with PHP
@@ -388,8 +395,7 @@ $client = new Client(
 
 
 The Client constructor also receives an optional "httpOptions" array, which
-**overrides** the "authorizationHeaders" and can be used to add custom
-[Guzzle HTTP Client request options](https://guzzle.readthedocs.io/en/latest/request-options.html).
+**overrides** the "authorizationHeaders". The only two options for this are `version` and `headers`.
 
 Example:
 
@@ -398,19 +404,11 @@ $client = new Client(
     'http://api.graphql.com',
     [],
     [ 
-        'connect_timeout' => 5,
-        'timeout' => 5,
         'headers' => [
-            'Authorization' => 'Basic xyz'
+            'Authorization' => 'Basic xyz',
             'User-Agent' => 'testing/1.0',
         ],
-        'proxy' => [
-                'http'  => 'tcp://localhost:8125', // Use this proxy with "http"
-                'https' => 'tcp://localhost:9124', // Use this proxy with "https",
-                'no' => ['.mit.edu', 'foo.com']    // Don't use a proxy with these
-        ],
-        'cert' => ['/path/server.pem', 'password']
-        ...
+        'version' => 5
     ]
 );
 ```
@@ -518,6 +516,114 @@ mutation($company: CompanyInputObject!) {
   createCompany(companyObject: $company)
 }
 {"company":{"name":"Tech Company","type":"Testing","size":"Medium"}}
+```
+
+## Error Handling
+
+All exceptions thrown by this library implement `\GraphQL\Exception\Exception`.
+
+### Exceptions
+The following exceptions are defined within the GraphQL Client.
+
+#### InvalidArgumentException
+`\GraphQL\Exception\InvalidArgumentException`
+
+An argument is not of the expected type.
+
+#### ArgumentException
+`\GraphQL\Exception\ArgumentException`
+
+One or more of the arguments provided when creating a Query object did not
+ have a
+key, which represents argument name.
+
+#### InvalidSelectionException
+`\GraphQL\Exception\InvalidSelectionException`
+
+One or more of the selection fields provided to a QueryBuilder or an
+InlineFragment was not of type string or Query.
+
+#### InvalidVariableException
+`\GraphQL\Exception\InvalidVariableException`
+
+At least one of the elements of the variables array provided to a Query object
+was not an instance of `\GraphQL\Variable`.
+
+#### TransferException
+`\GraphQL\Exception\Client\TransferException`
+
+There was an error attempting to make the request to the GraphQL endpoint.
+All HTTP client related errors will extend this.
+
+Implements `\Psr\Http\Client\ClientExceptionInterface`
+
+#### RequestException
+`\GraphQL\Exception\Client\RequestException`
+
+There was an error with the request that was made to the GraphQL endpoint.
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### BadResponseException
+`\GraphQL\Exception\Client\BadResponseException`
+
+The server returned an error (non-2xx status code).
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### ClientException
+`\GraphQL\Exception\Client\ClientException`
+
+The server returned a client error (4xx status code)
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### ServerException
+`\GraphQL\Exception\Client\ServerException`
+
+The server returned a server error (5xx status code)
+
+Implements `\Psr\Http\Client\RequestExceptionInterface`
+
+#### Client\ConnectException
+`\GraphQL\Exception\Client\ConnectException`
+
+The request could be sent due to a network failure of any kind, including a
+timeout.
+
+Implements `\Psr\Http\Client\NetworkExceptionInterface`
+
+#### QueryError
+`\GraphQL\Exception\QueryError`
+
+The GraphQL endpoint returns an error in the provided query. This exception
+has a method named `getErrorDetails()` which will return the message of the
+first error returned by the GraphQL endpoint.
+
+#### EmptySelectionSetException
+`\GraphQL\Exception\EmptySelectionSetException`
+
+A Query object has an empty selection set.
+
+### Excpeption Tree
+
+The following tree describes how all the exceptions thrown in this
+package extend on each other. These exceptions are relative to the 
+`\GraphQL\Exception` namespace.
+
+```
+. InvalidArgumentException
+   └── ArgumentException
+   └── InvalidSelectionException
+   └── InvalidVariableException
+. Client\TransferException
+   └── Client\RequestException
+      └── Client\BadResponseException
+      │  └── Client\ClientException
+      │  └── Client\ServerException
+      └── Client\ConnectException
+. QueryError
+. EmptySelectionSetException
 ```
 
 # Live API Example

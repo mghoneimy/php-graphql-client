@@ -3,7 +3,6 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Variable;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class VariableTest

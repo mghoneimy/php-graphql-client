@@ -3,7 +3,6 @@
 namespace GraphQL\Tests;
 
 use GraphQL\Exception\QueryError;
-use PHPUnit\Framework\TestCase;
 
 /**
  * Class QueryErrorTest
