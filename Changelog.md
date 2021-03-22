@@ -10,6 +10,36 @@ constructing a new query and adding a nested subfield
 
 ## Unreleased
 
+## 1.10
+
+### Added
+
+- Added support for MutationBuilder
+
+### Removed
+
+- Removed EmptySelectionSetException being thrown from QueryBuilder if selection set is empty
+
+## 1.9.2:
+
+### Removed
+
+- Removed support for GET requests by throwing exception when request type is set to GET
+
+## 1.9.1:
+
+### Changed
+
+- Modified variable identification logic in string literals
+
+## 1.9:
+
+### Added
+
+- Added PHP8 support
+
+## 1.8:
+
 ### Changed
 
 - Updated Query class to allow for an alias

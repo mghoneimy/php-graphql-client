@@ -2,7 +2,6 @@
 
 namespace GraphQL\QueryBuilder;
 
-use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\RawObject;
@@ -18,7 +17,7 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
     /**
      * @var Query
      */
-    private $query;
+    protected $query;
 
     /**
      * @var array|Variable[]
@@ -66,10 +65,6 @@ abstract class AbstractQueryBuilder implements QueryBuilderInterface
      */
     public function getQuery(): Query
     {
-        if (empty($this->selectionSet)) {
-            throw new EmptySelectionSetException(static::class);
-        }
-
         // Convert nested query builders to query objects
         foreach ($this->selectionSet as $key => $field) {
             if ($field instanceof QueryBuilderInterface) {

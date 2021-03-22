@@ -2,12 +2,10 @@
 
 namespace GraphQL\Tests;
 
-use GraphQL\Exception\EmptySelectionSetException;
 use GraphQL\InlineFragment;
 use GraphQL\Query;
 use GraphQL\QueryBuilder\QueryBuilder;
 use GraphQL\RawObject;
-use GraphQL\Variable;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -86,17 +84,6 @@ field_one
 }',
             (string) $builder->getQuery()
         );
-    }
-
-    /**
-     * @covers \GraphQL\QueryBuilder\QueryBuilder::getQuery
-     * @covers \GraphQL\QueryBuilder\AbstractQueryBuilder::getQuery
-     * @covers \GraphQL\Exception\EmptySelectionSetException
-     */
-    public function testEmptySelectionSet()
-    {
-        $this->expectException(EmptySelectionSetException::class);
-        $this->queryBuilder->getQuery();
     }
 
     /**
