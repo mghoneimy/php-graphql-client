@@ -136,6 +136,6 @@ class Client
         }
 
         // Parse response to extract results
-        return new Results($response, $resultsAsArray);
+        return new Results($request, $response, $resultsAsArray);
     }
 }
