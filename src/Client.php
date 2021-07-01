@@ -7,8 +7,8 @@ use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
 use GraphQL\Util\GuzzleAdapter;
 use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
 
@@ -119,7 +119,7 @@ class Client
         if (empty($variables)) $variables = (object) null;
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
-        $request = $request->withBody(Psr7\stream_for(json_encode($bodyArray)));
+        $request = $request->withBody(Utils::streamFor(json_encode($bodyArray)));
 
         // Send api request and get response
         try {
