@@ -33,7 +33,8 @@
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "psr/http-client": "^1.0",
-        "guzzlehttp/guzzle": "^6.3|^7.0.1"
+        "guzzlehttp/guzzle": "^6.3|^7.0.1",
+        "aws/aws-sdk-php": "^3.185"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.5|^8.0",
