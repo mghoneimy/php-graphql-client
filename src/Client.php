@@ -2,6 +2,8 @@
 
 namespace GraphQL;
 
+use GraphQL\Auth\AuthInterface;
+use GraphQL\Auth\HeaderAuth;
 use GraphQL\Exception\QueryError;
 use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
@@ -35,9 +37,19 @@ class Client
     protected $httpHeaders;
 
     /**
+     * @var array
+     */
+    protected $options;
+
+    /**
      * @var string
      */
     protected $requestMethod;
+
+    /**
+     * @var AuthInterface
+     */
+    protected $auth;
 
     /**
      * Client constructor.
@@ -45,28 +57,33 @@ class Client
      * @param string $endpointUrl
      * @param array $authorizationHeaders
      * @param array $httpOptions
-     * @param ClientInterface $httpClient
+     * @param ClientInterface|null $httpClient
      * @param string $requestMethod
+     * @param AuthInterface|null $auth
      */
     public function __construct(
         string $endpointUrl,
         array $authorizationHeaders = [],
         array $httpOptions = [],
         ClientInterface $httpClient = null,
-        string $requestMethod = 'POST'
+        string $requestMethod = 'POST',
+        AuthInterface $auth = null
     ) {
         $headers = array_merge(
             $authorizationHeaders,
             $httpOptions['headers'] ?? [],
             ['Content-Type' => 'application/json']
         );
-
         /**
          * All headers will be set on the request objects explicitly,
          * Guzzle doesn't have to care about them at this point, so to avoid any conflicts
          * we are removing the headers from the options
          */
         unset($httpOptions['headers']);
+        $this->options = $httpOptions;
+        if ($auth) {
+            $this->auth = $auth;
+        }
 
         $this->endpointUrl          = $endpointUrl;
         $this->httpClient           = $httpClient ?? new GuzzleAdapter(new \GuzzleHttp\Client($httpOptions));
@@ -120,6 +137,10 @@ class Client
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
         $request = $request->withBody(Utils::streamFor(json_encode($bodyArray)));
+
+        if ($this->auth) {
+            $request = $this->auth->run($request, $this->options);
+        }
 
         // Send api request and get response
         try {
