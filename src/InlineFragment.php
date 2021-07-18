@@ -2,6 +2,8 @@
 
 namespace GraphQL;
 
+use GraphQL\QueryBuilder\QueryBuilderInterface;
+
 /**
  * Class InlineFragment
  *
@@ -24,13 +26,20 @@ class InlineFragment extends NestableObject
     protected $typeName;
 
     /**
+     * @var QueryBuilderInterface|null
+     */
+    protected $queryBuilder;
+
+    /**
      * InlineFragment constructor.
      *
      * @param string $typeName
+     * @param QueryBuilderInterface|null $queryBuilder
      */
-    public function __construct(string $typeName)
+    public function __construct(string $typeName, ?QueryBuilderInterface $queryBuilder = null)
     {
         $this->typeName = $typeName;
+        $this->queryBuilder = $queryBuilder;
     }
 
     /**
@@ -38,6 +47,10 @@ class InlineFragment extends NestableObject
      */
     public function __toString()
     {
+        if ($this->queryBuilder !== null) {
+            $this->setSelectionSet($this->queryBuilder->getQuery()->getSelectionSet());
+        }
+
         return sprintf(static::FORMAT, $this->typeName, $this->constructSelectionSet());
     }
 

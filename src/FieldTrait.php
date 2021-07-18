@@ -67,5 +67,9 @@ trait FieldTrait
 
         return $attributesString;
     }
-}
 
+    public function getSelectionSet()
+    {
+        return $this->selectionSet;
+    }
+}

@@ -4,6 +4,7 @@ namespace GraphQL\Tests;
 
 use GraphQL\InlineFragment;
 use GraphQL\Query;
+use GraphQL\QueryBuilder\QueryBuilder;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -37,6 +38,7 @@ field2
             (string) $fragment
         );
     }
+
     /**
      * @covers \GraphQL\InlineFragment::__construct
      * @covers \GraphQL\InlineFragment::setSelectionSet
@@ -80,6 +82,30 @@ sub_field3
 another_field
 }
 }
+}',
+            (string) $fragment
+        );
+    }
+
+    /**
+     * @covers \GraphQL\InlineFragment::__construct
+     * @covers \GraphQL\InlineFragment::setSelectionSet
+     * @covers \GraphQL\InlineFragment::getSelectionSet
+     * @covers \GraphQL\InlineFragment::constructSelectionSet
+     * @covers \GraphQL\InlineFragment::__toString
+     */
+    public function testConvertQueryBuilderToString()
+    {
+        $queryBuilder = new QueryBuilder();
+
+        $fragment = new InlineFragment('Test', $queryBuilder);
+        $queryBuilder->selectField('field1');
+        $queryBuilder->selectField('field2');
+
+        $this->assertEquals(
+            '... on Test {
+field1
+field2
 }',
             (string) $fragment
         );
