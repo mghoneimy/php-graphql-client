@@ -2,6 +2,10 @@
 
 namespace GraphQL;
 
+use GraphQL\Auth\AuthInterface;
+use GraphQL\Auth\AwsIamAuth;
+use GraphQL\Auth\HeaderAuth;
+use GraphQL\Exception\AuthTypeNotSupportedException;
 use GraphQL\Exception\QueryError;
 use GraphQL\Exception\MethodNotSupportedException;
 use GraphQL\QueryBuilder\QueryBuilderInterface;
@@ -19,6 +23,18 @@ use TypeError;
  */
 class Client
 {
+    protected const AUTH_TYPE_AWS_IAM = 'aws_iam';
+    protected const AUTH_TYPE_HEADER = 'header';
+    protected const ALLOWED_AUTH_TYPES = [
+        self::AUTH_TYPE_AWS_IAM,
+        self::AUTH_TYPE_HEADER,
+    ];
+
+    protected const AUTH_MAP = [
+        self::AUTH_TYPE_AWS_IAM => AwsIamAuth::class,
+        self::AUTH_TYPE_HEADER => HeaderAuth::class,
+    ];
+
     /**
      * @var string
      */
@@ -40,6 +56,11 @@ class Client
     protected $requestMethod;
 
     /**
+     * @var AuthInterface
+     */
+    protected $auth;
+
+    /**
      * Client constructor.
      *
      * @param string $endpointUrl
@@ -47,14 +68,20 @@ class Client
      * @param array $httpOptions
      * @param ClientInterface $httpClient
      * @param string $requestMethod
+     * @param string $authType
      */
     public function __construct(
         string $endpointUrl,
         array $authorizationHeaders = [],
         array $httpOptions = [],
         ClientInterface $httpClient = null,
-        string $requestMethod = 'POST'
+        string $requestMethod = 'POST',
+        string $authType = self::AUTH_TYPE_HEADER
     ) {
+        if (!in_array($authType, self::ALLOWED_AUTH_TYPES, true)) {
+            throw new AuthTypeNotSupportedException($requestMethod);
+        }
+        $this->auth = new (self::AUTH_MAP[$authType]);
         $headers = array_merge(
             $authorizationHeaders,
             $httpOptions['headers'] ?? [],
@@ -111,15 +138,13 @@ class Client
     {
         $request = new Request($this->requestMethod, $this->endpointUrl);
 
-        foreach($this->httpHeaders as $header => $value) {
-            $request = $request->withHeader($header, $value);
-        }
-
         // Convert empty variables array to empty json object
         if (empty($variables)) $variables = (object) null;
         // Set query in the request body
         $bodyArray = ['query' => (string) $queryString, 'variables' => $variables];
         $request = $request->withBody(Utils::streamFor(json_encode($bodyArray)));
+
+        $request = $this->handleAuth($request);
 
         // Send api request and get response
         try {
@@ -137,5 +162,14 @@ class Client
 
         // Parse response to extract results
         return new Results($response, $resultsAsArray);
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    public function handleAuth(Request $request): Request
+    {
+        return $this->auth->run($request, $this->httpHeaders);
     }
 }
