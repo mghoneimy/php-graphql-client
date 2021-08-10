@@ -36,8 +36,9 @@
         "guzzlehttp/guzzle": "^6.3|^7.0.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.5|^8.0",
-        "codacy/coverage": "^1.4"
+        "phpunit/phpunit": "^7.5|^8.0|^9.0",
+        "codacy/coverage": "^1.4",
+        "aws/aws-sdk-php": "^3.186"
     },
     "conflict": {
         "guzzlehttp/psr7": "< 1.7.0"
@@ -46,6 +47,7 @@
         "test": "phpunit tests/ --whitelist src/ --coverage-clover build/coverage/xml"
     },
     "suggest": {
+        "aws/aws-sdk-php": "Move this package to require section to use AWS IAM authorization",
         "gmostafa/php-graphql-oqm": "To have object-to-query mapping support"
     }
 }

@@ -37,3 +37,7 @@ jobs:
 
     - name: Run test suite
       run: composer run test
+      env:
+        AWS_ACCESS_KEY_ID: key
+        AWS_SECRET_ACCESS_KEY: secret
+        AWS_SESSION_TOKEN: token
