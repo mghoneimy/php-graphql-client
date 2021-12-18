@@ -47,6 +47,7 @@ class QueryErrorTest extends TestCase
             ],
             $queryError->getErrorDetails()
         );
+        $this->assertEquals([], $queryError->getData());
     }
 
     /**
