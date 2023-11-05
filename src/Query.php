@@ -92,6 +92,9 @@ class Query extends NestableObject
         $this->isNested      = false;
     }
 
+    /**
+     * @return string
+     */
     public function getFieldName(): string
     {
         return $this->fieldName;
@@ -168,6 +171,9 @@ class Query extends NestableObject
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getArguments(): array
     {
         return $this->arguments;
