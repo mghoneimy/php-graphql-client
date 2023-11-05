@@ -737,17 +737,27 @@ fragment_field2
     public function testGettingArguments()
     {
         $gql = (new Query('things'))
-            ->setArguments([
-                'someClientId' => 'someValueBasedOnCodebase'
-            ]);
+            ->setArguments(
+                [
+                   'someClientId' => 'someValueBasedOnCodebase'
+                ]
+            );
         $cursor_id = 'someCursor';
         $new_args = $gql->getArguments();
-        $gql->setArguments(array_merge($new_args, [
-            'after' => $cursor_id
-        ]));
-        self::assertEquals('query {
+        $gql->setArguments(
+            array_merge(
+                $new_args,
+                [
+                    'after' => $cursor_id
+                ]
+            )
+        );
+        self::assertEquals(
+            'query {
 things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
-}', (string) $gql);
+}',
+            (string) $gql
+        );
     }
 
     /**
