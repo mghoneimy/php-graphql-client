@@ -766,20 +766,24 @@ things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
     public function testGettingNameAndAltering()
     {
         $gql = (new Query('things'))
-            ->setSelectionSet([
-                'id',
-                'name',
-                (new Query('subThings'))
-                    ->setArguments([
-                        'filter' => 'providerId123',
-                    ])
-                    ->setSelectionSet([
-                        'id',
-                        'name'
-                    ])
+            ->setSelectionSet(
+                [
+                    'id',
+                    'name',
+                    (new Query('subThings'))
+                        ->setArguments(
+                            [
+                                'filter' => 'providerId123',
+                            ]
+                        )
+                        ->setSelectionSet(
+                            [
+                                'id',
+                                'name'
+                            ]
+                        )
             ]);
         $sets = $gql->getSelectionSet();
-        $new_set = [];
         foreach ($sets as $set) {
             if (!$set instanceof Query) {
                 continue;
@@ -788,11 +792,20 @@ things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
             if ($name !== 'subThings') {
                 continue;
             }
-            $set->setArguments(['filter' => 'providerId456']);
-            $set->setSelectionSet(array_merge($set->getSelectionSet(), [
-                'someField',
-                'someOtherField'
-            ]));
+            $set->setArguments(
+                [
+                    'filter' => 'providerId456'
+                ]
+            );
+            $set->setSelectionSet(
+                array_merge(
+                    $set->getSelectionSet(),
+                    [
+                        'someField',
+                        'someOtherField'
+                    ]
+                )
+            );
         }
         self::assertEquals('query {
 things {
