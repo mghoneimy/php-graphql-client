@@ -730,4 +730,96 @@ fragment_field2
 
         return $query;
     }
+
+    /**
+     * @covers \GraphQL\Query::getArguments
+     */
+    public function testGettingArguments()
+    {
+        $gql = (new Query('things'))
+            ->setArguments(
+                [
+                   'someClientId' => 'someValueBasedOnCodebase'
+                ]
+            );
+        $cursor_id = 'someCursor';
+        $new_args = $gql->getArguments();
+        $gql->setArguments(
+            array_merge(
+                $new_args,
+                [
+                    'after' => $cursor_id
+                ]
+            )
+        );
+        self::assertEquals(
+            'query {
+things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
+}',
+            (string) $gql
+        );
+    }
+
+    /**
+     * @covers \GraphQL\Query::getFieldName
+     */
+    public function testGettingNameAndAltering()
+    {
+        $gql = (new Query('things'))
+            ->setSelectionSet(
+                [
+                    'id',
+                    'name',
+                    (new Query('subThings'))
+                        ->setArguments(
+                            [
+                                'filter' => 'providerId123',
+                            ]
+                        )
+                        ->setSelectionSet(
+                            [
+                                'id',
+                                'name'
+                            ]
+                        )
+            ]);
+        $sets = $gql->getSelectionSet();
+        foreach ($sets as $set) {
+            if (($set instanceof Query) === false) {
+                continue;
+            }
+            $name = $set->getFieldName();
+            if ($name !== 'subThings') {
+                continue;
+            }
+            $set->setArguments(
+                [
+                    'filter' => 'providerId456'
+                ]
+            );
+            $set->setSelectionSet(
+                array_merge(
+                    $set->getSelectionSet(),
+                    [
+                        'someField',
+                        'someOtherField'
+                    ]
+                )
+            );
+        }
+        self::assertEquals(
+            'query {
+things {
+id
+name
+subThings(filter: "providerId456") {
+id
+name
+someField
+someOtherField
+}
+}
+}',
+            (string) $gql);
+    }
 }
