@@ -785,7 +785,7 @@ things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
             ]);
         $sets = $gql->getSelectionSet();
         foreach ($sets as $set) {
-            if (!$set instanceof Query) {
+            if (($set instanceof Query) === false) {
                 continue;
             }
             $name = $set->getFieldName();
@@ -807,7 +807,8 @@ things(someClientId: "someValueBasedOnCodebase" after: "someCursor")
                 )
             );
         }
-        self::assertEquals('query {
+        self::assertEquals(
+            'query {
 things {
 id
 name
@@ -818,6 +819,7 @@ someField
 someOtherField
 }
 }
-}', (string) $gql);
+}',
+            (string) $gql);
     }
 }
