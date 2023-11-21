@@ -16,7 +16,7 @@ class QueryBuilder extends AbstractQueryBuilder
      *
      * @param Query|QueryBuilder|string $selectedField
      *
-     * @return AbstractQueryBuilder|QueryBuilder
+     * @return $this
      */
     public function selectField($selectedField)
     {
@@ -29,7 +29,7 @@ class QueryBuilder extends AbstractQueryBuilder
      * @param string $argumentName
      * @param        $argumentValue
      *
-     * @return AbstractQueryBuilder|QueryBuilder
+     * @return $this
      */
     public function setArgument(string $argumentName, $argumentValue)
     {
@@ -44,7 +44,7 @@ class QueryBuilder extends AbstractQueryBuilder
      * @param bool   $isRequired
      * @param null   $defaultValue
      *
-     * @return AbstractQueryBuilder|QueryBuilder
+     * @return $this
      */
     public function setVariable(string $name, string $type, bool $isRequired = false, $defaultValue = null)
     {
