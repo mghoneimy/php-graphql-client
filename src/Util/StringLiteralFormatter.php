@@ -20,7 +20,7 @@ class StringLiteralFormatter
     {
         if (is_string($value)) {
             if (!static::isVariable($value)) {
-                $value = str_replace('"', '\"', $value);
+                $value = preg_replace(['/([^\\\])"/', '/^"/'], ['$1\"', '\"'], $value);
                 if (strpos($value, "\n") !== false) {
                     $value = '"""' . $value . '"""';
                 } else {

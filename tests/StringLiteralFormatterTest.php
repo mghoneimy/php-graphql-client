@@ -34,6 +34,9 @@ class StringLiteralFormatterTest extends TestCase
         $formattedString = StringLiteralFormatter::formatValueForRHS("\"quotedString\"");
         $this->assertEquals('"\"quotedString\""', $formattedString);
 
+        $formattedString = StringLiteralFormatter::formatValueForRHS('<span class=\\"quotedStringEscaped\\" id="unescaped"></span>');
+        $this->assertEquals('"<span class=\\"quotedStringEscaped\\" id=\\"unescaped\\"></span>"', $formattedString);
+
         $formattedString = StringLiteralFormatter::formatValueForRHS('\'singleQuotes\'');
         $this->assertEquals('"\'singleQuotes\'"', $formattedString);
 
