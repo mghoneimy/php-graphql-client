@@ -37,6 +37,7 @@ class AwsIamAuthTest extends TestCase
      */
     public function testRunSuccess()
     {
+        $this->markTestSkipped('This can only run in a real environment with AWS credentials set up.');
         $request = $this->auth->run(
             new Request('POST', ''),
             ['aws_region' => 'us-east-1']

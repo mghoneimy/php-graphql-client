@@ -48,7 +48,6 @@ class QueryTest extends TestCase
 
     /**
      * @covers \GraphQL\Query::__toString
-     * @covers FieldTrait::constructSelectionSet
      */
     public function testQueryWithoutFieldName()
     {
