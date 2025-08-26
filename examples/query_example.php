@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use GraphQL\ArgumentObject;
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
 use GraphQL\Query;
@@ -15,7 +16,13 @@ $client = new Client(
 
 // Create the GraphQL query
 $gql = (new Query('pokemon'))
-    ->setArguments(['name' => 'Pikachu'])
+    ->setArguments([
+        'name' => 'Pikachu',
+        'age' => new ArgumentObject([
+            'min' => 7,
+            'max' => 20
+        ]),
+    ])
     ->setSelectionSet(
         [
             'id',
