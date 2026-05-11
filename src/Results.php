@@ -40,7 +40,7 @@ class Results
     public function __construct(ResponseInterface $response, $asArray = false)
     {
         $this->responseObject = $response;
-        $this->responseBody   = $this->responseObject->getBody()->getContents();
+        $this->responseBody   = (string) $this->responseObject->getBody();
         $this->results        = json_decode($this->responseBody, $asArray);
 
         // Check if any errors exist, and throw exception if they do

@@ -79,7 +79,7 @@ class ClientTest extends TestCase
 
         /** @var Request $firstRequest */
         $firstRequest = $container[0]['request'];
-        $this->assertEquals('{"query":"query_string","variables":{}}', $firstRequest->getBody()->getContents());
+        $this->assertEquals('{"query":"query_string","variables":{}}', (string) $firstRequest->getBody());
         $this->assertSame('POST', $firstRequest->getMethod());
 
         /** @var Request $thirdRequest */
@@ -92,7 +92,7 @@ class ClientTest extends TestCase
 
         /** @var Request $secondRequest */
         $secondRequest = $container[2]['request'];
-        $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', $secondRequest->getBody()->getContents());
+        $this->assertEquals('{"query":"query_string","variables":{"name":"val"}}', (string) $secondRequest->getBody());
 
         /** @var Request $fourthRequest */
         $fourthRequest = $container[3]['request'];
