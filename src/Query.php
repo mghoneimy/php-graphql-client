@@ -93,6 +93,14 @@ class Query extends NestableObject
     }
 
     /**
+     * @return string
+     */
+    public function getFieldName(): string
+    {
+        return $this->fieldName;
+    }
+
+    /**
      * @param string $alias
      *
      * @return Query
@@ -161,6 +169,14 @@ class Query extends NestableObject
         $this->arguments = $arguments;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getArguments(): array
+    {
+        return $this->arguments;
     }
 
     /**
